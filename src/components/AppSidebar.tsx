@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowDownCircle,
+  Target,
   LogOut
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
@@ -31,6 +32,7 @@ const mainNavItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Income Sources', url: '/sources', icon: Wallet },
   { title: 'Expenses', url: '/expenses', icon: ArrowDownCircle },
+  { title: 'Savings Goals', url: '/goals', icon: Target },
   { title: 'Analytics', url: '/analytics', icon: PieChart },
 ];
 

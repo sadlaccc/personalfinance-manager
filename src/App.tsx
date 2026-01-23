@@ -10,6 +10,7 @@ import Sources from "./pages/Sources";
 import Expenses from "./pages/Expenses";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Goals from "./pages/Goals";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
@@ -49,6 +50,7 @@ function AppRoutes() {
                 <Route path="/" element={<Index />} />
                 <Route path="/sources" element={<Sources />} />
                 <Route path="/expenses" element={<Expenses />} />
+                <Route path="/goals" element={<Goals />} />
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
