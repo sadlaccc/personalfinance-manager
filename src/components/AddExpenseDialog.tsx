@@ -5,44 +5,42 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { IncomeSource } from '@/hooks/useIncomeSources';
-import { IncomeCategory, categoryLabels } from '@/types/income';
-import { Frequency } from '@/types/expense';
-import { Wallet, DollarSign } from 'lucide-react';
+import { Expense, ExpenseCategory, expenseCategoryLabels, Frequency } from '@/types/expense';
+import { ArrowDownCircle, DollarSign } from 'lucide-react';
 
-interface AddIncomeDialogProps {
+interface AddExpenseDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (income: Omit<IncomeSource, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => void;
-  editingIncome?: IncomeSource | null;
+  onSubmit: (expense: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => void;
+  editingExpense?: Expense | null;
 }
 
-const categories: IncomeCategory[] = ['salary', 'freelance', 'investment', 'rental', 'business', 'other'];
+const categories: ExpenseCategory[] = ['housing', 'utilities', 'food', 'transportation', 'healthcare', 'entertainment', 'shopping', 'debt', 'savings', 'other'];
 const frequencies: Frequency[] = ['monthly', 'weekly', 'biweekly', 'quarterly', 'yearly', 'one-time'];
 
-export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }: AddIncomeDialogProps) {
+export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense }: AddExpenseDialogProps) {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState<IncomeCategory>('salary');
+  const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    if (editingIncome) {
-      setName(editingIncome.name);
-      setAmount(editingIncome.amount.toString());
-      setCategory(editingIncome.category);
-      setFrequency(editingIncome.frequency);
-      setDescription(editingIncome.description || '');
+    if (editingExpense) {
+      setName(editingExpense.name);
+      setAmount(editingExpense.amount.toString());
+      setCategory(editingExpense.category);
+      setFrequency(editingExpense.frequency);
+      setDescription(editingExpense.description || '');
     } else {
       resetForm();
     }
-  }, [editingIncome, open]);
+  }, [editingExpense, open]);
 
   const resetForm = () => {
     setName('');
     setAmount('');
-    setCategory('salary');
+    setCategory('food');
     setFrequency('monthly');
     setDescription('');
   };
@@ -69,11 +67,11 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-income p-2 rounded-xl">
-              <Wallet className="w-5 h-5 text-income-foreground" />
+            <div className="bg-destructive/10 p-2 rounded-xl">
+              <ArrowDownCircle className="w-5 h-5 text-destructive" />
             </div>
             <DialogTitle className="font-display text-xl">
-              {editingIncome ? 'Edit Income Source' : 'Add Income Source'}
+              {editingExpense ? 'Edit Expense' : 'Add Expense'}
             </DialogTitle>
           </div>
         </DialogHeader>
@@ -83,7 +81,7 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
-              placeholder="e.g., Full-time Salary"
+              placeholder="e.g., Rent Payment"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="rounded-xl"
@@ -112,14 +110,14 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select value={category} onValueChange={(v) => setCategory(v as IncomeCategory)}>
+              <Select value={category} onValueChange={(v) => setCategory(v as ExpenseCategory)}>
                 <SelectTrigger className="rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {categoryLabels[cat]}
+                      {expenseCategoryLabels[cat]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -147,7 +145,7 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
             <Label htmlFor="description">Description (optional)</Label>
             <Textarea
               id="description"
-              placeholder="Add notes about this income source..."
+              placeholder="Add notes about this expense..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="rounded-xl resize-none"
@@ -166,9 +164,9 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
             </Button>
             <Button 
               type="submit" 
-              className="flex-1 rounded-xl bg-gradient-income hover:opacity-90 transition-opacity"
+              className="flex-1 rounded-xl bg-destructive hover:bg-destructive/90 transition-opacity"
             >
-              {editingIncome ? 'Save Changes' : 'Add Income'}
+              {editingExpense ? 'Save Changes' : 'Add Expense'}
             </Button>
           </div>
         </form>

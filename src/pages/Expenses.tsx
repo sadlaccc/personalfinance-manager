@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { IncomeCard } from '@/components/IncomeCard';
-import { AddIncomeDialog } from '@/components/AddIncomeDialog';
+import { ExpenseCard } from '@/components/ExpenseCard';
+import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
-import { IncomeCategory, categoryLabels } from '@/types/income';
+import { useExpenses } from '@/hooks/useExpenses';
+import { Expense, ExpenseCategory, expenseCategoryLabels } from '@/types/expense';
 import { Plus, Search, Filter, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -28,57 +28,57 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
-const Sources = () => {
-  const { incomeSources, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading } = useIncomeSources();
+const Expenses = () => {
+  const { expenses, addExpense, updateExpense, deleteExpense, isLoading } = useExpenses();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<IncomeCategory[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<ExpenseCategory[]>([]);
 
-  const handleEdit = (income: IncomeSource) => {
-    setEditingIncome(income);
+  const handleEdit = (expense: Expense) => {
+    setEditingExpense(expense);
     setDialogOpen(true);
   };
 
-  const handleSubmit = async (incomeData: Omit<IncomeSource, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  const handleSubmit = async (expenseData: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     try {
-      if (editingIncome) {
-        await updateIncomeSource(editingIncome.id, incomeData);
-        toast({ title: 'Income updated successfully' });
-        setEditingIncome(null);
+      if (editingExpense) {
+        await updateExpense(editingExpense.id, expenseData);
+        toast({ title: 'Expense updated successfully' });
+        setEditingExpense(null);
       } else {
-        await addIncomeSource(incomeData);
-        toast({ title: 'Income added successfully' });
+        await addExpense(expenseData);
+        toast({ title: 'Expense added successfully' });
       }
     } catch (error) {
       toast({ 
         variant: 'destructive',
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to save income'
+        description: error instanceof Error ? error.message : 'Failed to save expense'
       });
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteIncomeSource(id);
-      toast({ title: 'Income deleted successfully' });
+      await deleteExpense(id);
+      toast({ title: 'Expense deleted successfully' });
     } catch (error) {
       toast({ 
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to delete income'
+        description: 'Failed to delete expense'
       });
     }
   };
 
   const handleDialogChange = (open: boolean) => {
     setDialogOpen(open);
-    if (!open) setEditingIncome(null);
+    if (!open) setEditingExpense(null);
   };
 
-  const toggleCategory = (category: IncomeCategory) => {
+  const toggleCategory = (category: ExpenseCategory) => {
     setSelectedCategories(prev =>
       prev.includes(category)
         ? prev.filter(c => c !== category)
@@ -86,10 +86,10 @@ const Sources = () => {
     );
   };
 
-  const filteredSources = incomeSources.filter(source => {
-    const matchesSearch = source.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      source.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(source.category);
+  const filteredExpenses = expenses.filter(expense => {
+    const matchesSearch = expense.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      expense.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(expense.category);
     return matchesSearch && matchesCategory;
   });
 
@@ -107,18 +107,18 @@ const Sources = () => {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">
-            All Income Sources
+            All Expenses
           </h2>
           <p className="text-muted-foreground">
-            {incomeSources.length} total source{incomeSources.length !== 1 ? 's' : ''}
+            {expenses.length} total expense{expenses.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Button 
           onClick={() => setDialogOpen(true)}
-          className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-2"
+          className="rounded-xl bg-destructive hover:bg-destructive/90 transition-opacity gap-2"
         >
           <Plus className="w-4 h-4" />
-          Add Income Source
+          Add Expense
         </Button>
       </div>
 
@@ -127,7 +127,7 @@ const Sources = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search income sources..."
+            placeholder="Search expenses..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 rounded-xl"
@@ -139,33 +139,33 @@ const Sources = () => {
               <Filter className="w-4 h-4" />
               Filter
               {selectedCategories.length > 0 && (
-                <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">
+                <span className="bg-destructive text-destructive-foreground text-xs px-1.5 py-0.5 rounded-full">
                   {selectedCategories.length}
                 </span>
               )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            {(Object.keys(categoryLabels) as IncomeCategory[]).map((category) => (
+            {(Object.keys(expenseCategoryLabels) as ExpenseCategory[]).map((category) => (
               <DropdownMenuCheckboxItem
                 key={category}
                 checked={selectedCategories.includes(category)}
                 onCheckedChange={() => toggleCategory(category)}
               >
-                {categoryLabels[category]}
+                {expenseCategoryLabels[category]}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Sources Grid */}
-      {filteredSources.length === 0 ? (
+      {/* Expenses Grid */}
+      {filteredExpenses.length === 0 ? (
         <div className="bg-card border border-border rounded-2xl p-12 text-center">
           <p className="text-muted-foreground">
             {searchQuery || selectedCategories.length > 0
-              ? 'No income sources match your filters'
-              : 'No income sources yet. Add your first one!'}
+              ? 'No expenses match your filters'
+              : 'No expenses yet. Add your first one!'}
           </p>
         </div>
       ) : (
@@ -175,10 +175,10 @@ const Sources = () => {
           animate="visible"
           className="grid gap-4 md:grid-cols-2"
         >
-          {filteredSources.map((income) => (
-            <motion.div key={income.id} variants={itemVariants}>
-              <IncomeCard
-                income={income}
+          {filteredExpenses.map((expense) => (
+            <motion.div key={expense.id} variants={itemVariants}>
+              <ExpenseCard
+                expense={expense}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
@@ -187,14 +187,14 @@ const Sources = () => {
         </motion.div>
       )}
 
-      <AddIncomeDialog
+      <AddExpenseDialog
         open={dialogOpen}
         onOpenChange={handleDialogChange}
         onSubmit={handleSubmit}
-        editingIncome={editingIncome}
+        editingExpense={editingExpense}
       />
     </div>
   );
 };
 
-export default Sources;
+export default Expenses;

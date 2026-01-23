@@ -1,4 +1,6 @@
-import { IncomeSource, categoryLabels, categoryColors, frequencyMultipliers } from '@/types/income';
+import { IncomeSource } from '@/hooks/useIncomeSources';
+import { categoryLabels, categoryColors } from '@/types/income';
+import { frequencyMultipliers } from '@/types/expense';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -9,10 +11,11 @@ interface IncomeCardProps {
   onDelete: (id: string) => void;
 }
 
-const frequencyLabels: Record<IncomeSource['frequency'], string> = {
+const frequencyLabels: Record<string, string> = {
   monthly: 'Monthly',
   weekly: 'Weekly',
   biweekly: 'Bi-weekly',
+  quarterly: 'Quarterly',
   yearly: 'Yearly',
   'one-time': 'One-time',
 };
@@ -39,7 +42,7 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
             </span>
             <span className="text-xs text-muted-foreground flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {frequencyLabels[income.frequency]}
+              {frequencyLabels[income.frequency] || income.frequency}
             </span>
           </div>
           

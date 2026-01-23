@@ -5,17 +5,20 @@ import { IncomeCard } from '@/components/IncomeCard';
 import { IncomeChart } from '@/components/IncomeChart';
 import { AddIncomeDialog } from '@/components/AddIncomeDialog';
 import { Button } from '@/components/ui/button';
-import { useIncomeStore } from '@/hooks/useIncomeStore';
-import { IncomeSource } from '@/types/income';
+import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
+import { useExpenses } from '@/hooks/useExpenses';
 import { 
   DollarSign, 
   TrendingUp, 
+  TrendingDown,
   Layers, 
-  Calendar,
   Plus,
-  ArrowRight
+  ArrowRight,
+  Loader2,
+  Wallet
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,7 +34,9 @@ const itemVariants = {
 };
 
 const Dashboard = () => {
-  const { incomeSources, stats, addIncomeSource, updateIncomeSource, deleteIncomeSource } = useIncomeStore();
+  const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources();
+  const { stats: expenseStats, isLoading: expenseLoading } = useExpenses();
+  const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
 
@@ -40,12 +45,35 @@ const Dashboard = () => {
     setDialogOpen(true);
   };
 
-  const handleSubmit = (incomeData: Omit<IncomeSource, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (editingIncome) {
-      updateIncomeSource(editingIncome.id, incomeData);
-      setEditingIncome(null);
-    } else {
-      addIncomeSource(incomeData);
+  const handleSubmit = async (incomeData: Omit<IncomeSource, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+    try {
+      if (editingIncome) {
+        await updateIncomeSource(editingIncome.id, incomeData);
+        toast({ title: 'Income updated successfully' });
+        setEditingIncome(null);
+      } else {
+        await addIncomeSource(incomeData);
+        toast({ title: 'Income added successfully' });
+      }
+    } catch (error) {
+      toast({ 
+        variant: 'destructive',
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to save income'
+      });
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteIncomeSource(id);
+      toast({ title: 'Income deleted successfully' });
+    } catch (error) {
+      toast({ 
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete income'
+      });
     }
   };
 
@@ -55,6 +83,17 @@ const Dashboard = () => {
   };
 
   const recentSources = incomeSources.slice(0, 3);
+  const netMonthly = incomeStats.totalMonthly - expenseStats.totalMonthly;
+  const netYearly = incomeStats.totalYearly - expenseStats.totalYearly;
+  const isLoading = incomeLoading || expenseLoading;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -67,29 +106,31 @@ const Dashboard = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Monthly Income"
-          value={`$${stats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={`$${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle="All sources combined"
-          icon={<DollarSign className="w-6 h-6" />}
+          icon={<TrendingUp className="w-6 h-6" />}
           variant="income"
         />
         <StatsCard
+          title="Monthly Expenses"
+          value={`$${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`}
+          icon={<TrendingDown className="w-6 h-6" />}
+          variant="destructive"
+        />
+        <StatsCard
+          title="Net Monthly"
+          value={`${netMonthly >= 0 ? '+' : ''}$${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle={netMonthly >= 0 ? 'You\'re in the green!' : 'Spending exceeds income'}
+          icon={<Wallet className="w-6 h-6" />}
+          variant={netMonthly >= 0 ? 'income' : 'destructive'}
+        />
+        <StatsCard
           title="Yearly Projection"
-          value={`$${stats.totalYearly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          subtitle="Based on current income"
-          icon={<TrendingUp className="w-6 h-6" />}
+          value={`${netYearly >= 0 ? '+' : ''}$${netYearly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle="Net savings/loss"
+          icon={<DollarSign className="w-6 h-6" />}
           variant="primary"
-        />
-        <StatsCard
-          title="Income Sources"
-          value={stats.sourceCount.toString()}
-          subtitle="Active streams"
-          icon={<Layers className="w-6 h-6 text-primary" />}
-        />
-        <StatsCard
-          title="This Month"
-          value={new Date().toLocaleDateString('en-US', { month: 'long' })}
-          subtitle={new Date().getFullYear().toString()}
-          icon={<Calendar className="w-6 h-6 text-primary" />}
         />
       </motion.div>
 
@@ -156,7 +197,7 @@ const Dashboard = () => {
                   <IncomeCard
                     income={income}
                     onEdit={handleEdit}
-                    onDelete={deleteIncomeSource}
+                    onDelete={handleDelete}
                   />
                 </motion.div>
               ))}
@@ -166,36 +207,34 @@ const Dashboard = () => {
 
         {/* Chart */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <IncomeChart stats={stats} />
+          <IncomeChart stats={incomeStats} />
           
           {/* Quick Stats */}
           <div className="bg-card border border-border rounded-2xl p-6">
             <h3 className="font-display font-semibold text-foreground mb-4">
-              Quick Breakdown
+              Budget Overview
             </h3>
             <div className="space-y-3">
-              {Object.entries(stats.byCategory)
-                .filter(([_, value]) => value > 0)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 4)
-                .map(([category, value]) => {
-                  const percentage = ((value / stats.totalMonthly) * 100).toFixed(0);
-                  return (
-                    <div key={category} className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground capitalize">
-                        {category}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">
-                          ${value.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                        </span>
-                        <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
-                          {percentage}%
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Total Income</span>
+                <span className="text-sm font-medium text-income">
+                  +${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Total Expenses</span>
+                <span className="text-sm font-medium text-destructive">
+                  -${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </span>
+              </div>
+              <div className="border-t border-border pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">Net Balance</span>
+                  <span className={`text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
+                    {netMonthly >= 0 ? '+' : ''}${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
