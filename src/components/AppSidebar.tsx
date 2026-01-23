@@ -5,7 +5,9 @@ import {
   Settings,
   TrendingUp,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ArrowDownCircle,
+  LogOut
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -23,10 +25,12 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Income Sources', url: '/sources', icon: Wallet },
+  { title: 'Expenses', url: '/expenses', icon: ArrowDownCircle },
   { title: 'Analytics', url: '/analytics', icon: PieChart },
 ];
 
@@ -36,6 +40,7 @@ const secondaryNavItems = [
 
 export function AppSidebar() {
   const { state, toggleSidebar } = useSidebar();
+  const { signOut, user } = useAuth();
   const isCollapsed = state === 'collapsed';
 
   return (
@@ -110,12 +115,32 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              
+              {/* Sign Out Button */}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Sign Out">
+                  <button 
+                    onClick={() => signOut()}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-muted-foreground hover:text-destructive hover:bg-destructive/10 w-full"
+                  >
+                    <LogOut className="w-5 h-5 flex-shrink-0" />
+                    {!isCollapsed && <span className="font-medium">Sign Out</span>}
+                  </button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="p-2">
+        {!isCollapsed && user && (
+          <div className="px-3 py-2 mb-2 bg-secondary/50 rounded-xl">
+            <p className="text-xs text-muted-foreground truncate">
+              {user.email}
+            </p>
+          </div>
+        )}
         <Button
           variant="ghost"
           size="sm"

@@ -6,7 +6,7 @@ interface StatsCardProps {
   value: string;
   subtitle?: string;
   icon: ReactNode;
-  variant?: 'default' | 'primary' | 'income';
+  variant?: 'default' | 'primary' | 'income' | 'destructive';
   className?: string;
 }
 
@@ -25,6 +25,7 @@ export function StatsCard({
         variant === 'default' && "bg-card border border-border",
         variant === 'primary' && "bg-gradient-hero text-primary-foreground",
         variant === 'income' && "bg-gradient-income text-income-foreground",
+        variant === 'destructive' && "bg-destructive text-destructive-foreground",
         className
       )}
     >
@@ -52,7 +53,8 @@ export function StatsCard({
           "p-3 rounded-xl",
           variant === 'default' && "bg-secondary",
           variant === 'primary' && "bg-primary-foreground/20",
-          variant === 'income' && "bg-income-foreground/20"
+          variant === 'income' && "bg-income-foreground/20",
+          variant === 'destructive' && "bg-destructive-foreground/20"
         )}>
           {icon}
         </div>
