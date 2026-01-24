@@ -4,6 +4,8 @@ import { StatsCard } from '@/components/StatsCard';
 import { IncomeCard } from '@/components/IncomeCard';
 import { IncomeChart } from '@/components/IncomeChart';
 import { AddIncomeDialog } from '@/components/AddIncomeDialog';
+import { NotificationWidget } from '@/components/NotificationWidget';
+import { GreetingWidget } from '@/components/GreetingWidget';
 import { Button } from '@/components/ui/button';
 import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
@@ -11,7 +13,6 @@ import {
   DollarSign, 
   TrendingUp, 
   TrendingDown,
-  Layers, 
   Plus,
   ArrowRight,
   Loader2,
@@ -102,6 +103,11 @@ const Dashboard = () => {
       animate="visible"
       className="space-y-8"
     >
+      {/* Greeting Widget */}
+      <motion.div variants={itemVariants}>
+        <GreetingWidget />
+      </motion.div>
+
       {/* Stats Grid */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
@@ -205,9 +211,12 @@ const Dashboard = () => {
           )}
         </motion.div>
 
-        {/* Chart */}
+        {/* Chart and Notifications */}
         <motion.div variants={itemVariants} className="space-y-6">
           <IncomeChart stats={incomeStats} />
+          
+          {/* Notifications Widget */}
+          <NotificationWidget />
           
           {/* Quick Stats */}
           <div className="bg-card border border-border rounded-2xl p-6">
