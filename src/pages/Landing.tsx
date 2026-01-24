@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import { 
   Wallet, 
   PiggyBank, 
@@ -11,7 +18,12 @@ import {
   Shield, 
   Zap,
   ArrowRight,
-  Check
+  Check,
+  Star,
+  Twitter,
+  Linkedin,
+  Github,
+  Mail
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.png';
 import savingsIllustration from '@/assets/savings-illustration.png';
@@ -46,6 +58,70 @@ const benefits = [
   'Real-time sync',
   'Mobile friendly',
 ];
+
+const testimonials = [
+  {
+    name: 'Sarah Johnson',
+    role: 'Freelance Designer',
+    content: 'IncomeFlow has transformed how I manage my freelance income. The analytics are incredibly insightful!',
+    rating: 5,
+    avatar: 'SJ',
+  },
+  {
+    name: 'Michael Chen',
+    role: 'Software Engineer',
+    content: 'Finally, a finance app that actually makes sense. I saved $500 in my first month just by tracking properly.',
+    rating: 5,
+    avatar: 'MC',
+  },
+  {
+    name: 'Emily Rodriguez',
+    role: 'Small Business Owner',
+    content: 'The goal-setting feature keeps me motivated. I hit my savings target 2 months early!',
+    rating: 5,
+    avatar: 'ER',
+  },
+  {
+    name: 'David Kim',
+    role: 'Marketing Manager',
+    content: 'Simple, beautiful, and effective. This is exactly what I needed for personal finance.',
+    rating: 5,
+    avatar: 'DK',
+  },
+  {
+    name: 'Lisa Thompson',
+    role: 'Teacher',
+    content: 'I recommend IncomeFlow to everyone. Its so easy to use and the insights are game-changing.',
+    rating: 5,
+    avatar: 'LT',
+  },
+];
+
+const footerLinks = {
+  product: [
+    { label: 'Features', href: '#features' },
+    { label: 'Pricing', href: '#' },
+    { label: 'Security', href: '#' },
+    { label: 'Roadmap', href: '#' },
+  ],
+  company: [
+    { label: 'About', href: '/about' },
+    { label: 'Blog', href: '#' },
+    { label: 'Careers', href: '#' },
+    { label: 'Contact', href: '/contact' },
+  ],
+  resources: [
+    { label: 'Help Center', href: '#' },
+    { label: 'Community', href: '#' },
+    { label: 'Guides', href: '#' },
+    { label: 'API Docs', href: '#' },
+  ],
+  legal: [
+    { label: 'Privacy', href: '#' },
+    { label: 'Terms', href: '#' },
+    { label: 'Cookies', href: '#' },
+  ],
+};
 
 export default function Landing() {
   return (
@@ -174,7 +250,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="py-12 sm:py-16 bg-muted/30">
+      <section id="features" className="py-12 sm:py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -211,8 +287,70 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Stats + Image Section */}
+      {/* Testimonials Slider Section */}
       <section className="py-12 sm:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-8"
+          >
+            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+              What Our Users Say
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
+              Join thousands of satisfied users transforming their financial lives.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative px-12"
+          >
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                    <div className="h-full p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-colors">
+                      <div className="flex items-center gap-1 mb-4">
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                        ))}
+                      </div>
+                      <p className="text-sm sm:text-base text-foreground mb-4 leading-relaxed">
+                        "{testimonial.content}"
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-sm">
+                          {testimonial.avatar}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm">{testimonial.name}</div>
+                          <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </Carousel>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Stats + Image Section */}
+      <section className="py-12 sm:py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             {/* Stats */}
@@ -228,15 +366,15 @@ export default function Landing() {
                 Join our growing community of users who are taking control of their finances.
               </p>
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 rounded-xl bg-muted/50">
+                <div className="text-center p-4 rounded-xl bg-card border border-border">
                   <div className="font-display text-2xl sm:text-3xl font-bold text-primary">10K+</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
                 </div>
-                <div className="text-center p-4 rounded-xl bg-muted/50">
+                <div className="text-center p-4 rounded-xl bg-card border border-border">
                   <div className="font-display text-2xl sm:text-3xl font-bold text-primary">$2M+</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Tracked</div>
                 </div>
-                <div className="text-center p-4 rounded-xl bg-muted/50">
+                <div className="text-center p-4 rounded-xl bg-card border border-border">
                   <div className="font-display text-2xl sm:text-3xl font-bold text-primary">4.9</div>
                   <div className="text-xs sm:text-sm text-muted-foreground">Rating</div>
                 </div>
@@ -292,23 +430,108 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-6">
+      {/* Modern Footer */}
+      <footer className="bg-muted/50 border-t border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-3 h-3 text-primary-foreground" />
+          {/* Main Footer */}
+          <div className="py-10 sm:py-12 grid grid-cols-2 md:grid-cols-5 gap-8">
+            {/* Brand */}
+            <div className="col-span-2 md:col-span-1">
+              <Link to="/" className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <Wallet className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="font-display font-bold text-lg">IncomeFlow</span>
+              </Link>
+              <p className="text-sm text-muted-foreground mb-4">
+                Smart financial management for everyone.
+              </p>
+              <div className="flex items-center gap-3">
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                  <Github className="w-4 h-4" />
+                </a>
               </div>
-              <span className="font-semibold text-sm">IncomeFlow</span>
             </div>
-            <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
-              <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-            </nav>
+
+            {/* Product */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Product</h4>
+              <ul className="space-y-2">
+                {footerLinks.product.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Company</h4>
+              <ul className="space-y-2">
+                {footerLinks.company.map((link) => (
+                  <li key={link.label}>
+                    <Link to={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="font-semibold text-sm mb-4">Resources</h4>
+              <ul className="space-y-2">
+                {footerLinks.resources.map((link) => (
+                  <li key={link.label}>
+                    <a href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Newsletter */}
+            <div className="col-span-2 md:col-span-1">
+              <h4 className="font-semibold text-sm mb-4">Stay Updated</h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                Get the latest tips and updates.
+              </p>
+              <div className="flex gap-2">
+                <input 
+                  type="email" 
+                  placeholder="Enter email" 
+                  className="flex-1 px-3 py-2 text-sm rounded-lg bg-card border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
+                />
+                <Button size="sm" className="shrink-0">
+                  <Mail className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Footer */}
+          <div className="py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-muted-foreground">
               © 2024 IncomeFlow. All rights reserved.
             </p>
+            <div className="flex items-center gap-4">
+              {footerLinks.legal.map((link) => (
+                <a key={link.label} href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  {link.label}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
