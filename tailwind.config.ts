@@ -64,6 +64,26 @@ export default {
           light: "hsl(var(--navy-light))",
         },
         slate: "hsl(var(--slate))",
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        ticket: {
+          DEFAULT: "hsl(var(--ticket))",
+          foreground: "hsl(var(--ticket-foreground))",
+        },
+        task: {
+          DEFAULT: "hsl(var(--task))",
+          foreground: "hsl(var(--task-foreground))",
+        },
         category: {
           salary: "hsl(var(--category-salary))",
           freelance: "hsl(var(--category-freelance))",

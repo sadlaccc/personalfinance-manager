@@ -45,6 +45,18 @@
     --navy-light: 217 33% 17%;
     --slate: 215 16% 47%;
     
+    /* Notification colors */
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --ticket: 262 83% 58%;
+    --ticket-foreground: 0 0% 100%;
+    --task: 199 89% 48%;
+    --task-foreground: 0 0% 100%;
+    
     /* Category colors */
     --category-salary: 217 91% 60%;
     --category-freelance: 280 65% 60%;
@@ -57,6 +69,10 @@
     --gradient-hero: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(280 65% 60%) 100%);
     --gradient-income: linear-gradient(135deg, hsl(160 84% 39%) 0%, hsl(160 60% 50%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
+    --gradient-ticket: linear-gradient(135deg, hsl(262 83% 58%) 0%, hsl(280 65% 60%) 100%);
+    --gradient-task: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(217 91% 60%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(160 84% 39%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%) 0%, hsl(25 95% 53%) 100%);
 
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
@@ -64,6 +80,8 @@
     --shadow-lg: 0 10px 15px -3px hsl(222 47% 11% / 0.1), 0 4px 6px -4px hsl(222 47% 11% / 0.1);
     --shadow-xl: 0 20px 25px -5px hsl(222 47% 11% / 0.1), 0 8px 10px -6px hsl(222 47% 11% / 0.1);
     --shadow-glow: 0 0 20px hsl(160 84% 39% / 0.3);
+    --shadow-ticket: 0 0 20px hsl(262 83% 58% / 0.3);
+    --shadow-task: 0 0 20px hsl(199 89% 48% / 0.3);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
