@@ -31,7 +31,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const mainNavItems = [
-  { title: 'Dashboard', url: '/', icon: LayoutDashboard },
+  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Income Sources', url: '/sources', icon: Wallet },
   { title: 'Expenses', url: '/expenses', icon: ArrowDownCircle },
   { title: 'Savings Goals', url: '/goals', icon: Target },
@@ -102,7 +102,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink 
                       to={item.url} 
-                      end={item.url === '/'}
+                      end={item.url === '/dashboard'}
                       onClick={handleNavClick}
                       className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary"
                       activeClassName="bg-gradient-income text-income-foreground shadow-md hover:bg-gradient-income hover:text-income-foreground"
