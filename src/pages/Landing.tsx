@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { PageTransition } from '@/components/PageTransition';
 import { 
   Wallet, 
   PiggyBank, 
@@ -45,6 +46,7 @@ const benefits = [
 
 export default function Landing() {
   return (
+    <PageTransition>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
@@ -222,5 +224,6 @@ export default function Landing() {
         </div>
       </footer>
     </div>
+    </PageTransition>
   );
 }
