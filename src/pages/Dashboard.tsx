@@ -109,84 +109,87 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatsCard
           title="Monthly Income"
           value={`$${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle="All sources combined"
-          icon={<TrendingUp className="w-6 h-6" />}
+          icon={<TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />}
           variant="income"
         />
         <StatsCard
           title="Monthly Expenses"
           value={`$${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`}
-          icon={<TrendingDown className="w-6 h-6" />}
+          icon={<TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />}
           variant="destructive"
         />
         <StatsCard
           title="Net Monthly"
           value={`${netMonthly >= 0 ? '+' : ''}$${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle={netMonthly >= 0 ? 'You\'re in the green!' : 'Spending exceeds income'}
-          icon={<Wallet className="w-6 h-6" />}
+          icon={<Wallet className="w-5 h-5 sm:w-6 sm:h-6" />}
           variant={netMonthly >= 0 ? 'income' : 'destructive'}
         />
         <StatsCard
           title="Yearly Projection"
           value={`${netYearly >= 0 ? '+' : ''}$${netYearly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle="Net savings/loss"
-          icon={<DollarSign className="w-6 h-6" />}
+          icon={<DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />}
           variant="primary"
         />
       </motion.div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Income Sources */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-xl font-bold text-foreground">
+              <h2 className="font-display text-lg sm:text-xl font-bold text-foreground">
                 Recent Income
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 Your latest income sources
               </p>
             </div>
             <div className="flex gap-2">
               <Button 
                 variant="outline"
-                className="rounded-xl gap-2"
+                size="sm"
+                className="rounded-xl gap-2 text-xs sm:text-sm"
                 asChild
               >
                 <Link to="/sources">
                   View All
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Link>
               </Button>
               <Button 
+                size="sm"
                 onClick={() => setDialogOpen(true)}
-                className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-2"
+                className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-2 text-xs sm:text-sm"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                 Add
               </Button>
             </div>
           </div>
 
           {recentSources.length === 0 ? (
-            <div className="bg-card border border-border rounded-2xl p-12 text-center">
-              <div className="bg-secondary w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-muted-foreground" />
+            <div className="bg-card border border-border rounded-2xl p-6 sm:p-12 text-center">
+              <div className="bg-secondary w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">
+              <h3 className="font-semibold text-foreground mb-2 text-sm sm:text-base">
                 No income sources yet
               </h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-4 text-xs sm:text-sm">
                 Start tracking your income
               </p>
               <Button 
+                size="sm"
                 onClick={() => setDialogOpen(true)}
-                className="rounded-xl bg-gradient-income hover:opacity-90"
+                className="rounded-xl bg-gradient-income hover:opacity-90 text-xs sm:text-sm"
               >
                 Add Your First Income
               </Button>
@@ -212,34 +215,34 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Chart and Notifications */}
-        <motion.div variants={itemVariants} className="space-y-6">
+        <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
           <IncomeChart stats={incomeStats} />
           
           {/* Notifications Widget */}
           <NotificationWidget />
           
           {/* Quick Stats */}
-          <div className="bg-card border border-border rounded-2xl p-6">
-            <h3 className="font-display font-semibold text-foreground mb-4">
+          <div className="bg-card border border-border rounded-2xl p-4 sm:p-6">
+            <h3 className="font-display font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">
               Budget Overview
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Income</span>
-                <span className="text-sm font-medium text-income">
+                <span className="text-xs sm:text-sm text-muted-foreground">Total Income</span>
+                <span className="text-xs sm:text-sm font-medium text-income">
                   +${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Expenses</span>
-                <span className="text-sm font-medium text-destructive">
+                <span className="text-xs sm:text-sm text-muted-foreground">Total Expenses</span>
+                <span className="text-xs sm:text-sm font-medium text-destructive">
                   -${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
-              <div className="border-t border-border pt-3">
+              <div className="border-t border-border pt-2 sm:pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-foreground">Net Balance</span>
-                  <span className={`text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
+                  <span className="text-xs sm:text-sm font-medium text-foreground">Net Balance</span>
+                  <span className={`text-xs sm:text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
                     {netMonthly >= 0 ? '+' : ''}${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </span>
                 </div>
