@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor } from 'lucide-react';
+import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useTheme } from '@/components/ThemeProvider';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+import { EditProfileDialog } from '@/components/EditProfileDialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -21,179 +25,227 @@ const itemVariants = {
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
-  
+  const { user } = useAuth();
+  const { profile, isLoading, updateProfile, isUpdating } = useProfile();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+
+  const getInitials = (name: string | null | undefined, email: string | undefined) => {
+    if (name) {
+      return name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
+    if (email) {
+      return email[0].toUpperCase();
+    }
+    return 'U';
+  };
+
+  const handleSaveProfile = (name: string) => {
+    updateProfile({ full_name: name }, {
+      onSuccess: () => {
+        setEditDialogOpen(false);
+      },
+    });
+  };
+
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="max-w-2xl space-y-6"
-    >
-      {/* Profile Section */}
-      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-primary/10 rounded-xl">
-            <User className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <h3 className="font-display font-semibold text-foreground">Profile</h3>
-            <p className="text-sm text-muted-foreground">Manage your account settings</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-hero flex items-center justify-center text-primary-foreground font-bold text-xl">
-            JD
-          </div>
-          <div className="flex-1">
-            <p className="font-medium text-foreground">John Doe</p>
-            <p className="text-sm text-muted-foreground">john@example.com</p>
-          </div>
-          <Button variant="outline" className="rounded-xl">
-            Edit Profile
-          </Button>
-        </div>
-      </motion.div>
-
-      {/* Notifications Section */}
-      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-category-rental/10 rounded-xl">
-            <Bell className="w-5 h-5 text-category-rental" />
-          </div>
-          <div>
-            <h3 className="font-display font-semibold text-foreground">Notifications</h3>
-            <p className="text-sm text-muted-foreground">Configure your alerts</p>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="income-alerts" className="flex flex-col gap-1">
-              <span>Income Alerts</span>
-              <span className="text-sm font-normal text-muted-foreground">
-                Get notified when income is received
-              </span>
-            </Label>
-            <Switch id="income-alerts" defaultChecked />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <Label htmlFor="monthly-summary" className="flex flex-col gap-1">
-              <span>Monthly Summary</span>
-              <span className="text-sm font-normal text-muted-foreground">
-                Receive a monthly income report
-              </span>
-            </Label>
-            <Switch id="monthly-summary" defaultChecked />
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Appearance Section */}
-      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-category-freelance/10 rounded-xl">
-            <Palette className="w-5 h-5 text-category-freelance" />
-          </div>
-          <div>
-            <h3 className="font-display font-semibold text-foreground">Appearance</h3>
-            <p className="text-sm text-muted-foreground">Customize your experience</p>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <Label className="flex flex-col gap-1 mb-3">
-              <span>Theme</span>
-              <span className="text-sm font-normal text-muted-foreground">
-                Choose your preferred color scheme
-              </span>
-            </Label>
-            <div className="flex gap-2">
-              <Button
-                variant={theme === "light" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTheme("light")}
-                className="rounded-xl flex items-center gap-2"
-              >
-                <Sun className="w-4 h-4" />
-                Light
-              </Button>
-              <Button
-                variant={theme === "dark" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTheme("dark")}
-                className="rounded-xl flex items-center gap-2"
-              >
-                <Moon className="w-4 h-4" />
-                Dark
-              </Button>
-              <Button
-                variant={theme === "system" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTheme("system")}
-                className="rounded-xl flex items-center gap-2"
-              >
-                <Monitor className="w-4 h-4" />
-                System
-              </Button>
+    <>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="max-w-2xl space-y-6"
+      >
+        {/* Profile Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <User className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Profile</h3>
+              <p className="text-sm text-muted-foreground">Manage your account settings</p>
             </div>
           </div>
           
-          <Separator />
+          {isLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-hero flex items-center justify-center text-primary-foreground font-bold text-xl">
+                {getInitials(profile?.full_name, user?.email)}
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-foreground">
+                  {profile?.full_name || 'No name set'}
+                </p>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
+              </div>
+              <Button 
+                variant="outline" 
+                className="rounded-xl"
+                onClick={() => setEditDialogOpen(true)}
+              >
+                Edit Profile
+              </Button>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Notifications Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-category-rental/10 rounded-xl">
+              <Bell className="w-5 h-5 text-category-rental" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Notifications</h3>
+              <p className="text-sm text-muted-foreground">Configure your alerts</p>
+            </div>
+          </div>
           
-          <div className="flex items-center justify-between">
-            <Label htmlFor="compact-view" className="flex flex-col gap-1">
-              <span>Compact View</span>
-              <span className="text-sm font-normal text-muted-foreground">
-                Show more content in less space
-              </span>
-            </Label>
-            <Switch id="compact-view" />
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="income-alerts" className="flex flex-col gap-1">
+                <span>Income Alerts</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  Get notified when income is received
+                </span>
+              </Label>
+              <Switch id="income-alerts" defaultChecked />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <Label htmlFor="monthly-summary" className="flex flex-col gap-1">
+                <span>Monthly Summary</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  Receive a monthly income report
+                </span>
+              </Label>
+              <Switch id="monthly-summary" defaultChecked />
+            </div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Appearance Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-category-freelance/10 rounded-xl">
+              <Palette className="w-5 h-5 text-category-freelance" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Appearance</h3>
+              <p className="text-sm text-muted-foreground">Customize your experience</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="flex flex-col gap-1 mb-3">
+                <span>Theme</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  Choose your preferred color scheme
+                </span>
+              </Label>
+              <div className="flex gap-2">
+                <Button
+                  variant={theme === "light" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("light")}
+                  className="rounded-xl flex items-center gap-2"
+                >
+                  <Sun className="w-4 h-4" />
+                  Light
+                </Button>
+                <Button
+                  variant={theme === "dark" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("dark")}
+                  className="rounded-xl flex items-center gap-2"
+                >
+                  <Moon className="w-4 h-4" />
+                  Dark
+                </Button>
+                <Button
+                  variant={theme === "system" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setTheme("system")}
+                  className="rounded-xl flex items-center gap-2"
+                >
+                  <Monitor className="w-4 h-4" />
+                  System
+                </Button>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="compact-view" className="flex flex-col gap-1">
+                <span>Compact View</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  Show more content in less space
+                </span>
+              </Label>
+              <Switch id="compact-view" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Security Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-income/10 rounded-xl">
+              <Shield className="w-5 h-5 text-income" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Security</h3>
+              <p className="text-sm text-muted-foreground">Protect your account</p>
+            </div>
+          </div>
+          
+          <Button variant="outline" className="rounded-xl">
+            Change Password
+          </Button>
+        </motion.div>
+
+        {/* Help Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-secondary rounded-xl">
+              <HelpCircle className="w-5 h-5 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Help & Support</h3>
+              <p className="text-sm text-muted-foreground">Get assistance</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button variant="outline" className="rounded-xl">
+              Documentation
+            </Button>
+            <Button variant="outline" className="rounded-xl">
+              Contact Support
+            </Button>
+          </div>
+        </motion.div>
       </motion.div>
 
-      {/* Security Section */}
-      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-income/10 rounded-xl">
-            <Shield className="w-5 h-5 text-income" />
-          </div>
-          <div>
-            <h3 className="font-display font-semibold text-foreground">Security</h3>
-            <p className="text-sm text-muted-foreground">Protect your account</p>
-          </div>
-        </div>
-        
-        <Button variant="outline" className="rounded-xl">
-          Change Password
-        </Button>
-      </motion.div>
-
-      {/* Help Section */}
-      <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-secondary rounded-xl">
-            <HelpCircle className="w-5 h-5 text-muted-foreground" />
-          </div>
-          <div>
-            <h3 className="font-display font-semibold text-foreground">Help & Support</h3>
-            <p className="text-sm text-muted-foreground">Get assistance</p>
-          </div>
-        </div>
-        
-        <div className="flex gap-3">
-          <Button variant="outline" className="rounded-xl">
-            Documentation
-          </Button>
-          <Button variant="outline" className="rounded-xl">
-            Contact Support
-          </Button>
-        </div>
-      </motion.div>
-    </motion.div>
+      <EditProfileDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        currentName={profile?.full_name || null}
+        onSave={handleSaveProfile}
+        isLoading={isUpdating}
+      />
+    </>
   );
 };
 
