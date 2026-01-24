@@ -78,7 +78,7 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
   return (
     <motion.div 
       className={cn(
-        "relative overflow-hidden rounded-2xl p-6 bg-card border border-border",
+        "relative overflow-hidden rounded-2xl p-4 sm:p-6 bg-card border border-border",
         className
       )}
       initial={{ opacity: 0, y: -20 }}
@@ -91,9 +91,9 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
         greetingData.gradient
       )} />
       
-      {/* Floating decorative elements */}
+      {/* Floating decorative elements - hidden on small screens */}
       <motion.div 
-        className="absolute top-4 right-4 opacity-20"
+        className="absolute top-4 right-4 opacity-20 hidden sm:block"
         animate={{ 
           y: [0, -10, 0],
           rotate: [0, 5, 0]
@@ -104,30 +104,30 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
           ease: "easeInOut"
         }}
       >
-        <Sparkles className="w-24 h-24 text-primary" />
+        <Sparkles className="w-16 sm:w-24 h-16 sm:h-24 text-primary" />
       </motion.div>
       
       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <motion.div 
-              className={cn("p-3 rounded-2xl bg-card shadow-md", greetingData.iconColor)}
+              className={cn("p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-card shadow-md", greetingData.iconColor)}
               whileHover={{ scale: 1.1, rotate: 10 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <Icon className="w-6 h-6" />
+              <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
             </motion.div>
             <div>
               <motion.p 
-                className="text-sm text-muted-foreground flex items-center gap-1"
+                className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                {greetingData.greeting} <span className="text-lg">{greetingData.emoji}</span>
+                {greetingData.greeting} <span className="text-base sm:text-lg">{greetingData.emoji}</span>
               </motion.p>
               <motion.h2 
-                className="text-2xl font-display font-bold text-foreground"
+                className="text-lg sm:text-2xl font-display font-bold text-foreground"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -139,7 +139,7 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
         </div>
         
         <motion.p 
-          className="text-muted-foreground mb-6"
+          className="text-muted-foreground mb-4 sm:mb-6 text-xs sm:text-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -149,7 +149,7 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
         
         {/* Quick Stats */}
         <motion.div 
-          className="flex flex-wrap gap-3"
+          className="flex flex-wrap gap-2 sm:gap-3"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -157,18 +157,18 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
           {quickStats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-sm"
+              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-sm"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 + index * 0.1 }}
               whileHover={{ scale: 1.05 }}
             >
-              <div className={cn("p-1.5 rounded-lg", stat.color)}>
-                <stat.icon className="w-3.5 h-3.5" />
+              <div className={cn("p-1 sm:p-1.5 rounded-md sm:rounded-lg", stat.color)}>
+                <stat.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-                <p className="text-sm font-bold text-foreground">{stat.value}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</p>
+                <p className="text-xs sm:text-sm font-bold text-foreground">{stat.value}</p>
               </div>
             </motion.div>
           ))}

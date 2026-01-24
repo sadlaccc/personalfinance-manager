@@ -29,30 +29,30 @@ interface NotificationWidgetProps {
 
 // Custom icons for different notification types
 const NotificationIcon = ({ type }: { type: Notification['type'] }) => {
-  const iconClass = "w-5 h-5";
+  const iconClass = "w-4 h-4 sm:w-5 sm:h-5";
   
   switch (type) {
     case 'ticket':
       return (
-        <div className="p-2 rounded-xl bg-ticket/20">
+        <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-ticket/20">
           <Ticket className={cn(iconClass, "text-ticket")} />
         </div>
       );
     case 'task':
       return (
-        <div className="p-2 rounded-xl bg-task/20">
+        <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-task/20">
           <CheckSquare className={cn(iconClass, "text-task")} />
         </div>
       );
     case 'alert':
       return (
-        <div className="p-2 rounded-xl bg-warning/20">
+        <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-warning/20">
           <AlertCircle className={cn(iconClass, "text-warning")} />
         </div>
       );
     case 'info':
       return (
-        <div className="p-2 rounded-xl bg-info/20">
+        <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-info/20">
           <Sparkles className={cn(iconClass, "text-info")} />
         </div>
       );
@@ -166,29 +166,29 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
       transition={{ duration: 0.3 }}
     >
       {/* Header */}
-      <div className="p-4 border-b border-border bg-gradient-to-r from-ticket/5 to-task/5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div className="p-3 sm:p-4 border-b border-border bg-gradient-to-r from-ticket/5 to-task/5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className={cn(
-              "p-2 rounded-xl bg-gradient-to-br from-ticket to-task transition-all",
+              "p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-gradient-to-br from-ticket to-task transition-all",
               isAnimating && "animate-pulse shadow-lg shadow-ticket/30"
             )}>
-              <Bell className="w-5 h-5 text-white" />
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-display font-semibold text-foreground">
+              <h3 className="font-display font-semibold text-foreground text-sm sm:text-base">
                 Notifications
               </h3>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">
                 Real-time updates
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {unreadCount > 0 && (
               <Badge 
                 variant="secondary" 
-                className="bg-ticket text-ticket-foreground hover:bg-ticket/90 font-semibold"
+                className="bg-ticket text-ticket-foreground hover:bg-ticket/90 font-semibold text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5"
               >
                 {unreadCount} new
               </Badge>
@@ -198,7 +198,7 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
                 variant="ghost" 
                 size="sm" 
                 onClick={markAllAsRead}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground h-7 px-2 hidden sm:inline-flex"
               >
                 Mark all read
               </Button>
@@ -208,19 +208,19 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
       </div>
       
       {/* Notifications List */}
-      <ScrollArea className="h-[300px]">
-        <div className="p-2">
+      <ScrollArea className="h-[200px] sm:h-[300px]">
+        <div className="p-1.5 sm:p-2">
           <AnimatePresence mode="popLayout">
             {notifications.length === 0 ? (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-12 text-center"
+                className="flex flex-col items-center justify-center py-8 sm:py-12 text-center"
               >
-                <div className="p-4 rounded-full bg-secondary mb-3">
-                  <Bell className="w-8 h-8 text-muted-foreground" />
+                <div className="p-3 sm:p-4 rounded-full bg-secondary mb-3">
+                  <Bell className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
                 </div>
-                <p className="text-sm text-muted-foreground">No notifications yet</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">No notifications yet</p>
               </motion.div>
             ) : (
               notifications.map((notification, index) => (
@@ -234,18 +234,20 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
                 >
                   <div 
                     className={cn(
-                      "group flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all",
+                      "group flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg sm:rounded-xl cursor-pointer transition-all",
                       "hover:bg-secondary/50",
                       !notification.read && "bg-secondary/30 border-l-2 border-ticket"
                     )}
                     onClick={() => markAsRead(notification.id)}
                   >
-                    <NotificationIcon type={notification.type} />
+                    <div className="flex-shrink-0">
+                      <NotificationIcon type={notification.type} />
+                    </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start justify-between gap-1 sm:gap-2">
                         <p className={cn(
-                          "text-sm",
+                          "text-xs sm:text-sm line-clamp-1",
                           !notification.read ? "font-semibold text-foreground" : "text-muted-foreground"
                         )}>
                           {notification.title}
@@ -253,20 +255,20 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity h-5 w-5 sm:h-6 sm:w-6 p-0 flex-shrink-0"
                           onClick={(e) => {
                             e.stopPropagation();
                             dismissNotification(notification.id);
                           }}
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         </Button>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1 mt-0.5">
                         {notification.message}
                       </p>
-                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                        <Clock className="w-3 h-3" />
+                      <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-xs text-muted-foreground">
+                        <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         {formatTimeAgo(notification.time)}
                       </div>
                     </div>
@@ -279,21 +281,21 @@ export function NotificationWidget({ className }: NotificationWidgetProps) {
       </ScrollArea>
       
       {/* Footer Stats */}
-      <div className="p-3 border-t border-border bg-secondary/30">
+      <div className="p-2 sm:p-3 border-t border-border bg-secondary/30">
         <div className="flex items-center justify-around text-center">
           <div>
-            <p className="text-lg font-bold text-ticket">{notifications.filter(n => n.type === 'ticket').length}</p>
-            <p className="text-xs text-muted-foreground">Tickets</p>
+            <p className="text-sm sm:text-lg font-bold text-ticket">{notifications.filter(n => n.type === 'ticket').length}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">Tickets</p>
           </div>
-          <div className="w-px h-8 bg-border" />
+          <div className="w-px h-6 sm:h-8 bg-border" />
           <div>
-            <p className="text-lg font-bold text-task">{notifications.filter(n => n.type === 'task').length}</p>
-            <p className="text-xs text-muted-foreground">Tasks</p>
+            <p className="text-sm sm:text-lg font-bold text-task">{notifications.filter(n => n.type === 'task').length}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">Tasks</p>
           </div>
-          <div className="w-px h-8 bg-border" />
+          <div className="w-px h-6 sm:h-8 bg-border" />
           <div>
-            <p className="text-lg font-bold text-warning">{notifications.filter(n => n.type === 'alert').length}</p>
-            <p className="text-xs text-muted-foreground">Alerts</p>
+            <p className="text-sm sm:text-lg font-bold text-warning">{notifications.filter(n => n.type === 'alert').length}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">Alerts</p>
           </div>
         </div>
       </div>
