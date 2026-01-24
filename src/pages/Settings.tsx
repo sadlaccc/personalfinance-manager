@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { User, Bell, Palette, Shield, HelpCircle } from 'lucide-react';
+import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useTheme } from '@/components/ThemeProvider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,6 +20,8 @@ const itemVariants = {
 };
 
 const Settings = () => {
+  const { theme, setTheme } = useTheme();
+  
   return (
     <motion.div
       variants={containerVariants}
@@ -99,14 +102,56 @@ const Settings = () => {
           </div>
         </div>
         
-        <div className="flex items-center justify-between">
-          <Label htmlFor="compact-view" className="flex flex-col gap-1">
-            <span>Compact View</span>
-            <span className="text-sm font-normal text-muted-foreground">
-              Show more content in less space
-            </span>
-          </Label>
-          <Switch id="compact-view" />
+        <div className="space-y-4">
+          <div>
+            <Label className="flex flex-col gap-1 mb-3">
+              <span>Theme</span>
+              <span className="text-sm font-normal text-muted-foreground">
+                Choose your preferred color scheme
+              </span>
+            </Label>
+            <div className="flex gap-2">
+              <Button
+                variant={theme === "light" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTheme("light")}
+                className="rounded-xl flex items-center gap-2"
+              >
+                <Sun className="w-4 h-4" />
+                Light
+              </Button>
+              <Button
+                variant={theme === "dark" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTheme("dark")}
+                className="rounded-xl flex items-center gap-2"
+              >
+                <Moon className="w-4 h-4" />
+                Dark
+              </Button>
+              <Button
+                variant={theme === "system" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setTheme("system")}
+                className="rounded-xl flex items-center gap-2"
+              >
+                <Monitor className="w-4 h-4" />
+                System
+              </Button>
+            </div>
+          </div>
+          
+          <Separator />
+          
+          <div className="flex items-center justify-between">
+            <Label htmlFor="compact-view" className="flex flex-col gap-1">
+              <span>Compact View</span>
+              <span className="text-sm font-normal text-muted-foreground">
+                Show more content in less space
+              </span>
+            </Label>
+            <Switch id="compact-view" />
+          </div>
         </div>
       </motion.div>
 
