@@ -23,9 +23,8 @@ export interface PlanPricing {
 }
 
 export const PLAN_PRICES: Record<string, PlanPricing> = {
-  starter: { monthly: 0, annual: 0 },
-  pro: { monthly: 299, annual: 2990 },
-  business: { monthly: 799, annual: 7990 },
+  starter: { monthly: 49, annual: 470 },
+  pro: { monthly: 299, annual: 2870 },
 };
 
 export function useSubscription() {

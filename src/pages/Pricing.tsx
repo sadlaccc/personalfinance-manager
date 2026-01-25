@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, Sparkles, Crown, Zap, ArrowRight, HelpCircle, Wallet } from 'lucide-react';
+import { Check, Sparkles, Zap, ArrowRight, HelpCircle, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -15,7 +15,7 @@ import {
 const plans = [
   {
     name: 'Starter',
-    price: '0',
+    price: '49',
     period: '/month',
     description: 'Perfect for getting started with basic tracking',
     icon: Zap,
@@ -26,7 +26,7 @@ const plans = [
       'Mobile-friendly access',
       'Email support',
     ],
-    cta: 'Get Started Free',
+    cta: 'Get Started',
     popular: false,
     gradient: 'from-muted to-muted/50',
   },
@@ -48,26 +48,6 @@ const plans = [
     cta: 'Start 14-Day Free Trial',
     popular: true,
     gradient: 'from-primary to-accent',
-  },
-  {
-    name: 'Business',
-    price: '799',
-    period: '/month',
-    description: 'For teams and small business financial management',
-    icon: Crown,
-    features: [
-      'Everything in Pro',
-      'Up to 5 team members',
-      'Shared dashboards',
-      'Advanced permissions',
-      'Custom categories',
-      'API access',
-      'Dedicated account manager',
-      'Phone & chat support',
-    ],
-    cta: 'Contact Sales',
-    popular: false,
-    gradient: 'from-ticket to-primary',
   },
 ];
 
@@ -94,7 +74,7 @@ const faqs = [
   },
   {
     question: 'Do you offer annual discounts?',
-    answer: 'Yes! Pay annually and save up to 20%. Pro annual is KSh 2,870/year (save KSh 718), Business annual is KSh 7,670/year (save KSh 1,918).',
+    answer: 'Yes! Pay annually and save up to 20%. Starter annual is KSh 470/year (save KSh 118), Pro annual is KSh 2,870/year (save KSh 718).',
   },
 ];
 
@@ -190,7 +170,7 @@ export default function Pricing() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto"
+              className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
             >
               {plans.map((plan, index) => (
                 <motion.div
