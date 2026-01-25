@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Crown, Sparkles, Zap, Calendar, Phone, ArrowRight } from 'lucide-react';
+import { Sparkles, Zap, Calendar, Phone, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,13 +11,11 @@ import { UpgradeDialog } from './UpgradeDialog';
 const planIcons = {
   starter: Zap,
   pro: Sparkles,
-  business: Crown,
 };
 
 const planColors = {
   starter: 'bg-muted text-muted-foreground',
   pro: 'bg-primary/10 text-primary',
-  business: 'bg-accent/10 text-accent',
 };
 
 export function SubscriptionCard() {
@@ -95,7 +93,7 @@ export function SubscriptionCard() {
                   <Progress value={periodProgress} className="h-1.5" />
                 </div>
 
-                {currentPlan !== 'business' && (
+                {currentPlan !== 'pro' && (
                   <Button 
                     onClick={() => setUpgradeOpen(true)} 
                     className="w-full group"
