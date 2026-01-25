@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { Users, Shield, ArrowLeft, Search } from 'lucide-react';
-import { useState } from 'react';
-import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { Users, Shield, ArrowLeft, Search, Mail, Clock } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
-import { useAdminUsers } from '@/hooks/useAdminUsers';
+import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
+import { SendEmailDialog } from '@/components/SendEmailDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,11 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -40,6 +45,8 @@ export default function AdminDashboard() {
   const { isAdmin, isLoading: roleLoading } = useUserRole();
   const { data: users, isLoading: usersLoading } = useAdminUsers();
   const [searchQuery, setSearchQuery] = useState('');
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     if (!roleLoading && !isAdmin) {
@@ -64,8 +71,14 @@ export default function AdminDashboard() {
   const filteredUsers = users?.filter(
     (user) =>
       user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.user_id.toLowerCase().includes(searchQuery.toLowerCase())
+      user.user_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleEmailClick = (user: AdminUser) => {
+    setSelectedUser(user);
+    setEmailDialogOpen(true);
+  };
 
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
@@ -202,9 +215,10 @@ export default function AdminDashboard() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>User</TableHead>
-                        <TableHead className="hidden md:table-cell">User ID</TableHead>
+                        <TableHead className="hidden lg:table-cell">Email</TableHead>
                         <TableHead className="hidden sm:table-cell">Joined</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden md:table-cell">Last Active</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -222,22 +236,52 @@ export default function AdminDashboard() {
                                 <p className="font-medium">
                                   {user.full_name || 'No name'}
                                 </p>
-                                <p className="text-xs text-muted-foreground md:hidden">
-                                  {user.user_id.slice(0, 8)}...
+                                <p className="text-xs text-muted-foreground lg:hidden">
+                                  {user.email || 'No email'}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground">
-                            {user.user_id.slice(0, 8)}...
+                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                            {user.email || '—'}
                           </TableCell>
                           <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                             {format(new Date(user.created_at), 'MMM d, yyyy')}
                           </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            {user.last_sign_in_at ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                    <Clock className="h-3.5 w-3.5" />
+                                    {formatDistanceToNow(new Date(user.last_sign_in_at), { addSuffix: true })}
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {format(new Date(user.last_sign_in_at), 'PPpp')}
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              <span className="text-sm text-muted-foreground">Never</span>
+                            )}
+                          </TableCell>
                           <TableCell>
-                            <Badge variant="secondary" className="bg-green-500/10 text-green-600">
-                              Active
-                            </Badge>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleEmailClick(user)}
+                                  disabled={!user.email}
+                                  className="h-8 w-8"
+                                >
+                                  <Mail className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {user.email ? 'Send email' : 'No email available'}
+                              </TooltipContent>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -253,6 +297,16 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Email Dialog */}
+        {selectedUser && (
+          <SendEmailDialog
+            open={emailDialogOpen}
+            onOpenChange={setEmailDialogOpen}
+            userEmail={selectedUser.email || ''}
+            userName={selectedUser.full_name}
+          />
+        )}
       </motion.div>
     </Layout>
   );
