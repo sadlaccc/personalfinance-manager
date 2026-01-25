@@ -119,6 +119,62 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          mpesa_checkout_request_id: string | null
+          mpesa_receipt_number: string | null
+          payment_method: string
+          phone_number: string | null
+          status: string
+          subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          mpesa_checkout_request_id?: string | null
+          mpesa_receipt_number?: string | null
+          payment_method?: string
+          phone_number?: string | null
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          mpesa_checkout_request_id?: string | null
+          mpesa_receipt_number?: string | null
+          payment_method?: string
+          phone_number?: string | null
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -147,6 +203,48 @@ export type Database = {
           full_name?: string | null
           id?: string
           last_sign_in_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          billing_cycle: string
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          mpesa_phone: string | null
+          plan_type: string
+          status: string
+          trial_ends_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle: string
+          created_at?: string
+          current_period_end: string
+          current_period_start?: string
+          id?: string
+          mpesa_phone?: string | null
+          plan_type: string
+          status?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: string
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          mpesa_phone?: string | null
+          plan_type?: string
+          status?: string
+          trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
         }
