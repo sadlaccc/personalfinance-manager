@@ -29,7 +29,7 @@ const contactInfo = [
   {
     icon: MapPin,
     title: 'Location',
-    value: 'San Francisco, CA',
+    value: 'Nairobi, Kenya',
     description: 'Where we\'re based',
   },
   {
@@ -119,11 +119,11 @@ export default function Contact() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative py-16 sm:py-24 overflow-hidden">
+      {/* Hero - Compact */}
+      <section className="relative py-8 sm:py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
             <ArrowLeft className="w-4 h-4" />
             Back to Home
           </Link>
@@ -131,39 +131,38 @@ export default function Contact() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-3xl"
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <MessageSquare className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-3">
+              <MessageSquare className="w-3.5 h-3.5" />
               Get in Touch
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2">
               Contact{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
                 Us
               </span>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Have questions, feedback, or need support? We'd love to hear from you. 
-              Fill out the form below and we'll get back to you shortly.
+            <p className="text-sm sm:text-base text-muted-foreground">
+              Have questions or need support? We'd love to hear from you.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-12 sm:py-16">
+      {/* Contact Section - Compact */}
+      <section className="py-8 sm:py-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-            {/* Contact Info */}
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Contact Info - Glassmorphism Cards */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="lg:col-span-1 space-y-6"
+              className="lg:col-span-1 space-y-3"
             >
-              <h2 className="font-display text-xl font-semibold mb-4">
+              <h2 className="font-display text-lg font-semibold mb-3">
                 Contact Information
               </h2>
               
@@ -173,36 +172,52 @@ export default function Contact() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1 }}
-                  className="flex items-start gap-4 p-4 rounded-xl bg-muted/50"
+                  className="relative flex items-start gap-3 p-3 rounded-xl border border-border/50 bg-card/40 backdrop-blur-xl hover:bg-card/60 hover:border-primary/40 transition-all duration-300"
+                  style={{
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                  }}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <item.icon className="w-5 h-5 text-primary" />
+                  {/* Glass overlay */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
+                  
+                  <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0 ring-1 ring-white/10">
+                    <item.icon className="w-4 h-4 text-primary" />
                   </div>
-                  <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-primary font-semibold">{item.value}</p>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                  <div className="relative">
+                    <p className="font-medium text-sm">{item.title}</p>
+                    <p className="text-primary font-semibold text-sm">{item.value}</p>
+                    <p className="text-xs text-muted-foreground">{item.description}</p>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* Contact Form */}
+            {/* Contact Form - Glassmorphism */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
               className="lg:col-span-2"
             >
-              <div className="p-6 sm:p-8 rounded-2xl bg-card border border-border">
-                <h2 className="font-display text-xl font-semibold mb-6">
+              <div 
+                className="relative p-5 sm:p-6 rounded-xl border border-border/50 bg-card/40 backdrop-blur-xl"
+                style={{
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                }}
+              >
+                {/* Glass overlay */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
+                
+                <h2 className="relative font-display text-lg font-semibold mb-4">
                   Send us a Message
                 </h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
+                <form onSubmit={handleSubmit} className="relative space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="name" className="text-sm">Name</Label>
                       <Input
                         id="name"
                         name="name"
@@ -210,10 +225,11 @@ export default function Contact() {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        className="bg-background/50 border-border/50"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="email" className="text-sm">Email</Label>
                       <Input
                         id="email"
                         name="email"
@@ -222,12 +238,13 @@ export default function Contact() {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        className="bg-background/50 border-border/50"
                       />
                     </div>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="subject" className="text-sm">Subject</Label>
                     <Input
                       id="subject"
                       name="subject"
@@ -235,29 +252,31 @@ export default function Contact() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
+                      className="bg-background/50 border-border/50"
                     />
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="message" className="text-sm">Message</Label>
                     <Textarea
                       id="message"
                       name="message"
                       placeholder="Tell us more about your inquiry..."
-                      rows={5}
+                      rows={4}
                       value={formData.message}
                       onChange={handleChange}
                       required
+                      className="bg-background/50 border-border/50"
                     />
                   </div>
                   
-                  <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
+                  <Button type="submit" size="sm" disabled={isSubmitting} className="w-full sm:w-auto shadow-lg shadow-primary/20">
                     {isSubmitting ? (
                       'Sending...'
                     ) : (
                       <>
                         Send Message
-                        <Send className="w-4 h-4 ml-2" />
+                        <Send className="w-3.5 h-3.5 ml-1.5" />
                       </>
                     )}
                   </Button>
@@ -268,22 +287,23 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 mt-auto">
+      {/* Footer - Compact */}
+      <footer className="border-t border-border py-6 mt-auto">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-3 h-3 text-primary-foreground" />
+              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Wallet className="w-2.5 h-2.5 text-primary-foreground" />
               </div>
-              <span className="font-semibold text-sm">IncomeFlow</span>
+              <span className="font-display font-semibold text-sm">IncomeFlow</span>
             </div>
-            <nav className="flex items-center gap-6 text-sm text-muted-foreground">
+            <nav className="flex items-center gap-4 text-xs text-muted-foreground">
               <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
               <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
+              <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
             </nav>
-            <p className="text-sm text-muted-foreground">
-              © 2024 IncomeFlow. All rights reserved.
+            <p className="text-xs text-muted-foreground">
+              © 2026 IncomeFlow. All rights reserved.
             </p>
           </div>
         </div>
