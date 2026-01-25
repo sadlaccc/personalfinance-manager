@@ -28,7 +28,6 @@ import {
 import heroDashboard from '@/assets/hero-dashboard.png';
 import savingsIllustration from '@/assets/savings-illustration.png';
 import analyticsIllustration from '@/assets/analytics-illustration.png';
-import { PricingSection } from '@/components/PricingSection';
 
 const features = [
   {
@@ -133,16 +132,16 @@ export default function Landing() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                 <Wallet className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg">IncomeFlow</span>
+              <span className="font-display font-bold text-lg tracking-tight">IncomeFlow</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Pricing
-              </a>
+              </Link>
               <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 About
               </Link>
@@ -170,48 +169,52 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-10 sm:py-14 lg:py-16 overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 border border-primary/20">
                 <Zap className="w-4 h-4" />
                 Smart Financial Management
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
                 Take Control of Your{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-ticket to-accent">
                   Financial Future
                 </span>
               </h1>
-              <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-lg">
+              <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
                 Track income, manage expenses, and achieve your savings goals with our intuitive personal finance dashboard.
               </p>
-              <div className="flex flex-col sm:flex-row items-start gap-3 mb-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4 mb-8">
                 <Link to="/auth">
-                  <Button size="lg">
+                  <Button size="lg" className="shadow-lg shadow-primary/25 h-12 px-8">
                     Start Free Today
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
-                <Link to="/about">
-                  <Button variant="outline" size="lg">
-                    Learn More
+                <Link to="/pricing">
+                  <Button variant="outline" size="lg" className="h-12 px-8">
+                    View Pricing
                   </Button>
                 </Link>
               </div>
               
               {/* Benefits */}
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
                 {benefits.map((benefit) => (
-                  <div key={benefit} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Check className="w-4 h-4 text-success flex-shrink-0" />
+                  <div key={benefit} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center">
+                      <Check className="w-3 h-3 text-success" />
+                    </div>
                     {benefit}
                   </div>
                 ))}
@@ -405,33 +408,39 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <PricingSection />
-
       {/* CTA Section */}
-      <section className="py-10 sm:py-14">
+      <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative rounded-2xl bg-gradient-to-br from-primary to-accent p-6 sm:p-10 text-center overflow-hidden"
+            className="relative rounded-3xl bg-gradient-to-br from-primary via-primary to-accent p-8 sm:p-12 lg:p-16 text-center overflow-hidden"
           >
-            <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzIiBjeT0iMyIgcj0iMyIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
             <div className="relative">
-              <Shield className="w-10 h-10 text-primary-foreground/80 mx-auto mb-4" />
-              <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-primary-foreground mb-3">
+              <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6">
+                <Shield className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
                 Ready to Get Started?
               </h2>
-              <p className="text-primary-foreground/80 mb-6 max-w-md mx-auto text-sm sm:text-base">
-                Join thousands of users who are already managing their finances smarter.
+              <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto text-base sm:text-lg">
+                Join thousands of users who are already managing their finances smarter with IncomeFlow.
               </p>
-              <Link to="/auth">
-                <Button size="lg" variant="secondary">
-                  Create Free Account
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link to="/auth">
+                  <Button size="lg" variant="secondary" className="shadow-xl h-12 px-8">
+                    Start Free Trial
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+                <Link to="/pricing">
+                  <Button size="lg" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 h-12 px-8">
+                    View Pricing
+                  </Button>
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
