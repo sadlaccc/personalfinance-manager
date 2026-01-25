@@ -6,6 +6,7 @@ import { IncomeChart } from '@/components/IncomeChart';
 import { AddIncomeDialog } from '@/components/AddIncomeDialog';
 import { NotificationWidget } from '@/components/NotificationWidget';
 import { GreetingWidget } from '@/components/GreetingWidget';
+import { SubscriptionCard } from '@/components/SubscriptionCard';
 import { Button } from '@/components/ui/button';
 import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
@@ -214,8 +215,9 @@ const Dashboard = () => {
           )}
         </motion.div>
 
-        {/* Chart and Notifications */}
+        {/* Chart, Subscription and Notifications */}
         <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
+          <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
           {/* Notifications Widget */}
