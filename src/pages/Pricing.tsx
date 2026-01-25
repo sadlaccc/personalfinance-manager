@@ -1,12 +1,10 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Calculator } from 'lucide-react';
+import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Accordion,
   AccordionContent,
@@ -22,47 +20,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-type BillingCycle = '1_month' | '6_months' | '1_year' | '2_years';
-
-const BILLING_LABELS: Record<BillingCycle, string> = {
-  '1_month': '1 Month',
-  '6_months': '6 Months',
-  '1_year': '1 Year',
-  '2_years': '2 Years',
-};
-
-const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
-  '1_month': 0,
-  '6_months': 10,
-  '1_year': 20,
-  '2_years': 30,
-};
-
-const BILLING_MONTHS: Record<BillingCycle, number> = {
-  '1_month': 1,
-  '6_months': 6,
-  '1_year': 12,
-  '2_years': 24,
-};
-
-const basePrices = {
-  starter: 49,
-  plus: 149,
-  pro: 499,
-  premium: 1099,
-};
-
-const getPrice = (plan: keyof typeof basePrices, cycle: BillingCycle): number => {
-  const months = BILLING_MONTHS[cycle];
-  const discount = BILLING_DISCOUNTS[cycle] / 100;
-  return Math.round(basePrices[plan] * months * (1 - discount));
-};
-
 const plans = [
   {
     id: 'starter',
     name: 'Starter',
-    description: 'Essential tools for personal finance tracking',
+    price: 49,
+    description: 'Essential tools for personal finance',
     icon: Zap,
     cta: 'Get Started',
     popular: false,
@@ -71,7 +34,8 @@ const plans = [
   {
     id: 'plus',
     name: 'Plus',
-    description: 'Enhanced features for multiple income streams',
+    price: 149,
+    description: 'For multiple income streams',
     icon: TrendingUp,
     cta: 'Start Free Trial',
     popular: false,
@@ -80,16 +44,18 @@ const plans = [
   {
     id: 'pro',
     name: 'Pro',
-    description: 'Advanced analytics and comprehensive reporting',
+    price: 499,
+    description: 'Advanced analytics & reporting',
     icon: Sparkles,
-    cta: 'Start 14-Day Free Trial',
+    cta: 'Start Free Trial',
     popular: true,
     gradient: 'from-primary to-accent',
   },
   {
     id: 'premium',
     name: 'Premium',
-    description: 'Complete solution with AI-powered insights',
+    price: 1099,
+    description: 'AI-powered complete solution',
     icon: Crown,
     cta: 'Go Premium',
     popular: false,
@@ -108,36 +74,25 @@ const features = [
   { name: 'Export (CSV, PDF)', starter: false, plus: false, pro: true, premium: true },
   { name: 'Budget forecasting AI', starter: false, plus: false, pro: false, premium: true },
   { name: 'Custom widgets', starter: false, plus: false, pro: false, premium: true },
-  { name: 'Financial insights', starter: false, plus: false, pro: false, premium: true },
-  { name: 'Email support', starter: false, plus: true, pro: 'Priority', premium: 'Priority' },
-  { name: 'Phone support', starter: false, plus: false, pro: false, premium: true },
-  { name: 'Early access', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Priority support', starter: false, plus: false, pro: true, premium: true },
 ];
 
 const faqs = [
   {
     question: 'Is there a free trial?',
-    answer: 'Yes! Pro plan comes with a 14-day free trial. No credit card required to start. You can cancel anytime during the trial period.',
+    answer: 'Yes! All paid plans come with a 14-day free trial. No credit card required.',
   },
   {
     question: 'Can I change plans later?',
-    answer: 'Absolutely! You can upgrade or downgrade your plan at any time. Changes take effect on your next billing cycle.',
+    answer: 'Absolutely! Upgrade or downgrade anytime. Changes take effect on your next billing cycle.',
   },
   {
     question: 'What payment methods do you accept?',
-    answer: 'We accept M-Pesa, credit/debit cards (Visa, Mastercard), and bank transfers for annual plans.',
+    answer: 'We accept M-Pesa, credit/debit cards (Visa, Mastercard), and bank transfers.',
   },
   {
-    question: 'Is my financial data secure?',
-    answer: 'Yes, we use bank-level encryption (256-bit SSL) and never store your actual banking credentials. Your data is encrypted at rest and in transit.',
-  },
-  {
-    question: 'Can I get a refund?',
-    answer: 'We offer a 30-day money-back guarantee on all paid plans. If you\'re not satisfied, contact us for a full refund.',
-  },
-  {
-    question: 'What discounts do you offer?',
-    answer: 'Save 10% on 6-month plans, 20% on 1-year plans, and 30% on 2-year plans!',
+    question: 'Is my data secure?',
+    answer: 'Yes, we use bank-level 256-bit SSL encryption. Your data is always protected.',
   },
 ];
 
@@ -145,23 +100,22 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 },
+    transition: { staggerChildren: 0.08 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 },
 };
 
 export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>('1_month');
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between h-14">
               <Link to="/" className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
@@ -171,146 +125,104 @@ export default function Pricing() {
               </Link>
 
               <nav className="hidden md:flex items-center gap-6">
-                <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Home
-                </Link>
-                <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  About
-                </Link>
-                <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
+                <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
+                <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
+                <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
               </nav>
 
-              <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2">
                 <ThemeToggle />
                 <Link to="/auth">
-                  <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-                    Sign In
-                  </Button>
+                  <Button variant="outline" size="sm" className="hidden sm:inline-flex">Sign In</Button>
                 </Link>
                 <Link to="/auth">
-                  <Button size="sm">
-                    Get Started
-                  </Button>
+                  <Button size="sm">Get Started</Button>
                 </Link>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Hero */}
-        <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+        {/* Hero - Compact */}
+        <section className="py-8 sm:py-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-          <div className="absolute top-20 left-10 w-48 sm:w-72 h-48 sm:h-72 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-48 sm:w-72 h-48 sm:h-72 bg-accent/10 rounded-full blur-3xl" />
+          <div className="absolute top-10 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl" />
           
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-            className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative"
+            transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
+            className="container mx-auto px-4 sm:px-6 text-center relative"
           >
-            <Badge variant="secondary" className="mb-4 px-4 py-1.5">
-              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-              Simple, Transparent Pricing
+            <Badge variant="secondary" className="mb-3 px-3 py-1">
+              <Sparkles className="w-3 h-3 mr-1" />
+              Simple Pricing
             </Badge>
-            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 tracking-tight">
               Choose Your Plan
             </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base lg:text-lg mb-2">
-              Start free and upgrade as you grow. All plans include a{' '}
-              <span className="font-semibold text-foreground">14-day free trial</span>.
-            </p>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              No credit card required • Cancel anytime
+            <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
+              14-day free trial • No credit card required
             </p>
           </motion.div>
         </section>
 
-        {/* Billing Cycle Selector & Savings Calculator */}
-        <section className="pb-8 -mt-4">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto">
-              <div className="flex flex-col items-center gap-4 mb-6">
-                <p className="text-sm text-muted-foreground">Select billing period:</p>
-                <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
-                  <SelectTrigger className="w-[200px] bg-background">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border border-border z-50">
-                    {(Object.keys(BILLING_LABELS) as BillingCycle[]).map((cycle) => (
-                      <SelectItem key={cycle} value={cycle}>
-                        {BILLING_LABELS[cycle]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Cards */}
-        <section className="pb-12 sm:pb-16 lg:pb-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Pricing Cards - Compact */}
+        <section className="pb-10 sm:pb-14">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
               variants={containerVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto"
             >
-              {plans.map((plan, index) => (
+              {plans.map((plan) => (
                 <motion.div
                   key={plan.name}
                   variants={itemVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                  className={`relative rounded-xl sm:rounded-2xl border-2 ${
+                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                  className={`relative rounded-xl border-2 ${
                     plan.popular
-                      ? 'border-primary bg-gradient-to-b from-primary/5 via-background to-background shadow-xl shadow-primary/10 lg:scale-[1.02]'
+                      ? 'border-primary bg-gradient-to-b from-primary/5 to-background shadow-xl shadow-primary/10 lg:scale-[1.03]'
                       : 'border-border bg-card hover:border-primary/30'
-                  } p-5 sm:p-6 lg:p-8 flex flex-col transition-all duration-300`}
+                  } p-4 sm:p-5 flex flex-col transition-all duration-300`}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-3 sm:-top-3.5 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg px-3 sm:px-4 py-1 text-xs">
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg px-2.5 py-0.5 text-[10px]">
                         Most Popular
                       </Badge>
                     </div>
                   )}
 
-                  <div className="mb-4 sm:mb-6">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}>
-                      <plan.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-md`}>
+                      <plan.icon className="w-4 h-4 text-primary-foreground" />
                     </div>
-                    <h3 className="font-display text-lg sm:text-xl font-bold">{plan.name}</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">{plan.description}</p>
-                  </div>
-
-                  <div className="mb-4 sm:mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-xs sm:text-sm text-muted-foreground">KSh</span>
-                      <span className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                        {getPrice(plan.id as keyof typeof basePrices, billingCycle)}
-                      </span>
-                      <span className="text-muted-foreground text-xs sm:text-sm">/{BILLING_LABELS[billingCycle].toLowerCase()}</span>
+                    <div>
+                      <h3 className="font-display text-base font-bold leading-tight">{plan.name}</h3>
+                      <p className="text-[11px] text-muted-foreground leading-tight">{plan.description}</p>
                     </div>
                   </div>
 
-                  <div className="mb-6 sm:mb-8 flex-1">
-                    <p className="text-xs text-muted-foreground">See feature comparison below</p>
+                  <div className="mb-4">
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-xs text-muted-foreground">KSh</span>
+                      <span className="text-2xl sm:text-3xl font-bold tracking-tight">{plan.price}</span>
+                      <span className="text-muted-foreground text-xs">/mo</span>
+                    </div>
                   </div>
 
-                  <Link to="/auth" className="w-full">
+                  <Link to="/auth" className="w-full mt-auto">
                     <Button
-                      className={`w-full ${plan.popular ? 'shadow-lg shadow-primary/25' : ''}`}
+                      className={`w-full text-sm ${plan.popular ? 'shadow-lg shadow-primary/25' : ''}`}
                       variant={plan.popular ? 'default' : 'outline'}
-                      size="lg"
+                      size="sm"
                     >
                       {plan.cta}
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                     </Button>
                   </Link>
                 </motion.div>
@@ -319,74 +231,54 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Feature Comparison Table */}
-        <section className="py-12 sm:py-16 lg:py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-8 sm:mb-10"
-            >
-              <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
-                Compare All Features
-              </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-                See exactly what's included in each plan
-              </p>
-            </motion.div>
-
+        {/* Feature Comparison - Compact */}
+        <section className="py-10 sm:py-12 bg-muted/20">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="max-w-5xl mx-auto overflow-x-auto"
+              transition={{ duration: 0.5 }}
+              className="text-center mb-6"
+            >
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Compare Features</h2>
+              <p className="text-muted-foreground text-sm">See what's included in each plan</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto overflow-x-auto"
             >
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[200px]">Feature</TableHead>
-                    <TableHead className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <Zap className="w-4 h-4 text-muted-foreground" />
-                        <span>Starter</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <TrendingUp className="w-4 h-4 text-ticket" />
-                        <span>Plus</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <Sparkles className="w-4 h-4 text-primary" />
-                        <span>Pro</span>
-                      </div>
-                    </TableHead>
-                    <TableHead className="text-center">
-                      <div className="flex flex-col items-center gap-1">
-                        <Crown className="w-4 h-4 text-accent" />
-                        <span>Premium</span>
-                      </div>
-                    </TableHead>
+                  <TableRow className="border-border/50">
+                    <TableHead className="w-[180px] text-xs">Feature</TableHead>
+                    {plans.map((plan) => (
+                      <TableHead key={plan.id} className="text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <plan.icon className={`w-4 h-4 ${plan.popular ? 'text-primary' : 'text-muted-foreground'}`} />
+                          <span className="text-xs font-medium">{plan.name}</span>
+                        </div>
+                      </TableHead>
+                    ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {features.map((feature) => (
-                    <TableRow key={feature.name}>
-                      <TableCell className="font-medium">{feature.name}</TableCell>
+                    <TableRow key={feature.name} className="border-border/30">
+                      <TableCell className="font-medium text-xs py-2">{feature.name}</TableCell>
                       {(['starter', 'plus', 'pro', 'premium'] as const).map((plan) => {
                         const value = feature[plan];
                         return (
-                          <TableCell key={plan} className="text-center">
+                          <TableCell key={plan} className="text-center py-2">
                             {value === true ? (
-                              <Check className="w-5 h-5 text-success mx-auto" />
+                              <Check className="w-4 h-4 text-success mx-auto" />
                             ) : value === false ? (
-                              <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                              <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
                             ) : (
-                              <span className="text-sm">{value}</span>
+                              <span className="text-xs">{value}</span>
                             )}
                           </TableCell>
                         );
@@ -399,43 +291,39 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        <section className="py-16 sm:py-20 bg-muted/30">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* FAQ - Compact */}
+        <section className="py-10 sm:py-12">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-10"
+              className="text-center mb-6"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <HelpCircle className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <HelpCircle className="w-5 h-5 text-primary" />
               </div>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
-                Frequently Asked Questions
-              </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">
-                Everything you need to know about our pricing and plans
-              </p>
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">FAQs</h2>
+              <p className="text-muted-foreground text-sm">Quick answers to common questions</p>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="max-w-2xl mx-auto"
+              className="max-w-xl mx-auto"
             >
-              <Accordion type="single" collapsible className="space-y-3">
+              <Accordion type="single" collapsible className="space-y-2">
                 {faqs.map((faq, index) => (
                   <AccordionItem
                     key={index}
                     value={`item-${index}`}
-                    className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-md transition-shadow"
+                    className="bg-card border border-border rounded-lg px-4 data-[state=open]:shadow-sm transition-shadow"
                   >
-                    <AccordionTrigger className="text-left font-medium hover:no-underline py-4">
+                    <AccordionTrigger className="text-left text-sm font-medium hover:no-underline py-3">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground pb-4">
+                    <AccordionContent className="text-muted-foreground text-sm pb-3">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -445,32 +333,32 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-16 sm:py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* CTA - Compact */}
+        <section className="py-10 sm:py-12">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative rounded-3xl bg-gradient-to-br from-primary via-primary to-accent p-8 sm:p-12 text-center overflow-hidden"
+              className="relative rounded-2xl bg-gradient-to-br from-primary via-primary to-accent p-6 sm:p-8 text-center overflow-hidden"
             >
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzIiBjeT0iMyIgcj0iMyIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
               <div className="relative">
-                <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
-                  Ready to Take Control?
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-primary-foreground mb-2">
+                  Ready to Start?
                 </h2>
-                <p className="text-primary-foreground/80 mb-8 max-w-md mx-auto">
-                  Join thousands of users managing their finances smarter with IncomeFlow.
+                <p className="text-primary-foreground/80 mb-5 text-sm max-w-sm mx-auto">
+                  Join thousands managing their finances smarter.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link to="/auth">
-                    <Button size="lg" variant="secondary" className="shadow-xl">
+                    <Button size="sm" variant="secondary" className="shadow-lg">
                       Start Free Trial
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                     </Button>
                   </Link>
                   <Link to="/contact">
-                    <Button size="lg" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10">
+                    <Button size="sm" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10">
                       Contact Sales
                     </Button>
                   </Link>
@@ -480,17 +368,17 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-8 border-t border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Footer - Compact */}
+        <footer className="py-6 border-t border-border">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Wallet className="w-3 h-3 text-primary-foreground" />
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <Wallet className="w-2.5 h-2.5 text-primary-foreground" />
                 </div>
-                <span className="font-display font-semibold">IncomeFlow</span>
+                <span className="font-display font-semibold text-sm">IncomeFlow</span>
               </Link>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 © 2026 IncomeFlow. All rights reserved.
               </p>
             </div>
