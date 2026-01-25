@@ -9,7 +9,8 @@ import {
   ArrowDownCircle,
   Target,
   LogOut,
-  X
+  X,
+  Shield
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -29,6 +30,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useUserRole } from '@/hooks/useUserRole';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -46,6 +48,7 @@ export function AppSidebar() {
   const { state, toggleSidebar, setOpenMobile } = useSidebar();
   const { signOut, user } = useAuth();
   const isMobile = useIsMobile();
+  const { isAdmin } = useUserRole();
   const isCollapsed = state === 'collapsed';
 
   const handleNavClick = () => {
@@ -116,6 +119,35 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Admin Section - Only visible for admins */}
+        {isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel className={cn(
+              "text-xs font-medium text-muted-foreground uppercase tracking-wider",
+              isCollapsed && "sr-only"
+            )}>
+              Admin
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild tooltip="Admin Dashboard">
+                    <NavLink 
+                      to="/admin"
+                      onClick={handleNavClick}
+                      className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      activeClassName="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-500 hover:to-orange-500 hover:text-white"
+                    >
+                      <Shield className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                      {!isCollapsed && <span className="font-medium text-sm sm:text-base">Admin Dashboard</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup className="mt-auto">
           <SidebarGroupLabel className={cn(
