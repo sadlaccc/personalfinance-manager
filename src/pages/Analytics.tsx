@@ -1,10 +1,13 @@
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
 import { useIncomeSources } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
 import { categoryLabels, IncomeCategory } from '@/types/income';
-import { expenseCategoryLabels, ExpenseCategory } from '@/types/expense';
-import { TrendingUp, TrendingDown, DollarSign, PieChart, Target, Loader2, Wallet } from 'lucide-react';
+import { expenseCategoryLabels, ExpenseCategory, frequencyMultipliers } from '@/types/expense';
+import { TrendingUp, TrendingDown, DollarSign, PieChart, Target, Loader2, Wallet, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { format, startOfMonth, endOfMonth, subMonths, addMonths, isSameMonth, parseISO } from 'date-fns';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,9 +46,75 @@ const EXPENSE_COLORS: Record<ExpenseCategory, string> = {
 
 const Analytics = () => {
   const { stats: incomeStats, incomeSources, isLoading: incomeLoading } = useIncomeSources();
-  const { stats: expenseStats, expenses, isLoading: expenseLoading } = useExpenses();
+  const { expenses, isLoading: expenseLoading } = useExpenses();
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
 
   const isLoading = incomeLoading || expenseLoading;
+
+  // Filter expenses by selected month
+  const monthlyExpenses = useMemo(() => {
+    return expenses.filter(expense => {
+      const expenseDate = parseISO(expense.date);
+      return isSameMonth(expenseDate, selectedMonth);
+    });
+  }, [expenses, selectedMonth]);
+
+  // Calculate monthly expense stats
+  const monthlyExpenseStats = useMemo(() => {
+    const byCategory: Record<ExpenseCategory, number> = {
+      housing: 0,
+      utilities: 0,
+      food: 0,
+      transportation: 0,
+      healthcare: 0,
+      entertainment: 0,
+      shopping: 0,
+      debt: 0,
+      savings: 0,
+      other: 0,
+    };
+
+    let totalMonthly = 0;
+
+    monthlyExpenses.forEach(expense => {
+      const amount = expense.amount * frequencyMultipliers[expense.frequency];
+      totalMonthly += amount;
+      byCategory[expense.category] += amount;
+    });
+
+    return {
+      totalMonthly,
+      totalYearly: totalMonthly * 12,
+      byCategory,
+      expenseCount: monthlyExpenses.length,
+    };
+  }, [monthlyExpenses]);
+
+  // Get historical data for the last 6 months
+  const historicalData = useMemo(() => {
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const monthDate = subMonths(selectedMonth, i);
+      const monthStart = startOfMonth(monthDate);
+      const monthEnd = endOfMonth(monthDate);
+      
+      const monthExpenses = expenses.filter(expense => {
+        const expenseDate = parseISO(expense.date);
+        return expenseDate >= monthStart && expenseDate <= monthEnd;
+      });
+
+      const expenseTotal = monthExpenses.reduce((sum, expense) => {
+        return sum + expense.amount * frequencyMultipliers[expense.frequency];
+      }, 0);
+
+      months.push({
+        name: format(monthDate, 'MMM'),
+        income: Math.round(incomeStats.totalMonthly),
+        expenses: Math.round(expenseTotal),
+      });
+    }
+    return months;
+  }, [expenses, selectedMonth, incomeStats.totalMonthly]);
 
   // Income category breakdown data
   const incomeCategoryData = Object.entries(incomeStats.byCategory)
@@ -57,8 +126,8 @@ const Analytics = () => {
     }))
     .sort((a, b) => b.value - a.value);
 
-  // Expense category breakdown data
-  const expenseCategoryData = Object.entries(expenseStats.byCategory)
+  // Expense category breakdown data for selected month
+  const expenseCategoryData = Object.entries(monthlyExpenseStats.byCategory)
     .filter(([_, value]) => value > 0)
     .map(([category, value]) => ({
       name: expenseCategoryLabels[category as ExpenseCategory],
@@ -70,26 +139,25 @@ const Analytics = () => {
   // Net income data for pie chart
   const netData = [
     { name: 'Income', value: Math.round(incomeStats.totalMonthly), fill: '#10b981' },
-    { name: 'Expenses', value: Math.round(expenseStats.totalMonthly), fill: '#ef4444' },
+    { name: 'Expenses', value: Math.round(monthlyExpenseStats.totalMonthly), fill: '#ef4444' },
   ];
 
-  // Monthly projection data (simulated for demo)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const currentMonth = new Date().getMonth();
-  const projectionData = months.map((month, index) => ({
-    name: month,
-    income: index <= currentMonth 
-      ? Math.round(incomeStats.totalMonthly * (0.85 + Math.random() * 0.3))
-      : Math.round(incomeStats.totalMonthly * (0.95 + Math.random() * 0.1)),
-    expenses: index <= currentMonth 
-      ? Math.round(expenseStats.totalMonthly * (0.85 + Math.random() * 0.3))
-      : Math.round(expenseStats.totalMonthly * (0.95 + Math.random() * 0.1)),
-  }));
-
-  const netMonthly = incomeStats.totalMonthly - expenseStats.totalMonthly;
+  const netMonthly = incomeStats.totalMonthly - monthlyExpenseStats.totalMonthly;
   const savingsRate = incomeStats.totalMonthly > 0 
     ? ((netMonthly / incomeStats.totalMonthly) * 100).toFixed(1)
     : '0';
+
+  const handlePreviousMonth = () => {
+    setSelectedMonth(prev => subMonths(prev, 1));
+  };
+
+  const handleNextMonth = () => {
+    setSelectedMonth(prev => addMonths(prev, 1));
+  };
+
+  const handleCurrentMonth = () => {
+    setSelectedMonth(new Date());
+  };
 
   if (isLoading) {
     return (
@@ -106,6 +174,42 @@ const Analytics = () => {
       animate="visible"
       className="space-y-6"
     >
+      {/* Month Selector */}
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-bold text-foreground">Analytics</h2>
+          <p className="text-muted-foreground text-sm">Track your financial trends</p>
+        </div>
+        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handlePreviousMonth}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <button
+            onClick={handleCurrentMonth}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
+          >
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium text-sm min-w-[100px] text-center">
+              {format(selectedMonth, 'MMMM yyyy')}
+            </span>
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handleNextMonth}
+            disabled={isSameMonth(selectedMonth, new Date())}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </motion.div>
+
       {/* Summary Cards */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-card border border-border rounded-2xl p-5">
@@ -125,10 +229,13 @@ const Analytics = () => {
             <div className="p-2 bg-destructive/10 rounded-xl">
               <TrendingDown className="w-5 h-5 text-destructive" />
             </div>
-            <span className="text-sm text-muted-foreground">Monthly Expenses</span>
+            <span className="text-sm text-muted-foreground">{format(selectedMonth, 'MMM')} Expenses</span>
           </div>
           <p className="text-2xl font-bold font-display text-destructive">
-            -${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            -${monthlyExpenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {monthlyExpenseStats.expenseCount} expense{monthlyExpenseStats.expenseCount !== 1 ? 's' : ''}
           </p>
         </div>
         
@@ -137,7 +244,7 @@ const Analytics = () => {
             <div className="p-2 bg-primary/10 rounded-xl">
               <Wallet className="w-5 h-5 text-primary" />
             </div>
-            <span className="text-sm text-muted-foreground">Net Monthly</span>
+            <span className="text-sm text-muted-foreground">Net {format(selectedMonth, 'MMM')}</span>
           </div>
           <p className={`text-2xl font-bold font-display ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
             {netMonthly >= 0 ? '+' : ''}${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
@@ -162,11 +269,11 @@ const Analytics = () => {
         {/* Monthly Trend */}
         <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
           <h3 className="font-display font-semibold text-lg text-foreground mb-4">
-            Income vs Expenses Trend
+            6-Month Trend
           </h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={projectionData}>
+              <AreaChart data={historicalData}>
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
@@ -212,7 +319,7 @@ const Analytics = () => {
         {/* Income vs Expenses Pie */}
         <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
           <h3 className="font-display font-semibold text-lg text-foreground mb-4">
-            Budget Distribution
+            {format(selectedMonth, 'MMMM')} Budget Distribution
           </h3>
           <div className="h-64 flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -290,12 +397,12 @@ const Analytics = () => {
         {/* Expense Category Breakdown */}
         <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
           <h3 className="font-display font-semibold text-lg text-foreground mb-4">
-            Expenses by Category
+            {format(selectedMonth, 'MMMM')} Expenses by Category
           </h3>
           <div className="h-64">
             {expenseCategoryData.length === 0 ? (
               <div className="h-full flex items-center justify-center text-muted-foreground">
-                No expenses tracked yet
+                No expenses in {format(selectedMonth, 'MMMM yyyy')}
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">

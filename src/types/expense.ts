@@ -19,6 +19,7 @@ export interface Expense {
   amount: number;
   category: ExpenseCategory;
   frequency: Frequency;
+  date: string;
   description?: string;
   created_at: string;
   updated_at: string;

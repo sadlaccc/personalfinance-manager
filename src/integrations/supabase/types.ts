@@ -52,6 +52,7 @@ export type Database = {
           amount: number
           category: string
           created_at: string
+          date: string
           description: string | null
           frequency: string
           id: string
@@ -63,6 +64,7 @@ export type Database = {
           amount: number
           category: string
           created_at?: string
+          date?: string
           description?: string | null
           frequency: string
           id?: string
@@ -74,6 +76,7 @@ export type Database = {
           amount?: number
           category?: string
           created_at?: string
+          date?: string
           description?: string | null
           frequency?: string
           id?: string
