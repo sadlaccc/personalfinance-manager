@@ -22,14 +22,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-type BillingCycle = '1_month' | '2_months' | '6_months' | '1_year' | '2_years';
+type BillingCycle = '1_month' | '2_months' | '6_months' | '1_year';
 
 const BILLING_LABELS: Record<BillingCycle, string> = {
   '1_month': '1 Month',
   '2_months': '2 Months',
   '6_months': '6 Months',
   '1_year': '1 Year',
-  '2_years': '2 Years',
 };
 
 const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
@@ -37,7 +36,6 @@ const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
   '2_months': 5,
   '6_months': 10,
   '1_year': 20,
-  '2_years': 30,
 };
 
 const BILLING_MONTHS: Record<BillingCycle, number> = {
@@ -45,7 +43,6 @@ const BILLING_MONTHS: Record<BillingCycle, number> = {
   '2_months': 2,
   '6_months': 6,
   '1_year': 12,
-  '2_years': 24,
 };
 
 const basePrices = {
@@ -56,7 +53,7 @@ const basePrices = {
 };
 
 const getPrice = (plan: keyof typeof basePrices, cycle: BillingCycle): number => {
-  const months = cycle === '1_month' ? 1 : cycle === '2_months' ? 2 : cycle === '6_months' ? 6 : cycle === '1_year' ? 12 : 24;
+  const months = cycle === '1_month' ? 1 : cycle === '2_months' ? 2 : cycle === '6_months' ? 6 : 12;
   const discount = BILLING_DISCOUNTS[cycle] / 100;
   return Math.round(basePrices[plan] * months * (1 - discount));
 };
