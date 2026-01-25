@@ -11,8 +11,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useSubscription, PLAN_PRICES } from '@/hooks/useSubscription';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useSubscription, PLAN_PRICES, BILLING_CYCLE_LABELS, BillingCycle } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
 
 interface UpgradeDialogProps {
@@ -48,10 +48,12 @@ const plans = [
   },
 ];
 
+const billingOptions: BillingCycle[] = ['1_month', '2_months', '6_months', '1_year', '2_years'];
+
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   const { currentPlan, initiateMpesaPayment } = useSubscription();
   const [selectedPlan, setSelectedPlan] = useState<'starter' | 'plus' | 'pro' | 'premium'>('pro');
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('1_month');
   const [phone, setPhone] = useState('');
   const [step, setStep] = useState<'select' | 'payment'>('select');
 
@@ -61,7 +63,6 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
 
   const handleContinue = () => {
     if (selectedPlan === 'starter' || selectedPlan === currentPlan) {
-      // Free plan or same plan - activate directly
       initiateMpesaPayment.mutate(
         { phone: '', planType: selectedPlan, billingCycle },
         {
@@ -92,7 +93,8 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   };
 
   const price = PLAN_PRICES[selectedPlan][billingCycle];
-  const annualSavings = Math.round(((PLAN_PRICES[selectedPlan].monthly * 12) - PLAN_PRICES[selectedPlan].annual) / 12);
+  const monthlyEquivalent = Math.round(price / (billingCycle === '1_month' ? 1 : billingCycle === '2_months' ? 2 : billingCycle === '6_months' ? 6 : billingCycle === '1_year' ? 12 : 24));
+  const savings = billingCycle !== '1_month' ? PLAN_PRICES[selectedPlan]['1_month'] - monthlyEquivalent : 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -118,17 +120,26 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
               exit={{ opacity: 0, x: 20 }}
               className="space-y-4"
             >
-              <Tabs value={billingCycle} onValueChange={(v) => setBillingCycle(v as 'monthly' | 'annual')}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                  <TabsTrigger value="annual" className="relative">
-                    Annual
-                    <span className="absolute -top-2 -right-2 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
-                      Save 17%
-                    </span>
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+            <div className="space-y-2">
+              <Label>Billing Period</Label>
+              <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {billingOptions.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {BILLING_CYCLE_LABELS[option]}
+                      {option !== '1_month' && (
+                        <span className="ml-2 text-xs text-primary">
+                          Save {option === '2_months' ? '5%' : option === '6_months' ? '10%' : option === '1_year' ? '20%' : '30%'}
+                        </span>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
               <div className="grid gap-3">
                 {plans.map((plan) => {
@@ -171,7 +182,7 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                           <div>
                             <h4 className="font-semibold">{plan.name}</h4>
                             <p className="text-sm text-muted-foreground">
-                              {planPrice === 0 ? 'Free' : `KSh ${planPrice}/${billingCycle === 'annual' ? 'year' : 'month'}`}
+                              {planPrice === 0 ? 'Free' : `KSh ${planPrice}/${BILLING_CYCLE_LABELS[billingCycle].toLowerCase()}`}
                             </p>
                           </div>
                         </div>
@@ -217,15 +228,15 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Billing</span>
-                  <span className="font-medium capitalize">{billingCycle}</span>
+                  <span className="font-medium">{BILLING_CYCLE_LABELS[billingCycle]}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold pt-2 border-t">
                   <span>Total</span>
                   <span>KSh {price}</span>
                 </div>
-                {billingCycle === 'annual' && annualSavings > 0 && (
+                {savings > 0 && (
                   <p className="text-xs text-primary">
-                    You save KSh {annualSavings}/month with annual billing!
+                    You save KSh {savings}/month compared to monthly billing!
                   </p>
                 )}
               </div>

@@ -1,87 +1,112 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
+import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+type BillingCycle = '1_month' | '2_months' | '6_months' | '1_year' | '2_years';
+
+const BILLING_LABELS: Record<BillingCycle, string> = {
+  '1_month': '1 Month',
+  '2_months': '2 Months',
+  '6_months': '6 Months',
+  '1_year': '1 Year',
+  '2_years': '2 Years',
+};
+
+const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
+  '1_month': 0,
+  '2_months': 5,
+  '6_months': 10,
+  '1_year': 20,
+  '2_years': 30,
+};
+
+const basePrices = {
+  starter: 49,
+  plus: 149,
+  pro: 299,
+  premium: 499,
+};
+
+const getPrice = (plan: keyof typeof basePrices, cycle: BillingCycle): number => {
+  const months = cycle === '1_month' ? 1 : cycle === '2_months' ? 2 : cycle === '6_months' ? 6 : cycle === '1_year' ? 12 : 24;
+  const discount = BILLING_DISCOUNTS[cycle] / 100;
+  return Math.round(basePrices[plan] * months * (1 - discount));
+};
 
 const plans = [
   {
+    id: 'starter',
     name: 'Starter',
-    price: '49',
-    period: '/month',
     description: 'Perfect for getting started with basic tracking',
     icon: Zap,
-    features: [
-      'Track up to 5 income sources',
-      'Basic expense tracking',
-      'Monthly summary reports',
-      'Mobile-friendly access',
-    ],
     cta: 'Get Started',
     popular: false,
     gradient: 'from-muted to-muted/50',
   },
   {
+    id: 'plus',
     name: 'Plus',
-    price: '149',
-    period: '/month',
     description: 'Great for individuals tracking multiple income streams',
     icon: TrendingUp,
-    features: [
-      'Track up to 15 income sources',
-      'Advanced expense categories',
-      'Weekly & monthly reports',
-      'Basic savings goals',
-      'Email support',
-    ],
     cta: 'Start Free Trial',
     popular: false,
     gradient: 'from-ticket/80 to-ticket/40',
   },
   {
+    id: 'pro',
     name: 'Pro',
-    price: '299',
-    period: '/month',
     description: 'Best for individuals serious about their finances',
     icon: Sparkles,
-    features: [
-      'Unlimited income sources',
-      'Advanced expense categories',
-      'Savings goals & tracking',
-      'Detailed analytics & charts',
-      'Export reports (CSV, PDF)',
-      'Priority email support',
-    ],
     cta: 'Start 14-Day Free Trial',
     popular: true,
     gradient: 'from-primary to-accent',
   },
   {
+    id: 'premium',
     name: 'Premium',
-    price: '499',
-    period: '/month',
     description: 'For power users who want everything',
     icon: Crown,
-    features: [
-      'Everything in Pro',
-      'Budget forecasting AI',
-      'Custom dashboard widgets',
-      'Financial insights & tips',
-      'Priority phone support',
-      'Early access to features',
-    ],
     cta: 'Go Premium',
     popular: false,
     gradient: 'from-accent to-primary',
   },
+];
+
+const features = [
+  { name: 'Income sources', starter: '5', plus: '15', pro: 'Unlimited', premium: 'Unlimited' },
+  { name: 'Expense tracking', starter: 'Basic', plus: 'Advanced', pro: 'Advanced', premium: 'Advanced' },
+  { name: 'Expense categories', starter: '5', plus: '15', pro: 'Unlimited', premium: 'Unlimited' },
+  { name: 'Monthly reports', starter: true, plus: true, pro: true, premium: true },
+  { name: 'Weekly reports', starter: false, plus: true, pro: true, premium: true },
+  { name: 'Savings goals', starter: false, plus: 'Basic', pro: 'Full', premium: 'Full' },
+  { name: 'Analytics & charts', starter: false, plus: 'Basic', pro: 'Detailed', premium: 'Detailed' },
+  { name: 'Export (CSV, PDF)', starter: false, plus: false, pro: true, premium: true },
+  { name: 'Budget forecasting AI', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Custom widgets', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Financial insights', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Email support', starter: false, plus: true, pro: 'Priority', premium: 'Priority' },
+  { name: 'Phone support', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Early access', starter: false, plus: false, pro: false, premium: true },
 ];
 
 const faqs = [
@@ -106,8 +131,8 @@ const faqs = [
     answer: 'We offer a 30-day money-back guarantee on all paid plans. If you\'re not satisfied, contact us for a full refund.',
   },
   {
-    question: 'Do you offer annual discounts?',
-    answer: 'Yes! Pay annually and save up to 20%. Starter annual is KSh 470/year (save KSh 118), Pro annual is KSh 2,870/year (save KSh 718).',
+    question: 'What discounts do you offer?',
+    answer: 'Save 5% on 2-month plans, 10% on 6-month plans, 20% on 1-year plans, and 30% on 2-year plans!',
   },
 ];
 
@@ -125,6 +150,7 @@ const itemVariants = {
 };
 
 export default function Pricing() {
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('1_month');
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -196,8 +222,32 @@ export default function Pricing() {
           </motion.div>
         </section>
 
+        {/* Billing Cycle Selector */}
+        <section className="pb-8 -mt-4">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-sm text-muted-foreground">Select billing period:</p>
+              <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(Object.keys(BILLING_LABELS) as BillingCycle[]).map((cycle) => (
+                    <SelectItem key={cycle} value={cycle}>
+                      {BILLING_LABELS[cycle]}
+                      {BILLING_DISCOUNTS[cycle] > 0 && (
+                        <span className="ml-2 text-xs text-primary">-{BILLING_DISCOUNTS[cycle]}%</span>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </section>
+
         {/* Pricing Cards */}
-        <section className="pb-16 sm:pb-20 -mt-4">
+        <section className="pb-16 sm:pb-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               variants={containerVariants}
@@ -234,21 +284,21 @@ export default function Pricing() {
                   <div className="mb-6">
                     <div className="flex items-baseline gap-1">
                       <span className="text-sm text-muted-foreground">KSh</span>
-                      <span className="text-4xl sm:text-5xl font-bold tracking-tight">{plan.price}</span>
-                      <span className="text-muted-foreground text-sm">{plan.period}</span>
+                      <span className="text-4xl sm:text-5xl font-bold tracking-tight">
+                        {getPrice(plan.id as keyof typeof basePrices, billingCycle)}
+                      </span>
+                      <span className="text-muted-foreground text-sm">/{BILLING_LABELS[billingCycle].toLowerCase()}</span>
                     </div>
+                    {billingCycle !== '1_month' && (
+                      <p className="text-xs text-primary mt-1">
+                        Save {BILLING_DISCOUNTS[billingCycle]}% vs monthly
+                      </p>
+                    )}
                   </div>
 
-                  <ul className="space-y-3 mb-8 flex-1">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3 text-sm">
-                        <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-success" />
-                        </div>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mb-8 flex-1">
+                    <p className="text-xs text-muted-foreground">See feature comparison below</p>
+                  </div>
 
                   <Link to="/auth" className="w-full">
                     <Button
@@ -262,6 +312,85 @@ export default function Pricing() {
                   </Link>
                 </motion.div>
               ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Feature Comparison Table */}
+        <section className="py-16 sm:py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-10"
+            >
+              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+                Compare All Features
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                See exactly what's included in each plan
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-5xl mx-auto overflow-x-auto"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[200px]">Feature</TableHead>
+                    <TableHead className="text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <Zap className="w-4 h-4 text-muted-foreground" />
+                        <span>Starter</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <TrendingUp className="w-4 h-4 text-ticket" />
+                        <span>Plus</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <Sparkles className="w-4 h-4 text-primary" />
+                        <span>Pro</span>
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <Crown className="w-4 h-4 text-accent" />
+                        <span>Premium</span>
+                      </div>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {features.map((feature) => (
+                    <TableRow key={feature.name}>
+                      <TableCell className="font-medium">{feature.name}</TableCell>
+                      {(['starter', 'plus', 'pro', 'premium'] as const).map((plan) => {
+                        const value = feature[plan];
+                        return (
+                          <TableCell key={plan} className="text-center">
+                            {value === true ? (
+                              <Check className="w-5 h-5 text-success mx-auto" />
+                            ) : value === false ? (
+                              <X className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+                            ) : (
+                              <span className="text-sm">{value}</span>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </motion.div>
           </div>
         </section>
