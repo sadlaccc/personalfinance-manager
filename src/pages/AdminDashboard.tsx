@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Users, Shield, ArrowLeft, Search, Mail, Clock, Send } from 'lucide-react';
+import { Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -9,6 +9,7 @@ import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
 import { SendEmailDialog } from '@/components/SendEmailDialog';
 import { BulkEmailDialog } from '@/components/BulkEmailDialog';
 import { UserAnalyticsCharts } from '@/components/UserAnalyticsCharts';
+import { RoleManagementDialog } from '@/components/RoleManagementDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [bulkEmailDialogOpen, setBulkEmailDialogOpen] = useState(false);
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
@@ -81,6 +83,11 @@ export default function AdminDashboard() {
   const handleEmailClick = (user: AdminUser) => {
     setSelectedUser(user);
     setEmailDialogOpen(true);
+  };
+
+  const handleRoleClick = (user: AdminUser) => {
+    setSelectedUser(user);
+    setRoleDialogOpen(true);
   };
 
   const getInitials = (name: string | null) => {
@@ -234,6 +241,7 @@ export default function AdminDashboard() {
                         <TableHead className="hidden lg:table-cell">Email</TableHead>
                         <TableHead className="hidden sm:table-cell">Joined</TableHead>
                         <TableHead className="hidden md:table-cell">Last Active</TableHead>
+                        <TableHead>Role</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -282,22 +290,42 @@ export default function AdminDashboard() {
                             )}
                           </TableCell>
                           <TableCell>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleEmailClick(user)}
-                                  disabled={!user.email}
-                                  className="h-8 w-8"
-                                >
-                                  <Mail className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                {user.email ? 'Send email' : 'No email available'}
-                              </TooltipContent>
-                            </Tooltip>
+                            <Badge variant="secondary" className="text-xs">
+                              user
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleRoleClick(user)}
+                                    className="h-8 w-8"
+                                  >
+                                    <UserCog className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Manage roles</TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEmailClick(user)}
+                                    disabled={!user.email}
+                                    className="h-8 w-8"
+                                  >
+                                    <Mail className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  {user.email ? 'Send email' : 'No email available'}
+                                </TooltipContent>
+                              </Tooltip>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -330,6 +358,16 @@ export default function AdminDashboard() {
             open={bulkEmailDialogOpen}
             onOpenChange={setBulkEmailDialogOpen}
             users={users}
+          />
+        )}
+
+        {/* Role Management Dialog */}
+        {selectedUser && (
+          <RoleManagementDialog
+            open={roleDialogOpen}
+            onOpenChange={setRoleDialogOpen}
+            userId={selectedUser.user_id}
+            userName={selectedUser.full_name}
           />
         )}
       </motion.div>
