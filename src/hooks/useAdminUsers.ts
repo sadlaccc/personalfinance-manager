@@ -6,8 +6,10 @@ export interface AdminUser {
   user_id: string;
   full_name: string | null;
   avatar_url: string | null;
+  email: string | null;
   created_at: string;
   updated_at: string;
+  last_sign_in_at: string | null;
 }
 
 export function useAdminUsers() {
