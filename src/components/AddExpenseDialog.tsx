@@ -5,8 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Expense, ExpenseCategory, expenseCategoryLabels, Frequency } from '@/types/expense';
-import { ArrowDownCircle, DollarSign } from 'lucide-react';
+import { ArrowDownCircle, DollarSign, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface AddExpenseDialogProps {
   open: boolean;
@@ -23,6 +27,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
+  const [date, setDate] = useState<Date>(new Date());
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -31,6 +36,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
       setAmount(editingExpense.amount.toString());
       setCategory(editingExpense.category);
       setFrequency(editingExpense.frequency);
+      setDate(new Date(editingExpense.date));
       setDescription(editingExpense.description || '');
     } else {
       resetForm();
@@ -42,6 +48,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
     setAmount('');
     setCategory('food');
     setFrequency('monthly');
+    setDate(new Date());
     setDescription('');
   };
 
@@ -55,6 +62,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
       amount: parseFloat(amount),
       category,
       frequency,
+      date: format(date, 'yyyy-MM-dd'),
       description: description.trim() || undefined,
     });
     
@@ -107,6 +115,33 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
             </div>
           </div>
           
+          <div className="space-y-2">
+            <Label>Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal rounded-xl",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(d) => d && setDate(d)}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Category</Label>

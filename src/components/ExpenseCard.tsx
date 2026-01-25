@@ -1,7 +1,7 @@
 import { Expense, expenseCategoryLabels, expenseCategoryColors, frequencyMultipliers } from '@/types/expense';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Edit, Trash2, ArrowDownCircle } from 'lucide-react';
+import { MoreHorizontal, Edit, Trash2, ArrowDownCircle, Calendar } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface ExpenseCardProps {
   expense: Expense;
@@ -94,6 +95,10 @@ export function ExpenseCard({ expense, onEdit, onDelete }: ExpenseCardProps) {
                 {formattedMonthly}/mo
               </p>
             )}
+          </div>
+          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+            <Calendar className="w-3.5 h-3.5" />
+            {format(new Date(expense.date), 'MMM d, yyyy')}
           </div>
         </div>
         
