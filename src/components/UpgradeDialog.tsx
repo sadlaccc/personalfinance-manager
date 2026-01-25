@@ -130,11 +130,6 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                   {billingOptions.map((option) => (
                     <SelectItem key={option} value={option}>
                       {BILLING_CYCLE_LABELS[option]}
-                      {option !== '1_month' && (
-                        <span className="ml-2 text-xs text-primary">
-                          Save {option === '6_months' ? '10%' : option === '1_year' ? '20%' : '30%'}
-                        </span>
-                      )}
                     </SelectItem>
                   ))}
                 </SelectContent>
