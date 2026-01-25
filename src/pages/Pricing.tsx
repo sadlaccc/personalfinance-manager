@@ -203,28 +203,29 @@ export default function Pricing() {
         </header>
 
         {/* Hero */}
-        <section className="py-16 sm:py-20 relative overflow-hidden">
+        <section className="py-12 sm:py-16 lg:py-20 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
+          <div className="absolute top-20 left-10 w-48 sm:w-72 h-48 sm:h-72 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-48 sm:w-72 h-48 sm:h-72 bg-accent/10 rounded-full blur-3xl" />
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
             className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative"
           >
             <Badge variant="secondary" className="mb-4 px-4 py-1.5">
               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
               Simple, Transparent Pricing
             </Badge>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 tracking-tight">
               Choose Your Plan
             </h1>
-            <p className="text-muted-foreground max-w-xl mx-auto text-base sm:text-lg mb-2">
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base lg:text-lg mb-2">
               Start free and upgrade as you grow. All plans include a{' '}
               <span className="font-semibold text-foreground">14-day free trial</span>.
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               No credit card required • Cancel anytime
             </p>
           </motion.div>
@@ -312,47 +313,49 @@ export default function Pricing() {
         </section>
 
         {/* Pricing Cards */}
-        <section className="pb-16 sm:pb-20">
+        <section className="pb-12 sm:pb-16 lg:pb-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               variants={containerVariants}
               initial="hidden"
-              animate="visible"
-              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto"
             >
               {plans.map((plan, index) => (
                 <motion.div
                   key={plan.name}
                   variants={itemVariants}
-                  className={`relative rounded-2xl border-2 ${
+                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                  className={`relative rounded-xl sm:rounded-2xl border-2 ${
                     plan.popular
-                      ? 'border-primary bg-gradient-to-b from-primary/5 via-background to-background shadow-xl shadow-primary/10 scale-[1.02]'
+                      ? 'border-primary bg-gradient-to-b from-primary/5 via-background to-background shadow-xl shadow-primary/10 lg:scale-[1.02]'
                       : 'border-border bg-card hover:border-primary/30'
-                  } p-6 sm:p-8 flex flex-col transition-all duration-300`}
+                  } p-5 sm:p-6 lg:p-8 flex flex-col transition-all duration-300`}
                 >
                   {plan.popular && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg px-4 py-1">
+                    <div className="absolute -top-3 sm:-top-3.5 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg px-3 sm:px-4 py-1 text-xs">
                         Most Popular
                       </Badge>
                     </div>
                   )}
 
-                  <div className="mb-6">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center mb-4 shadow-lg`}>
-                      <plan.icon className="w-6 h-6 text-primary-foreground" />
+                  <div className="mb-4 sm:mb-6">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center mb-3 sm:mb-4 shadow-lg`}>
+                      <plan.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
-                    <h3 className="font-display text-xl font-bold">{plan.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+                    <h3 className="font-display text-lg sm:text-xl font-bold">{plan.name}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">{plan.description}</p>
                   </div>
 
-                  <div className="mb-6">
+                  <div className="mb-4 sm:mb-6">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-sm text-muted-foreground">KSh</span>
-                      <span className="text-4xl sm:text-5xl font-bold tracking-tight">
+                      <span className="text-xs sm:text-sm text-muted-foreground">KSh</span>
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
                         {getPrice(plan.id as keyof typeof basePrices, billingCycle)}
                       </span>
-                      <span className="text-muted-foreground text-sm">/{BILLING_LABELS[billingCycle].toLowerCase()}</span>
+                      <span className="text-muted-foreground text-xs sm:text-sm">/{BILLING_LABELS[billingCycle].toLowerCase()}</span>
                     </div>
                     {billingCycle !== '1_month' && (
                       <p className="text-xs text-primary mt-1">
@@ -361,7 +364,7 @@ export default function Pricing() {
                     )}
                   </div>
 
-                  <div className="mb-8 flex-1">
+                  <div className="mb-6 sm:mb-8 flex-1">
                     <p className="text-xs text-muted-foreground">See feature comparison below</p>
                   </div>
 
@@ -382,18 +385,19 @@ export default function Pricing() {
         </section>
 
         {/* Feature Comparison Table */}
-        <section className="py-16 sm:py-20">
+        <section className="py-12 sm:py-16 lg:py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-10"
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-8 sm:mb-10"
             >
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+              <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold mb-2">
                 Compare All Features
               </h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">
+              <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
                 See exactly what's included in each plan
               </p>
             </motion.div>

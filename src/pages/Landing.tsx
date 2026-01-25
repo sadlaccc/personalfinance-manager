@@ -257,37 +257,44 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-12 sm:py-16 bg-muted/30">
+      <section id="features" className="py-12 sm:py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 lg:mb-12"
           >
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
               Everything You Need
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base lg:text-lg">
               Powerful features to help you manage your finances effectively.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group p-4 sm:p-5 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-lg transition-all duration-300"
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ 
+                  delay: index * 0.1, 
+                  duration: 0.5,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                className="group p-5 sm:p-6 rounded-xl bg-card border border-border hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                  <feature.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                 </div>
-                <h3 className="font-semibold text-sm sm:text-base mb-1">{feature.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="font-semibold text-base sm:text-lg mb-2">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -295,27 +302,29 @@ export default function Landing() {
       </section>
 
       {/* Testimonials Slider Section */}
-      <section className="py-12 sm:py-16">
+      <section className="py-12 sm:py-16 lg:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8"
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-8 lg:mb-12"
           >
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-2">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">
               What Our Users Say
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base lg:text-lg">
               Join thousands of satisfied users transforming their financial lives.
             </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative px-12"
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative px-4 sm:px-12"
           >
             <Carousel
               opts={{
@@ -326,8 +335,11 @@ export default function Landing() {
             >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                    <div className="h-full p-6 rounded-2xl bg-card border border-border hover:border-primary/30 transition-colors">
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                    <motion.div 
+                      className="h-full p-5 sm:p-6 rounded-2xl bg-card border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
+                      whileHover={{ y: -4 }}
+                    >
                       <div className="flex items-center gap-1 mb-4">
                         {[...Array(testimonial.rating)].map((_, i) => (
                           <Star key={i} className="w-4 h-4 fill-primary text-primary" />
@@ -337,66 +349,78 @@ export default function Landing() {
                         "{testimonial.content}"
                       </p>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-sm">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-sm">
                           {testimonial.avatar}
                         </div>
                         <div>
-                          <div className="font-semibold text-sm">{testimonial.name}</div>
-                          <div className="text-xs text-muted-foreground">{testimonial.role}</div>
+                          <div className="font-semibold text-sm sm:text-base">{testimonial.name}</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">{testimonial.role}</div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-0" />
-              <CarouselNext className="right-0" />
+              <CarouselPrevious className="left-0 hidden sm:flex" />
+              <CarouselNext className="right-0 hidden sm:flex" />
             </Carousel>
           </motion.div>
         </div>
       </section>
 
       {/* Stats + Image Section */}
-      <section className="py-12 sm:py-16 bg-muted/30">
+      <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Stats */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, type: "spring", stiffness: 80 }}
             >
-              <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 lg:mb-6">
                 Trusted by Thousands
               </h2>
-              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
+              <p className="text-muted-foreground mb-6 lg:mb-8 text-sm sm:text-base lg:text-lg leading-relaxed">
                 Join our growing community of users who are taking control of their finances.
               </p>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 rounded-xl bg-card border border-border">
-                  <div className="font-display text-2xl sm:text-3xl font-bold text-primary">10K+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
-                </div>
-                <div className="text-center p-4 rounded-xl bg-card border border-border">
-                  <div className="font-display text-2xl sm:text-3xl font-bold text-primary">$2M+</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Tracked</div>
-                </div>
-                <div className="text-center p-4 rounded-xl bg-card border border-border">
-                  <div className="font-display text-2xl sm:text-3xl font-bold text-primary">4.9</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Rating</div>
-                </div>
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+                {[
+                  { value: '10K+', label: 'Active Users' },
+                  { value: '$2M+', label: 'Tracked' },
+                  { value: '4.9', label: 'Rating' },
+                ].map((stat, index) => (
+                  <motion.div 
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 * index, duration: 0.5 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="text-center p-3 sm:p-4 lg:p-6 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300"
+                  >
+                    <div className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-primary">{stat.value}</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground mt-1">{stat.label}</div>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
 
             {/* Image */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, x: 40, scale: 0.9 }}
+              whileInView={{ opacity: 1, x: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, type: "spring", stiffness: 80 }}
               className="relative flex justify-center"
             >
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-2xl" />
+              <div className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80">
+                <motion.div 
+                  className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 blur-2xl"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                />
                 <img 
                   src={savingsIllustration} 
                   alt="Savings Growth" 
@@ -409,23 +433,34 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative rounded-3xl bg-gradient-to-br from-primary via-primary to-accent p-8 sm:p-12 lg:p-16 text-center overflow-hidden"
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, type: "spring", stiffness: 80 }}
+            className="relative rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary via-primary to-accent p-6 sm:p-10 lg:p-16 text-center overflow-hidden"
           >
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzIiBjeT0iMyIgcj0iMyIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-            <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-6">
-                <Shield className="w-8 h-8 text-primary-foreground" />
-              </div>
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
+            <motion.div 
+              className="relative"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <motion.div 
+                className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mx-auto mb-4 sm:mb-6"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Shield className="w-7 h-7 sm:w-8 sm:h-8 text-primary-foreground" />
+              </motion.div>
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary-foreground mb-3 sm:mb-4">
                 Ready to Get Started?
               </h2>
-              <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto text-base sm:text-lg">
+              <p className="text-primary-foreground/80 mb-6 sm:mb-8 max-w-lg mx-auto text-sm sm:text-base lg:text-lg leading-relaxed">
                 Join thousands of users who are already managing their finances smarter with IncomeFlow.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -441,7 +476,7 @@ export default function Landing() {
                   </Button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
