@@ -28,6 +28,7 @@ import {
 import heroDashboard from '@/assets/hero-dashboard.png';
 import savingsIllustration from '@/assets/savings-illustration.png';
 import analyticsIllustration from '@/assets/analytics-illustration.png';
+import { PricingSection } from '@/components/PricingSection';
 
 const features = [
   {
@@ -139,6 +140,9 @@ export default function Landing() {
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
+              <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Pricing
+              </a>
               <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 About
               </Link>
@@ -400,6 +404,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* CTA Section */}
       <section className="py-10 sm:py-14">
