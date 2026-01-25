@@ -51,8 +51,8 @@ const BILLING_MONTHS: Record<BillingCycle, number> = {
 const basePrices = {
   starter: 49,
   plus: 149,
-  pro: 299,
-  premium: 499,
+  pro: 499,
+  premium: 1099,
 };
 
 const getPrice = (plan: keyof typeof basePrices, cycle: BillingCycle): number => {
@@ -65,7 +65,7 @@ const plans = [
   {
     id: 'starter',
     name: 'Starter',
-    description: 'Perfect for getting started with basic tracking',
+    description: 'Essential tools for personal finance tracking',
     icon: Zap,
     cta: 'Get Started',
     popular: false,
@@ -74,7 +74,7 @@ const plans = [
   {
     id: 'plus',
     name: 'Plus',
-    description: 'Great for individuals tracking multiple income streams',
+    description: 'Enhanced features for multiple income streams',
     icon: TrendingUp,
     cta: 'Start Free Trial',
     popular: false,
@@ -83,7 +83,7 @@ const plans = [
   {
     id: 'pro',
     name: 'Pro',
-    description: 'Best for individuals serious about their finances',
+    description: 'Advanced analytics and comprehensive reporting',
     icon: Sparkles,
     cta: 'Start 14-Day Free Trial',
     popular: true,
@@ -92,7 +92,7 @@ const plans = [
   {
     id: 'premium',
     name: 'Premium',
-    description: 'For power users who want everything',
+    description: 'Complete solution with AI-powered insights',
     icon: Crown,
     cta: 'Go Premium',
     popular: false,
