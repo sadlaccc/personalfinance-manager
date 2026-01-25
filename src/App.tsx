@@ -16,6 +16,7 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
 import { Loader2 } from "lucide-react";
@@ -49,6 +50,7 @@ function AppRoutes() {
       <Route path="/landing" element={user ? <Navigate to="/dashboard" replace /> : <Landing />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/pricing" element={<Pricing />} />
       <Route path="/auth" element={user ? <Navigate to="/dashboard" replace /> : <Auth />} />
       
       {/* Redirect root to landing or dashboard */}
