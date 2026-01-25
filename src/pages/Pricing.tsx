@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, Sparkles, Zap, ArrowRight, HelpCircle, Wallet } from 'lucide-react';
+import { Check, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -24,11 +24,27 @@ const plans = [
       'Basic expense tracking',
       'Monthly summary reports',
       'Mobile-friendly access',
-      'Email support',
     ],
     cta: 'Get Started',
     popular: false,
     gradient: 'from-muted to-muted/50',
+  },
+  {
+    name: 'Plus',
+    price: '149',
+    period: '/month',
+    description: 'Great for individuals tracking multiple income streams',
+    icon: TrendingUp,
+    features: [
+      'Track up to 15 income sources',
+      'Advanced expense categories',
+      'Weekly & monthly reports',
+      'Basic savings goals',
+      'Email support',
+    ],
+    cta: 'Start Free Trial',
+    popular: false,
+    gradient: 'from-ticket/80 to-ticket/40',
   },
   {
     name: 'Pro',
@@ -43,11 +59,28 @@ const plans = [
       'Detailed analytics & charts',
       'Export reports (CSV, PDF)',
       'Priority email support',
-      'Budget forecasting',
     ],
     cta: 'Start 14-Day Free Trial',
     popular: true,
     gradient: 'from-primary to-accent',
+  },
+  {
+    name: 'Premium',
+    price: '499',
+    period: '/month',
+    description: 'For power users who want everything',
+    icon: Crown,
+    features: [
+      'Everything in Pro',
+      'Budget forecasting AI',
+      'Custom dashboard widgets',
+      'Financial insights & tips',
+      'Priority phone support',
+      'Early access to features',
+    ],
+    cta: 'Go Premium',
+    popular: false,
+    gradient: 'from-accent to-primary',
   },
 ];
 
@@ -170,7 +203,7 @@ export default function Pricing() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
+              className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
             >
               {plans.map((plan, index) => (
                 <motion.div
