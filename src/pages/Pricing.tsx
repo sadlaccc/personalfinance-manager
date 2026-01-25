@@ -242,9 +242,6 @@ export default function Pricing() {
                     {(Object.keys(BILLING_LABELS) as BillingCycle[]).map((cycle) => (
                       <SelectItem key={cycle} value={cycle}>
                         {BILLING_LABELS[cycle]}
-                        {BILLING_DISCOUNTS[cycle] > 0 && (
-                          <span className="ml-2 text-xs text-primary">-{BILLING_DISCOUNTS[cycle]}%</span>
-                        )}
                       </SelectItem>
                     ))}
                   </SelectContent>
