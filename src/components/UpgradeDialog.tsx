@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Loader2, Phone, Sparkles, Zap } from 'lucide-react';
+import { Check, Loader2, Phone, Sparkles, Zap, TrendingUp, Crown } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -25,26 +25,38 @@ const plans = [
     id: 'starter',
     name: 'Starter',
     icon: Zap,
-    features: ['Track up to 5 income sources', 'Basic expense tracking', 'Monthly reports'],
+    features: ['Up to 5 income sources', 'Basic expense tracking', 'Monthly reports'],
+  },
+  {
+    id: 'plus',
+    name: 'Plus',
+    icon: TrendingUp,
+    features: ['Up to 15 income sources', 'Weekly reports', 'Basic savings goals'],
   },
   {
     id: 'pro',
     name: 'Pro',
     icon: Sparkles,
     popular: true,
-    features: ['Unlimited entries', 'Advanced analytics', 'Budget forecasting', 'Export to CSV'],
+    features: ['Unlimited entries', 'Advanced analytics', 'Export reports'],
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    icon: Crown,
+    features: ['Everything in Pro', 'AI forecasting', 'Priority support'],
   },
 ];
 
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   const { currentPlan, initiateMpesaPayment } = useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'pro'>('pro');
+  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'plus' | 'pro' | 'premium'>('pro');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const [phone, setPhone] = useState('');
   const [step, setStep] = useState<'select' | 'payment'>('select');
 
   const handlePlanSelect = (planId: string) => {
-    setSelectedPlan(planId as 'starter' | 'pro');
+    setSelectedPlan(planId as 'starter' | 'plus' | 'pro' | 'premium');
   };
 
   const handleContinue = () => {

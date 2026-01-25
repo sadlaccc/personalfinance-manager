@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 export interface Subscription {
   id: string;
   user_id: string;
-  plan_type: 'starter' | 'pro' | 'business';
+  plan_type: 'starter' | 'plus' | 'pro' | 'premium';
   billing_cycle: 'monthly' | 'annual';
   status: 'active' | 'cancelled' | 'expired' | 'trial';
   current_period_start: string;
@@ -24,7 +24,9 @@ export interface PlanPricing {
 
 export const PLAN_PRICES: Record<string, PlanPricing> = {
   starter: { monthly: 49, annual: 470 },
+  plus: { monthly: 149, annual: 1430 },
   pro: { monthly: 299, annual: 2870 },
+  premium: { monthly: 499, annual: 4790 },
 };
 
 export function useSubscription() {
@@ -55,7 +57,7 @@ export function useSubscription() {
       billingCycle,
     }: {
       phone: string;
-      planType: 'starter' | 'pro' | 'business';
+      planType: 'starter' | 'plus' | 'pro' | 'premium';
       billingCycle: 'monthly' | 'annual';
     }) => {
       const amount = PLAN_PRICES[planType][billingCycle];
