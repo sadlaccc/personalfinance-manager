@@ -188,7 +188,7 @@ export default function Landing() {
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
                 Take Control of Your{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-ticket to-accent">
-                  Financial Future
+                  Finances
                 </span>
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
