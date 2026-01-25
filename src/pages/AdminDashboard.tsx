@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Users, Shield, ArrowLeft, Search, Mail, Clock } from 'lucide-react';
+import { Users, Shield, ArrowLeft, Search, Mail, Clock, Send } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
 import { SendEmailDialog } from '@/components/SendEmailDialog';
+import { BulkEmailDialog } from '@/components/BulkEmailDialog';
+import { UserAnalyticsCharts } from '@/components/UserAnalyticsCharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +48,7 @@ export default function AdminDashboard() {
   const { data: users, isLoading: usersLoading } = useAdminUsers();
   const [searchQuery, setSearchQuery] = useState('');
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [bulkEmailDialogOpen, setBulkEmailDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
@@ -99,24 +102,30 @@ export default function AdminDashboard() {
         className="space-y-6"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/dashboard')}
-            className="shrink-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Shield className="h-6 w-6 text-primary" />
-              Admin Dashboard
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Manage users and view signups
-            </p>
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              className="shrink-0"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Shield className="h-6 w-6 text-primary" />
+                Admin Dashboard
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Manage users and view signups
+              </p>
+            </div>
           </div>
+          <Button onClick={() => setBulkEmailDialogOpen(true)} className="self-start sm:self-auto">
+            <Send className="mr-2 h-4 w-4" />
+            Bulk Email
+          </Button>
         </motion.div>
 
         {/* Stats Cards */}
@@ -181,6 +190,13 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Analytics Charts */}
+        {!usersLoading && users && (
+          <motion.div variants={itemVariants}>
+            <UserAnalyticsCharts users={users} />
+          </motion.div>
+        )}
 
         {/* Users Table */}
         <motion.div variants={itemVariants}>
@@ -305,6 +321,15 @@ export default function AdminDashboard() {
             onOpenChange={setEmailDialogOpen}
             userEmail={selectedUser.email || ''}
             userName={selectedUser.full_name}
+          />
+        )}
+
+        {/* Bulk Email Dialog */}
+        {users && (
+          <BulkEmailDialog
+            open={bulkEmailDialogOpen}
+            onOpenChange={setBulkEmailDialogOpen}
+            users={users}
           />
         )}
       </motion.div>
