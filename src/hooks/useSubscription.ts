@@ -7,7 +7,7 @@ export interface Subscription {
   id: string;
   user_id: string;
   plan_type: 'starter' | 'plus' | 'pro' | 'premium';
-  billing_cycle: '1_month' | '2_months' | '6_months' | '1_year';
+  billing_cycle: '1_month' | '6_months' | '1_year' | '2_years';
   status: 'active' | 'cancelled' | 'expired' | 'trial';
   current_period_start: string;
   current_period_end: string;
@@ -17,54 +17,54 @@ export interface Subscription {
   updated_at: string;
 }
 
-export type BillingCycle = '1_month' | '2_months' | '6_months' | '1_year';
+export type BillingCycle = '1_month' | '6_months' | '1_year' | '2_years';
 
 export interface PlanPricing {
   '1_month': number;
-  '2_months': number;
   '6_months': number;
   '1_year': number;
+  '2_years': number;
 }
 
 export const BILLING_CYCLE_LABELS: Record<BillingCycle, string> = {
   '1_month': '1 Month',
-  '2_months': '2 Months',
   '6_months': '6 Months',
   '1_year': '1 Year',
+  '2_years': '2 Years',
 };
 
 export const BILLING_CYCLE_MONTHS: Record<BillingCycle, number> = {
   '1_month': 1,
-  '2_months': 2,
   '6_months': 6,
   '1_year': 12,
+  '2_years': 24,
 };
 
-// Prices with discounts: 2mo (5%), 6mo (10%), 1yr (20%)
+// Prices with discounts: 6mo (10%), 1yr (20%), 2yr (30%)
 export const PLAN_PRICES: Record<string, PlanPricing> = {
   starter: {
     '1_month': 49,
-    '2_months': 93,      // 49*2 * 0.95
     '6_months': 265,     // 49*6 * 0.90
     '1_year': 470,       // 49*12 * 0.80
+    '2_years': 823,      // 49*24 * 0.70
   },
   plus: {
     '1_month': 149,
-    '2_months': 283,     // 149*2 * 0.95
     '6_months': 805,     // 149*6 * 0.90
     '1_year': 1430,      // 149*12 * 0.80
+    '2_years': 2503,     // 149*24 * 0.70
   },
   pro: {
     '1_month': 499,
-    '2_months': 948,     // 499*2 * 0.95
     '6_months': 2695,    // 499*6 * 0.90
     '1_year': 4790,      // 499*12 * 0.80
+    '2_years': 8383,     // 499*24 * 0.70
   },
   premium: {
     '1_month': 1099,
-    '2_months': 2088,    // 1099*2 * 0.95
     '6_months': 5935,    // 1099*6 * 0.90
     '1_year': 10550,     // 1099*12 * 0.80
+    '2_years': 18463,    // 1099*24 * 0.70
   },
 };
 

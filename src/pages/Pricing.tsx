@@ -22,27 +22,27 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-type BillingCycle = '1_month' | '2_months' | '6_months' | '1_year';
+type BillingCycle = '1_month' | '6_months' | '1_year' | '2_years';
 
 const BILLING_LABELS: Record<BillingCycle, string> = {
   '1_month': '1 Month',
-  '2_months': '2 Months',
   '6_months': '6 Months',
   '1_year': '1 Year',
+  '2_years': '2 Years',
 };
 
 const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
   '1_month': 0,
-  '2_months': 5,
   '6_months': 10,
   '1_year': 20,
+  '2_years': 30,
 };
 
 const BILLING_MONTHS: Record<BillingCycle, number> = {
   '1_month': 1,
-  '2_months': 2,
   '6_months': 6,
   '1_year': 12,
+  '2_years': 24,
 };
 
 const basePrices = {
@@ -53,7 +53,7 @@ const basePrices = {
 };
 
 const getPrice = (plan: keyof typeof basePrices, cycle: BillingCycle): number => {
-  const months = cycle === '1_month' ? 1 : cycle === '2_months' ? 2 : cycle === '6_months' ? 6 : 12;
+  const months = BILLING_MONTHS[cycle];
   const discount = BILLING_DISCOUNTS[cycle] / 100;
   return Math.round(basePrices[plan] * months * (1 - discount));
 };
@@ -137,7 +137,7 @@ const faqs = [
   },
   {
     question: 'What discounts do you offer?',
-    answer: 'Save 5% on 2-month plans, 10% on 6-month plans, 20% on 1-year plans, and 30% on 2-year plans!',
+    answer: 'Save 10% on 6-month plans, 20% on 1-year plans, and 30% on 2-year plans!',
   },
 ];
 
@@ -251,60 +251,6 @@ export default function Pricing() {
                 </Select>
               </div>
 
-              {/* Savings Calculator Card */}
-              {billingCycle !== '1_month' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-gradient-to-br from-primary/10 via-background to-accent/10 border border-primary/20 rounded-2xl p-6"
-                >
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Calculator className="w-4 h-4 text-primary" />
-                    </div>
-                    <h3 className="font-semibold">Your Savings with {BILLING_LABELS[billingCycle]} Billing</h3>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {plans.map((plan) => {
-                      const monthlyTotal = basePrices[plan.id as keyof typeof basePrices] * BILLING_MONTHS[billingCycle];
-                      const discountedPrice = getPrice(plan.id as keyof typeof basePrices, billingCycle);
-                      const savings = monthlyTotal - discountedPrice;
-                      
-                      return (
-                        <div key={plan.id} className="bg-card rounded-xl p-4 border border-border">
-                          <div className="flex items-center gap-2 mb-3">
-                            <plan.icon className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-medium text-sm">{plan.name}</span>
-                          </div>
-                          <div className="space-y-1.5">
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                              <span>Monthly rate:</span>
-                              <span className="line-through">KSh {monthlyTotal.toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between text-xs">
-                              <span className="text-muted-foreground">You pay:</span>
-                              <span className="font-medium">KSh {discountedPrice.toLocaleString()}</span>
-                            </div>
-                            <div className="pt-2 border-t border-border">
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-primary font-medium">You save:</span>
-                                <Badge variant="secondary" className="bg-success/10 text-success border-0">
-                                  KSh {savings.toLocaleString()}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <p className="text-xs text-muted-foreground text-center mt-4">
-                    That's {BILLING_DISCOUNTS[billingCycle]}% off compared to paying monthly!
-                  </p>
-                </motion.div>
-              )}
             </div>
           </div>
         </section>
@@ -354,11 +300,6 @@ export default function Pricing() {
                       </span>
                       <span className="text-muted-foreground text-xs sm:text-sm">/{BILLING_LABELS[billingCycle].toLowerCase()}</span>
                     </div>
-                    {billingCycle !== '1_month' && (
-                      <p className="text-xs text-primary mt-1">
-                        Save {BILLING_DISCOUNTS[billingCycle]}% vs monthly
-                      </p>
-                    )}
                   </div>
 
                   <div className="mb-6 sm:mb-8 flex-1">

@@ -48,7 +48,7 @@ const plans = [
   },
 ];
 
-const billingOptions: BillingCycle[] = ['1_month', '2_months', '6_months', '1_year'];
+const billingOptions: BillingCycle[] = ['1_month', '6_months', '1_year', '2_years'];
 
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   const { currentPlan, initiateMpesaPayment } = useSubscription();
@@ -93,7 +93,7 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   };
 
   const price = PLAN_PRICES[selectedPlan][billingCycle];
-  const monthlyEquivalent = Math.round(price / (billingCycle === '1_month' ? 1 : billingCycle === '2_months' ? 2 : billingCycle === '6_months' ? 6 : billingCycle === '1_year' ? 12 : 24));
+  const monthlyEquivalent = Math.round(price / (billingCycle === '1_month' ? 1 : billingCycle === '6_months' ? 6 : billingCycle === '1_year' ? 12 : 24));
   const savings = billingCycle !== '1_month' ? PLAN_PRICES[selectedPlan]['1_month'] - monthlyEquivalent : 0;
 
   return (
@@ -132,7 +132,7 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                       {BILLING_CYCLE_LABELS[option]}
                       {option !== '1_month' && (
                         <span className="ml-2 text-xs text-primary">
-                          Save {option === '2_months' ? '5%' : option === '6_months' ? '10%' : option === '1_year' ? '20%' : '30%'}
+                          Save {option === '6_months' ? '10%' : option === '1_year' ? '20%' : '30%'}
                         </span>
                       )}
                     </SelectItem>
