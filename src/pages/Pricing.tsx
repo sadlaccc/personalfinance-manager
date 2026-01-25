@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
+import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Download, FileSpreadsheet } from 'lucide-react';
+import pricingHero from '@/assets/pricing-hero.png';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -71,7 +72,10 @@ const features = [
   { name: 'Weekly reports', starter: false, plus: true, pro: true, premium: true },
   { name: 'Savings goals', starter: false, plus: 'Basic', pro: 'Full', premium: 'Full' },
   { name: 'Analytics & charts', starter: false, plus: 'Basic', pro: 'Detailed', premium: 'Detailed' },
-  { name: 'Export (CSV, PDF)', starter: false, plus: false, pro: true, premium: true },
+  { name: 'Export CSV', starter: false, plus: 'Basic', pro: true, premium: true },
+  { name: 'Export PDF Reports', starter: false, plus: false, pro: true, premium: true },
+  { name: 'Export Excel (.xlsx)', starter: false, plus: false, pro: false, premium: true },
+  { name: 'Bulk Data Export', starter: false, plus: false, pro: false, premium: true },
   { name: 'Budget forecasting AI', starter: false, plus: false, pro: false, premium: true },
   { name: 'Custom widgets', starter: false, plus: false, pro: false, premium: true },
   { name: 'Priority support', starter: false, plus: false, pro: true, premium: true },
@@ -143,7 +147,7 @@ export default function Pricing() {
           </div>
         </header>
 
-        {/* Hero - Compact */}
+        {/* Hero - Compact with Image */}
         <section className="py-8 sm:py-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
           <div className="absolute top-10 left-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
@@ -155,7 +159,12 @@ export default function Pricing() {
             transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
             className="container mx-auto px-4 sm:px-6 text-center relative"
           >
-            <Badge variant="secondary" className="mb-3 px-3 py-1">
+            <img 
+              src={pricingHero} 
+              alt="Financial dashboard" 
+              className="w-full max-w-lg mx-auto h-32 sm:h-40 object-cover rounded-2xl mb-4 opacity-80"
+            />
+            <Badge variant="secondary" className="mb-3 px-3 py-1 backdrop-blur-sm bg-secondary/80">
               <Sparkles className="w-3 h-3 mr-1" />
               Simple Pricing
             </Badge>
@@ -183,22 +192,29 @@ export default function Pricing() {
                   key={plan.name}
                   variants={itemVariants}
                   whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                  className={`relative rounded-xl border-2 ${
+                  className={`relative rounded-xl border ${
                     plan.popular
-                      ? 'border-primary bg-gradient-to-b from-primary/5 to-background shadow-xl shadow-primary/10 lg:scale-[1.03]'
-                      : 'border-border bg-card hover:border-primary/30'
-                  } p-4 sm:p-5 flex flex-col transition-all duration-300`}
+                      ? 'border-primary/50 bg-gradient-to-b from-primary/10 via-background/80 to-background/60 shadow-xl shadow-primary/20 lg:scale-[1.03]'
+                      : 'border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60'
+                  } backdrop-blur-xl p-4 sm:p-5 flex flex-col transition-all duration-300`}
+                  style={{
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                  }}
                 >
+                  {/* Glass overlay effect */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
+                  
                   {plan.popular && (
                     <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg px-2.5 py-0.5 text-[10px]">
+                      <Badge className="bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-lg shadow-primary/30 px-2.5 py-0.5 text-[10px] backdrop-blur-sm">
                         Most Popular
                       </Badge>
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-md`}>
+                  <div className="relative flex items-center gap-2.5 mb-3">
+                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-lg ring-1 ring-white/10`}>
                       <plan.icon className="w-4 h-4 text-primary-foreground" />
                     </div>
                     <div>
@@ -207,17 +223,27 @@ export default function Pricing() {
                     </div>
                   </div>
 
-                  <div className="mb-4">
+                  <div className="relative mb-4">
                     <div className="flex items-baseline gap-0.5">
                       <span className="text-xs text-muted-foreground">KSh</span>
-                      <span className="text-2xl sm:text-3xl font-bold tracking-tight">{plan.price}</span>
+                      <span className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">{plan.price}</span>
                       <span className="text-muted-foreground text-xs">/mo</span>
                     </div>
                   </div>
 
-                  <Link to="/auth" className="w-full mt-auto">
+                  {/* Export badge for Pro/Premium */}
+                  {(plan.id === 'pro' || plan.id === 'premium') && (
+                    <div className="relative flex items-center gap-1.5 mb-3 px-2 py-1 rounded-md bg-accent/10 border border-accent/20 w-fit">
+                      <Download className="w-3 h-3 text-accent" />
+                      <span className="text-[10px] font-medium text-accent">
+                        {plan.id === 'premium' ? 'Full Export Suite' : 'PDF & CSV Export'}
+                      </span>
+                    </div>
+                  )}
+
+                  <Link to="/auth" className="relative w-full mt-auto">
                     <Button
-                      className={`w-full text-sm ${plan.popular ? 'shadow-lg shadow-primary/25' : ''}`}
+                      className={`w-full text-sm ${plan.popular ? 'shadow-lg shadow-primary/25 ring-1 ring-primary/20' : 'ring-1 ring-border/50'}`}
                       variant={plan.popular ? 'default' : 'outline'}
                       size="sm"
                     >
