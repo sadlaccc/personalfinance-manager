@@ -48,7 +48,7 @@ const plans = [
   },
 ];
 
-const billingOptions: BillingCycle[] = ['1_month', '2_months', '6_months', '1_year', '2_years'];
+const billingOptions: BillingCycle[] = ['1_month', '2_months', '6_months', '1_year'];
 
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   const { currentPlan, initiateMpesaPayment } = useSubscription();
