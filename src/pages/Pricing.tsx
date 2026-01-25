@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown } from 'lucide-react';
+import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -38,6 +38,14 @@ const BILLING_DISCOUNTS: Record<BillingCycle, number> = {
   '6_months': 10,
   '1_year': 20,
   '2_years': 30,
+};
+
+const BILLING_MONTHS: Record<BillingCycle, number> = {
+  '1_month': 1,
+  '2_months': 2,
+  '6_months': 6,
+  '1_year': 12,
+  '2_years': 24,
 };
 
 const basePrices = {
@@ -222,26 +230,83 @@ export default function Pricing() {
           </motion.div>
         </section>
 
-        {/* Billing Cycle Selector */}
+        {/* Billing Cycle Selector & Savings Calculator */}
         <section className="pb-8 -mt-4">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col items-center gap-3">
-              <p className="text-sm text-muted-foreground">Select billing period:</p>
-              <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(BILLING_LABELS) as BillingCycle[]).map((cycle) => (
-                    <SelectItem key={cycle} value={cycle}>
-                      {BILLING_LABELS[cycle]}
-                      {BILLING_DISCOUNTS[cycle] > 0 && (
-                        <span className="ml-2 text-xs text-primary">-{BILLING_DISCOUNTS[cycle]}%</span>
-                      )}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="max-w-2xl mx-auto">
+              <div className="flex flex-col items-center gap-4 mb-6">
+                <p className="text-sm text-muted-foreground">Select billing period:</p>
+                <Select value={billingCycle} onValueChange={(v) => setBillingCycle(v as BillingCycle)}>
+                  <SelectTrigger className="w-[200px] bg-background">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background border border-border z-50">
+                    {(Object.keys(BILLING_LABELS) as BillingCycle[]).map((cycle) => (
+                      <SelectItem key={cycle} value={cycle}>
+                        {BILLING_LABELS[cycle]}
+                        {BILLING_DISCOUNTS[cycle] > 0 && (
+                          <span className="ml-2 text-xs text-primary">-{BILLING_DISCOUNTS[cycle]}%</span>
+                        )}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Savings Calculator Card */}
+              {billingCycle !== '1_month' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-primary/10 via-background to-accent/10 border border-primary/20 rounded-2xl p-6"
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Calculator className="w-4 h-4 text-primary" />
+                    </div>
+                    <h3 className="font-semibold">Your Savings with {BILLING_LABELS[billingCycle]} Billing</h3>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {plans.map((plan) => {
+                      const monthlyTotal = basePrices[plan.id as keyof typeof basePrices] * BILLING_MONTHS[billingCycle];
+                      const discountedPrice = getPrice(plan.id as keyof typeof basePrices, billingCycle);
+                      const savings = monthlyTotal - discountedPrice;
+                      
+                      return (
+                        <div key={plan.id} className="bg-card rounded-xl p-4 border border-border">
+                          <div className="flex items-center gap-2 mb-3">
+                            <plan.icon className="w-4 h-4 text-muted-foreground" />
+                            <span className="font-medium text-sm">{plan.name}</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs text-muted-foreground">
+                              <span>Monthly rate:</span>
+                              <span className="line-through">KSh {monthlyTotal.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-muted-foreground">You pay:</span>
+                              <span className="font-medium">KSh {discountedPrice.toLocaleString()}</span>
+                            </div>
+                            <div className="pt-2 border-t border-border">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs text-primary font-medium">You save:</span>
+                                <Badge variant="secondary" className="bg-success/10 text-success border-0">
+                                  KSh {savings.toLocaleString()}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <p className="text-xs text-muted-foreground text-center mt-4">
+                    That's {BILLING_DISCOUNTS[billingCycle]}% off compared to paying monthly!
+                  </p>
+                </motion.div>
+              )}
             </div>
           </div>
         </section>
