@@ -3,11 +3,15 @@ import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart as RechartsPieChart, Pie, Cell } from 'recharts';
 import { useIncomeSources } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
+import { useCategoryBudgets } from '@/hooks/useCategoryBudgets';
 import { categoryLabels, IncomeCategory } from '@/types/income';
 import { expenseCategoryLabels, ExpenseCategory, frequencyMultipliers } from '@/types/expense';
 import { TrendingUp, TrendingDown, DollarSign, PieChart, Target, Loader2, Wallet, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { format, startOfMonth, endOfMonth, subMonths, addMonths, isSameMonth, parseISO } from 'date-fns';
+import { format, startOfMonth, endOfMonth, subMonths, addMonths, isSameMonth, parseISO, getMonth, getYear } from 'date-fns';
+import { SetBudgetDialog } from '@/components/SetBudgetDialog';
+import { BudgetProgressCard } from '@/components/BudgetProgressCard';
+import { MonthlyReportCard } from '@/components/MonthlyReportCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -48,6 +52,10 @@ const Analytics = () => {
   const { stats: incomeStats, incomeSources, isLoading: incomeLoading } = useIncomeSources();
   const { expenses, isLoading: expenseLoading } = useExpenses();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  
+  const currentMonth = getMonth(selectedMonth) + 1;
+  const currentYear = getYear(selectedMonth);
+  const { budgets, upsertBudget, isUpdating } = useCategoryBudgets(currentMonth, currentYear);
 
   const isLoading = incomeLoading || expenseLoading;
 
@@ -175,38 +183,45 @@ const Analytics = () => {
       className="space-y-6"
     >
       {/* Month Selector */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="font-display text-2xl font-bold text-foreground">Analytics</h2>
           <p className="text-muted-foreground text-sm">Track your financial trends</p>
         </div>
-        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={handlePreviousMonth}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <button
-            onClick={handleCurrentMonth}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
-          >
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium text-sm min-w-[100px] text-center">
-              {format(selectedMonth, 'MMMM yyyy')}
-            </span>
-          </button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={handleNextMonth}
-            disabled={isSameMonth(selectedMonth, new Date())}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+        <div className="flex items-center gap-3">
+          <SetBudgetDialog 
+            onSubmit={upsertBudget} 
+            existingBudgets={budgets} 
+            isUpdating={isUpdating}
+          />
+          <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-lg"
+              onClick={handlePreviousMonth}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <button
+              onClick={handleCurrentMonth}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors"
+            >
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium text-sm min-w-[100px] text-center">
+                {format(selectedMonth, 'MMMM yyyy')}
+              </span>
+            </button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-lg"
+              onClick={handleNextMonth}
+              disabled={isSameMonth(selectedMonth, new Date())}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -431,6 +446,37 @@ const Analytics = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Budget Progress Section */}
+      {budgets.length > 0 && (
+        <motion.div variants={itemVariants}>
+          <h3 className="font-display font-semibold text-lg text-foreground mb-4 flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Budget Tracking - {format(selectedMonth, 'MMMM yyyy')}
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {budgets.map((budget) => (
+              <BudgetProgressCard
+                key={budget.id}
+                category={budget.category}
+                spent={monthlyExpenseStats.byCategory[budget.category as ExpenseCategory] || 0}
+                budget={budget.budget_amount}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Monthly Report */}
+      <motion.div variants={itemVariants}>
+        <MonthlyReportCard
+          month={selectedMonth}
+          totalIncome={incomeStats.totalMonthly}
+          totalExpenses={monthlyExpenseStats.totalMonthly}
+          categoryBreakdown={monthlyExpenseStats.byCategory}
+          savingsRate={incomeStats.totalMonthly > 0 ? (netMonthly / incomeStats.totalMonthly) * 100 : 0}
+        />
+      </motion.div>
     </motion.div>
   );
 };
