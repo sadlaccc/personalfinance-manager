@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog } from 'lucide-react';
+import { Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
@@ -9,6 +9,7 @@ import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
 import { SendEmailDialog } from '@/components/SendEmailDialog';
 import { BulkEmailDialog } from '@/components/BulkEmailDialog';
 import { UserAnalyticsCharts } from '@/components/UserAnalyticsCharts';
+import { UserFinancialsDialog } from '@/components/UserFinancialsDialog';
 import { RoleManagementDialog } from '@/components/RoleManagementDialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,7 @@ export default function AdminDashboard() {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [bulkEmailDialogOpen, setBulkEmailDialogOpen] = useState(false);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
+  const [financialsDialogOpen, setFinancialsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   useEffect(() => {
@@ -88,6 +90,11 @@ export default function AdminDashboard() {
   const handleRoleClick = (user: AdminUser) => {
     setSelectedUser(user);
     setRoleDialogOpen(true);
+  };
+
+  const handleFinancialsClick = (user: AdminUser) => {
+    setSelectedUser(user);
+    setFinancialsDialogOpen(true);
   };
 
   const getInitials = (name: string | null) => {
@@ -301,6 +308,19 @@ export default function AdminDashboard() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
+                                    onClick={() => handleFinancialsClick(user)}
+                                    className="h-8 w-8"
+                                  >
+                                    <BarChart3 className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>View financials</TooltipContent>
+                              </Tooltip>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
                                     onClick={() => handleRoleClick(user)}
                                     className="h-8 w-8"
                                   >
@@ -366,6 +386,16 @@ export default function AdminDashboard() {
           <RoleManagementDialog
             open={roleDialogOpen}
             onOpenChange={setRoleDialogOpen}
+            userId={selectedUser.user_id}
+            userName={selectedUser.full_name}
+          />
+        )}
+
+        {/* User Financials Dialog */}
+        {selectedUser && (
+          <UserFinancialsDialog
+            open={financialsDialogOpen}
+            onOpenChange={setFinancialsDialogOpen}
             userId={selectedUser.user_id}
             userName={selectedUser.full_name}
           />
