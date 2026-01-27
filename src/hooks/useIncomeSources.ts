@@ -13,6 +13,7 @@ export interface IncomeSource {
   category: IncomeCategory;
   frequency: Frequency;
   description?: string;
+  date: string;
   created_at: string;
   updated_at: string;
 }

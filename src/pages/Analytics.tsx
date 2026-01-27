@@ -12,6 +12,7 @@ import { format, startOfMonth, endOfMonth, subMonths, addMonths, isSameMonth, pa
 import { SetBudgetDialog } from '@/components/SetBudgetDialog';
 import { BudgetProgressCard } from '@/components/BudgetProgressCard';
 import { MonthlyReportCard } from '@/components/MonthlyReportCard';
+import { CopyBudgetDialog } from '@/components/CopyBudgetDialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -55,7 +56,7 @@ const Analytics = () => {
   
   const currentMonth = getMonth(selectedMonth) + 1;
   const currentYear = getYear(selectedMonth);
-  const { budgets, upsertBudget, isUpdating } = useCategoryBudgets(currentMonth, currentYear);
+  const { budgets, upsertBudget, copyFromMonth, isUpdating, isCopying } = useCategoryBudgets(currentMonth, currentYear);
 
   const isLoading = incomeLoading || expenseLoading;
 
@@ -188,7 +189,13 @@ const Analytics = () => {
           <h2 className="font-display text-2xl font-bold text-foreground">Analytics</h2>
           <p className="text-muted-foreground text-sm">Track your financial trends</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <CopyBudgetDialog
+            currentMonth={currentMonth}
+            currentYear={currentYear}
+            onCopy={copyFromMonth}
+            isCopying={isCopying}
+          />
           <SetBudgetDialog 
             onSubmit={upsertBudget} 
             existingBudgets={budgets} 

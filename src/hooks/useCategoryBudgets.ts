@@ -94,6 +94,66 @@ export function useCategoryBudgets(month: number, year: number) {
     },
   });
 
+  const copyFromMonthMutation = useMutation({
+    mutationFn: async ({ fromMonth, fromYear }: { fromMonth: number; fromYear: number }) => {
+      if (!user) throw new Error('User not authenticated');
+
+      // Fetch budgets from source month
+      const { data: sourceBudgets, error: fetchError } = await supabase
+        .from('category_budgets')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('month', fromMonth)
+        .eq('year', fromYear);
+
+      if (fetchError) throw fetchError;
+      if (!sourceBudgets || sourceBudgets.length === 0) {
+        throw new Error('No budgets found in the selected month');
+      }
+
+      // Insert/update budgets for target month
+      const results = await Promise.all(
+        sourceBudgets.map(async (budget) => {
+          const { data: existing } = await supabase
+            .from('category_budgets')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('category', budget.category)
+            .eq('month', month)
+            .eq('year', year)
+            .maybeSingle();
+
+          if (existing) {
+            return supabase
+              .from('category_budgets')
+              .update({ budget_amount: budget.budget_amount })
+              .eq('id', existing.id);
+          } else {
+            return supabase
+              .from('category_budgets')
+              .insert({
+                user_id: user.id,
+                category: budget.category,
+                budget_amount: budget.budget_amount,
+                month,
+                year,
+              });
+          }
+        })
+      );
+
+      const errors = results.filter(r => r.error);
+      if (errors.length > 0) {
+        throw new Error('Some budgets failed to copy');
+      }
+
+      return sourceBudgets.length;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['category-budgets'] });
+    },
+  });
+
   const getBudgetForCategory = (category: string): number | null => {
     const budget = budgets.find(b => b.category === category);
     return budget ? budget.budget_amount : null;
@@ -104,7 +164,9 @@ export function useCategoryBudgets(month: number, year: number) {
     isLoading,
     upsertBudget: upsertMutation.mutateAsync,
     deleteBudget: deleteMutation.mutateAsync,
+    copyFromMonth: copyFromMonthMutation.mutateAsync,
     getBudgetForCategory,
     isUpdating: upsertMutation.isPending,
+    isCopying: copyFromMonthMutation.isPending,
   };
 }

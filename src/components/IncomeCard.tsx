@@ -4,6 +4,7 @@ import { frequencyMultipliers } from '@/types/expense';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format, parseISO } from 'date-fns';
 
 interface IncomeCardProps {
   income: IncomeSource;
@@ -33,7 +34,7 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
       
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className={cn(
               "text-xs font-medium px-2 py-1 rounded-full text-primary-foreground",
               categoryColors[income.category]
@@ -44,6 +45,11 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
               <Calendar className="w-3 h-3" />
               {frequencyLabels[income.frequency] || income.frequency}
             </span>
+            {income.date && (
+              <span className="text-xs text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+                {format(parseISO(income.date), 'MMM d, yyyy')}
+              </span>
+            )}
           </div>
           
           <h3 className="font-semibold text-foreground truncate mb-1">
