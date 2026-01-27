@@ -100,13 +100,13 @@ const testimonials = [
 const footerLinks = {
   product: [
     { label: 'Features', href: '#features' },
-    { label: 'Pricing', href: '#' },
+    { label: 'Pricing', href: '/pricing' },
     { label: 'Security', href: '#' },
     { label: 'Roadmap', href: '#' },
   ],
   company: [
     { label: 'About', href: '/about' },
-    { label: 'Blog', href: '#' },
+    { label: 'Blog', href: '/blog' },
     { label: 'Careers', href: '#' },
     { label: 'Contact', href: '/contact' },
   ],

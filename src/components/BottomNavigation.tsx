@@ -1,19 +1,21 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Wallet, PiggyBank, BarChart3, Settings } from 'lucide-react';
+import { Home, Wallet, PiggyBank, BarChart3, Target, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/sources', icon: Wallet, label: 'Income' },
   { path: '/expenses', icon: PiggyBank, label: 'Expenses' },
+  { path: '/goals', icon: Target, label: 'Budget' },
   { path: '/analytics', icon: BarChart3, label: 'Analytics' },
-  { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   return (
     <motion.nav
@@ -21,7 +23,7 @@ export function BottomNavigation() {
       animate={{ y: 0 }}
       className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border safe-area-bottom md:hidden"
     >
-      <div className="flex items-center justify-around h-16 px-2">
+      <div className="flex items-center justify-around h-16 px-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -31,7 +33,7 @@ export function BottomNavigation() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-200",
+                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200",
                 "active:scale-95 touch-manipulation",
                 isActive 
                   ? "text-primary" 
@@ -55,7 +57,7 @@ export function BottomNavigation() {
                 )}
               </div>
               <span className={cn(
-                "text-[10px] font-medium transition-all duration-200",
+                "text-[9px] font-medium transition-all duration-200",
                 isActive ? "text-primary" : "text-muted-foreground"
               )}>
                 {item.label}
@@ -63,6 +65,17 @@ export function BottomNavigation() {
             </button>
           );
         })}
+        
+        {/* Logout button */}
+        <button
+          onClick={() => signOut()}
+          className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 active:scale-95 touch-manipulation text-muted-foreground hover:text-destructive"
+        >
+          <div className="p-1.5 rounded-xl transition-all duration-200">
+            <LogOut className="h-5 w-5" />
+          </div>
+          <span className="text-[9px] font-medium">Logout</span>
+        </button>
       </div>
     </motion.nav>
   );

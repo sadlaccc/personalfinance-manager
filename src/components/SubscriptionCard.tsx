@@ -8,14 +8,14 @@ import { Progress } from '@/components/ui/progress';
 import { useSubscription, PLAN_PRICES, BILLING_CYCLE_LABELS, BillingCycle } from '@/hooks/useSubscription';
 import { UpgradeDialog } from './UpgradeDialog';
 
-const planIcons = {
+const planIcons: Record<string, typeof Zap> = {
   starter: Zap,
   plus: TrendingUp,
   pro: Sparkles,
   premium: Crown,
 };
 
-const planColors = {
+const planColors: Record<string, string> = {
   starter: 'bg-muted text-muted-foreground',
   plus: 'bg-ticket/10 text-ticket',
   pro: 'bg-primary/10 text-primary',
@@ -40,8 +40,8 @@ export function SubscriptionCard() {
     );
   }
 
-  const PlanIcon = planIcons[currentPlan as keyof typeof planIcons] || Zap;
-  const planColor = planColors[currentPlan as keyof typeof planColors] || planColors.starter;
+  const PlanIcon = planIcons[currentPlan] || Zap;
+  const planColor = planColors[currentPlan] || planColors.starter;
   const periodProgress = subscription?.current_period_end
     ? Math.min(100, ((30 - daysRemaining) / 30) * 100)
     : 0;
@@ -66,35 +66,35 @@ export function SubscriptionCard() {
           <CardContent className="space-y-4">
             {subscription && isActive ? (
               <>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Billing cycle</span>
-                    <span className="font-medium">{BILLING_CYCLE_LABELS[subscription.billing_cycle as BillingCycle] || subscription.billing_cycle}</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 rounded-lg bg-muted/50 space-y-1">
+                    <span className="text-xs text-muted-foreground">Billing Cycle</span>
+                    <p className="font-medium text-sm">
+                      {BILLING_CYCLE_LABELS[subscription.billing_cycle as BillingCycle] || subscription.billing_cycle}
+                    </p>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Next payment</span>
-                    <span className="font-medium flex items-center gap-1">
+                  <div className="p-3 rounded-lg bg-muted/50 space-y-1">
+                    <span className="text-xs text-muted-foreground">Next Payment</span>
+                    <p className="font-medium text-sm flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {new Date(subscription.current_period_end).toLocaleDateString()}
-                    </span>
+                      {new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
                   </div>
-                  {subscription.mpesa_phone && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">M-Pesa</span>
-                      <span className="font-medium flex items-center gap-1">
-                        <Phone className="w-3 h-3" />
-                        {subscription.mpesa_phone}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
-                <div className="space-y-1.5">
+                {subscription.mpesa_phone && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground p-2 rounded-lg bg-muted/30">
+                    <Phone className="w-4 h-4" />
+                    <span>M-Pesa: {subscription.mpesa_phone}</span>
+                  </div>
+                )}
+
+                <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Period progress</span>
-                    <span className="text-muted-foreground">{daysRemaining} days left</span>
+                    <span className="font-medium text-primary">{daysRemaining} days left</span>
                   </div>
-                  <Progress value={periodProgress} className="h-1.5" />
+                  <Progress value={periodProgress} className="h-2" />
                 </div>
 
                 {currentPlan !== 'premium' && (
@@ -113,14 +113,14 @@ export function SubscriptionCard() {
                 <p className="text-sm text-muted-foreground">
                   You're on the free Starter plan. Upgrade to unlock advanced features.
                 </p>
-                <div className="grid grid-cols-2 gap-2 text-center">
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <p className="text-lg font-bold text-primary">KSh {PLAN_PRICES.pro['1_month']}</p>
-                    <p className="text-xs text-muted-foreground">Pro/month</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 text-center">
+                    <p className="text-xl font-bold text-primary">KSh {PLAN_PRICES.pro['1_month']}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Pro / month</p>
                   </div>
-                  <div className="p-3 rounded-lg bg-muted/50">
-                    <p className="text-lg font-bold text-accent">KSh {PLAN_PRICES.premium['1_month']}</p>
-                    <p className="text-xs text-muted-foreground">Premium/month</p>
+                  <div className="p-4 rounded-xl bg-accent/5 border border-accent/20 text-center">
+                    <p className="text-xl font-bold text-accent">KSh {PLAN_PRICES.premium['1_month']}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Premium / month</p>
                   </div>
                 </div>
                 <Button 
