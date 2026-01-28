@@ -9,6 +9,7 @@ import { useTheme } from '@/components/ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { EditProfileDialog } from '@/components/EditProfileDialog';
+import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -210,9 +211,15 @@ const Settings = () => {
             </div>
           </div>
           
-          <Button variant="outline" className="rounded-xl">
-            Change Password
-          </Button>
+          <div className="space-y-3">
+            <ResetPasswordDialog
+              trigger={
+                <Button variant="outline" className="rounded-xl w-full sm:w-auto">
+                  Reset Password
+                </Button>
+              }
+            />
+          </div>
         </motion.div>
 
         {/* Help Section */}

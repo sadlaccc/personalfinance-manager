@@ -19,14 +19,16 @@ interface ExpenseCardProps {
 
 export function ExpenseCard({ expense, onEdit, onDelete }: ExpenseCardProps) {
   const monthlyAmount = expense.amount * frequencyMultipliers[expense.frequency];
-  const formattedAmount = new Intl.NumberFormat('en-US', {
+  const formattedAmount = new Intl.NumberFormat('en-KE', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'KES',
+    minimumFractionDigits: 0,
   }).format(expense.amount);
 
-  const formattedMonthly = new Intl.NumberFormat('en-US', {
+  const formattedMonthly = new Intl.NumberFormat('en-KE', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'KES',
+    minimumFractionDigits: 0,
   }).format(monthlyAmount);
 
   return (

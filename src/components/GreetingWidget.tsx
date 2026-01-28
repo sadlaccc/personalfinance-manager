@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { 
   Sun, 
@@ -7,12 +7,11 @@ import {
   Sunrise, 
   Sunset,
   Sparkles,
-  Zap,
-  Coffee,
-  Star
+  X
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { Button } from '@/components/ui/button';
 
 interface GreetingWidgetProps {
   className?: string;
@@ -23,7 +22,7 @@ const getGreetingData = () => {
   
   if (hour >= 5 && hour < 12) {
     return {
-      greeting: 'Good morning',
+      greeting: 'Habari za asubuhi',
       icon: Sunrise,
       gradient: 'from-warning/20 via-warning/10 to-transparent',
       iconColor: 'text-warning',
@@ -32,7 +31,7 @@ const getGreetingData = () => {
     };
   } else if (hour >= 12 && hour < 17) {
     return {
-      greeting: 'Good afternoon',
+      greeting: 'Habari za mchana',
       icon: Sun,
       gradient: 'from-task/20 via-task/10 to-transparent',
       iconColor: 'text-task',
@@ -41,7 +40,7 @@ const getGreetingData = () => {
     };
   } else if (hour >= 17 && hour < 21) {
     return {
-      greeting: 'Good evening',
+      greeting: 'Habari za jioni',
       icon: Sunset,
       gradient: 'from-ticket/20 via-ticket/10 to-transparent',
       iconColor: 'text-ticket',
@@ -50,7 +49,7 @@ const getGreetingData = () => {
     };
   } else {
     return {
-      greeting: 'Good night',
+      greeting: 'Usiku mwema',
       icon: Moon,
       gradient: 'from-primary/20 via-primary/10 to-transparent',
       iconColor: 'text-primary',
@@ -60,120 +59,94 @@ const getGreetingData = () => {
   }
 };
 
-const quickStats = [
-  { label: 'Active Tasks', value: 3, icon: Zap, color: 'text-task bg-task/10' },
-  { label: 'Open Tickets', value: 2, icon: Coffee, color: 'text-ticket bg-ticket/10' },
-  { label: 'Goals Near', value: 1, icon: Star, color: 'text-warning bg-warning/10' }
-];
-
 export function GreetingWidget({ className }: GreetingWidgetProps) {
   const { user } = useAuth();
   const { profile } = useProfile();
+  const [isVisible, setIsVisible] = useState(true);
   
   const greetingData = useMemo(() => getGreetingData(), []);
   const Icon = greetingData.icon;
   
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
 
+  // Auto-hide after 8 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <motion.div 
-      className={cn(
-        "relative overflow-hidden rounded-2xl p-4 sm:p-6 bg-card border border-border",
-        className
-      )}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-    >
-      {/* Animated background gradient */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-br",
-        greetingData.gradient
-      )} />
-      
-      {/* Floating decorative elements - hidden on small screens */}
-      <motion.div 
-        className="absolute top-4 right-4 opacity-20 hidden sm:block"
-        animate={{ 
-          y: [0, -10, 0],
-          rotate: [0, 5, 0]
-        }}
-        transition={{ 
-          duration: 4, 
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      >
-        <Sparkles className="w-16 sm:w-24 h-16 sm:h-24 text-primary" />
-      </motion.div>
-      
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-3 sm:mb-4">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <motion.div 
-              className={cn("p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-card shadow-md", greetingData.iconColor)}
-              whileHover={{ scale: 1.1, rotate: 10 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
-            </motion.div>
-            <div>
-              <motion.p 
-                className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                {greetingData.greeting} <span className="text-base sm:text-lg">{greetingData.emoji}</span>
-              </motion.p>
-              <motion.h2 
-                className="text-lg sm:text-2xl font-display font-bold text-foreground"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                Welcome back, {displayName}!
-              </motion.h2>
-            </div>
-          </div>
-        </div>
-        
-        <motion.p 
-          className="text-muted-foreground mb-4 sm:mb-6 text-xs sm:text-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          {greetingData.message}
-        </motion.p>
-        
-        {/* Quick Stats */}
+    <AnimatePresence>
+      {isVisible && (
         <motion.div 
-          className="flex flex-wrap gap-2 sm:gap-3"
-          initial={{ opacity: 0, y: 10 }}
+          className={cn(
+            "relative overflow-hidden rounded-xl p-4 bg-card border border-border",
+            className
+          )}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          exit={{ opacity: 0, height: 0, marginBottom: 0, padding: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          {quickStats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-card/80 backdrop-blur-sm border border-border shadow-sm"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 + index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <div className={cn("p-1 sm:p-1.5 rounded-md sm:rounded-lg", stat.color)}>
-                <stat.icon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          {/* Animated background gradient */}
+          <div className={cn(
+            "absolute inset-0 bg-gradient-to-br",
+            greetingData.gradient
+          )} />
+          
+          {/* Floating decorative elements - hidden on small screens */}
+          <motion.div 
+            className="absolute top-2 right-10 opacity-20 hidden sm:block"
+            animate={{ 
+              y: [0, -5, 0],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ 
+              duration: 4, 
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            <Sparkles className="w-12 h-12 text-primary" />
+          </motion.div>
+
+          {/* Dismiss button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 h-6 w-6 rounded-full opacity-60 hover:opacity-100"
+            onClick={() => setIsVisible(false)}
+          >
+            <X className="w-3 h-3" />
+          </Button>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3">
+              <motion.div 
+                className={cn("p-2 rounded-xl bg-card shadow-sm", greetingData.iconColor)}
+                whileHover={{ scale: 1.1, rotate: 10 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <Icon className="w-5 h-5" />
+              </motion.div>
+              <div className="flex-1">
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  {greetingData.greeting} <span className="text-base">{greetingData.emoji}</span>
+                </p>
+                <h2 className="text-base sm:text-lg font-display font-bold text-foreground">
+                  Welcome back, {displayName}!
+                </h2>
               </div>
-              <div>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">{stat.label}</p>
-                <p className="text-xs sm:text-sm font-bold text-foreground">{stat.value}</p>
-              </div>
-            </motion.div>
-          ))}
+            </div>
+            <p className="text-muted-foreground mt-2 text-xs">
+              {greetingData.message}
+            </p>
+          </div>
         </motion.div>
-      </div>
-    </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

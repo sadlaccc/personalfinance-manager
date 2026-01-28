@@ -115,10 +115,10 @@ export function BudgetGoalCard({ goal, onEdit, onDelete, onAddFunds }: BudgetGoa
       <div className="space-y-3">
         <div className="flex justify-between items-baseline">
           <span className="text-2xl font-bold text-foreground">
-            ${goal.current_amount.toLocaleString()}
+            KSh {goal.current_amount.toLocaleString()}
           </span>
           <span className="text-sm text-muted-foreground">
-            of ${goal.target_amount.toLocaleString()}
+            of KSh {goal.target_amount.toLocaleString()}
           </span>
         </div>
 
@@ -138,7 +138,7 @@ export function BudgetGoalCard({ goal, onEdit, onDelete, onAddFunds }: BudgetGoa
           </span>
           {!isComplete && (
             <span className="text-muted-foreground">
-              ${remaining.toLocaleString()} to go
+              KSh {remaining.toLocaleString()} to go
             </span>
           )}
         </div>

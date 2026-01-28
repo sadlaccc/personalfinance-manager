@@ -57,7 +57,7 @@ export function IncomeChart({ stats }: IncomeChartProps) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => [`$${value.toLocaleString()}`, 'Monthly']}
+              formatter={(value: number) => [`KSh ${value.toLocaleString()}`, 'Monthly']}
               contentStyle={{
                 backgroundColor: 'hsl(var(--card))',
                 border: '1px solid hsl(var(--border))',

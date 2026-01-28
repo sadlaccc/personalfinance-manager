@@ -64,7 +64,7 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
           
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold font-display text-foreground">
-              ${income.amount.toLocaleString()}
+              KSh {income.amount.toLocaleString()}
             </span>
             <span className="text-sm text-muted-foreground">
               /{income.frequency === 'one-time' ? 'once' : income.frequency.replace('ly', '')}
@@ -74,7 +74,7 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
           {income.frequency !== 'monthly' && income.frequency !== 'one-time' && (
             <div className="flex items-center gap-1.5 mt-2 text-sm text-income">
               <TrendingUp className="w-4 h-4" />
-              <span>${monthlyAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo equivalent</span>
+              <span>KSh {monthlyAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}/mo equivalent</span>
             </div>
           )}
         </div>
