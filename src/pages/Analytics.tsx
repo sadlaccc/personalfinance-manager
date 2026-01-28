@@ -5,14 +5,15 @@ import { useIncomeSources } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useCategoryBudgets } from '@/hooks/useCategoryBudgets';
 import { categoryLabels, IncomeCategory } from '@/types/income';
-import { expenseCategoryLabels, ExpenseCategory, frequencyMultipliers } from '@/types/expense';
-import { TrendingUp, TrendingDown, DollarSign, PieChart, Target, Loader2, Wallet, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { expenseCategoryLabels, ExpenseCategory } from '@/types/expense';
+import { TrendingUp, TrendingDown, Target, Loader2, Wallet, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format, startOfMonth, endOfMonth, subMonths, addMonths, isSameMonth, parseISO, getMonth, getYear } from 'date-fns';
 import { SetBudgetDialog } from '@/components/SetBudgetDialog';
 import { BudgetProgressCard } from '@/components/BudgetProgressCard';
 import { MonthlyReportCard } from '@/components/MonthlyReportCard';
 import { CopyBudgetDialog } from '@/components/CopyBudgetDialog';
+import { ExportReportDialog } from '@/components/ExportReportDialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -60,7 +61,7 @@ const Analytics = () => {
 
   const isLoading = incomeLoading || expenseLoading;
 
-  // Filter expenses by selected month
+  // Filter expenses by selected month - ALL expenses paid in this month count at full amount
   const monthlyExpenses = useMemo(() => {
     return expenses.filter(expense => {
       const expenseDate = parseISO(expense.date);
@@ -68,7 +69,7 @@ const Analytics = () => {
     });
   }, [expenses, selectedMonth]);
 
-  // Calculate monthly expense stats
+  // Calculate monthly expense stats - expenses are counted at their actual amount in the month they're paid
   const monthlyExpenseStats = useMemo(() => {
     const byCategory: Record<ExpenseCategory, number> = {
       housing: 0,
@@ -85,10 +86,10 @@ const Analytics = () => {
 
     let totalMonthly = 0;
 
+    // Each expense is counted at its full amount in the month it was paid
     monthlyExpenses.forEach(expense => {
-      const amount = expense.amount * frequencyMultipliers[expense.frequency];
-      totalMonthly += amount;
-      byCategory[expense.category] += amount;
+      totalMonthly += expense.amount;
+      byCategory[expense.category] += expense.amount;
     });
 
     return {
@@ -112,8 +113,9 @@ const Analytics = () => {
         return expenseDate >= monthStart && expenseDate <= monthEnd;
       });
 
+      // Count expenses at their full amount for the month they were paid
       const expenseTotal = monthExpenses.reduce((sum, expense) => {
-        return sum + expense.amount * frequencyMultipliers[expense.frequency];
+        return sum + expense.amount;
       }, 0);
 
       months.push({
@@ -190,6 +192,13 @@ const Analytics = () => {
           <p className="text-muted-foreground text-sm">Track your financial trends</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <ExportReportDialog
+            monthlyIncome={incomeStats.totalMonthly}
+            monthlyExpenses={monthlyExpenseStats.totalMonthly}
+            expensesByCategory={monthlyExpenseStats.byCategory}
+            incomeByCategory={incomeStats.byCategory}
+            selectedMonth={selectedMonth}
+          />
           <CopyBudgetDialog
             currentMonth={currentMonth}
             currentYear={currentYear}
@@ -242,40 +251,40 @@ const Analytics = () => {
             <span className="text-sm text-muted-foreground">Monthly Income</span>
           </div>
           <p className="text-2xl font-bold font-display text-income">
-            +${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            +KSh {incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
         </div>
         
-        <div className="bg-card border border-border rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-destructive/10 rounded-xl">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-destructive/10 rounded-lg">
               <TrendingDown className="w-5 h-5 text-destructive" />
             </div>
             <span className="text-sm text-muted-foreground">{format(selectedMonth, 'MMM')} Expenses</span>
           </div>
           <p className="text-2xl font-bold font-display text-destructive">
-            -${monthlyExpenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            -KSh {monthlyExpenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             {monthlyExpenseStats.expenseCount} expense{monthlyExpenseStats.expenseCount !== 1 ? 's' : ''}
           </p>
         </div>
         
-        <div className="bg-card border border-border rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-primary/10 rounded-xl">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-primary/10 rounded-lg">
               <Wallet className="w-5 h-5 text-primary" />
             </div>
             <span className="text-sm text-muted-foreground">Net {format(selectedMonth, 'MMM')}</span>
           </div>
           <p className={`text-2xl font-bold font-display ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
-            {netMonthly >= 0 ? '+' : ''}${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+            {netMonthly >= 0 ? '+' : ''}KSh {Math.abs(netMonthly).toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
         </div>
         
-        <div className="bg-card border border-border rounded-2xl p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-category-rental/10 rounded-xl">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-category-rental/10 rounded-lg">
               <Target className="w-5 h-5 text-category-rental" />
             </div>
             <span className="text-sm text-muted-foreground">Savings Rate</span>
@@ -315,7 +324,7 @@ const Analytics = () => {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '12px',
                   }}
-                  formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name === 'income' ? 'Income' : 'Expenses']}
+                  formatter={(value: number, name: string) => [`KSh ${value.toLocaleString()}`, name === 'income' ? 'Income' : 'Expenses']}
                 />
                 <Area 
                   type="monotone" 
@@ -365,7 +374,7 @@ const Analytics = () => {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '12px',
                   }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                  formatter={(value: number) => [`KSh ${value.toLocaleString()}`, '']}
                 />
               </RechartsPieChart>
             </ResponsiveContainer>
@@ -408,7 +417,7 @@ const Analytics = () => {
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '12px',
                   }}
-                  formatter={(value: number) => [`$${value.toLocaleString()}`, 'Monthly']}
+                  formatter={(value: number) => [`KSh ${value.toLocaleString()}`, 'Monthly']}
                 />
                 <Bar dataKey="value" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -444,7 +453,7 @@ const Analytics = () => {
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '12px',
                     }}
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Monthly']}
+                    formatter={(value: number) => [`KSh ${value.toLocaleString()}`, 'Monthly']}
                   />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} />
                 </BarChart>

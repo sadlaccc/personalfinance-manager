@@ -9,7 +9,7 @@ const navItems = [
   { path: '/sources', icon: Wallet, label: 'Income' },
   { path: '/expenses', icon: PiggyBank, label: 'Expenses' },
   { path: '/goals', icon: Target, label: 'Budget' },
-  { path: '/analytics', icon: BarChart3, label: 'Analytics' },
+  { path: '/analytics', icon: BarChart3, label: 'Stats' },
 ];
 
 export function BottomNavigation() {
@@ -23,7 +23,7 @@ export function BottomNavigation() {
       animate={{ y: 0 }}
       className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border safe-area-bottom md:hidden"
     >
-      <div className="flex items-center justify-around h-16 px-1">
+      <div className="flex items-center justify-around h-14 px-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const Icon = item.icon;
@@ -41,23 +41,16 @@ export function BottomNavigation() {
               )}
             >
               <div className={cn(
-                "relative p-1.5 rounded-xl transition-all duration-200",
+                "relative p-1 rounded-lg transition-all duration-200",
                 isActive && "bg-primary/10"
               )}>
                 <Icon className={cn(
-                  "h-5 w-5 transition-all duration-200",
+                  "h-4 w-4 transition-all duration-200",
                   isActive && "scale-110"
                 )} />
-                {isActive && (
-                  <motion.div
-                    layoutId="bottomNavIndicator"
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  />
-                )}
               </div>
               <span className={cn(
-                "text-[9px] font-medium transition-all duration-200",
+                "text-[9px] font-medium",
                 isActive ? "text-primary" : "text-muted-foreground"
               )}>
                 {item.label}
@@ -66,15 +59,17 @@ export function BottomNavigation() {
           );
         })}
         
-        {/* Logout button */}
+        {/* Modern Logout button */}
         <button
           onClick={() => signOut()}
-          className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 active:scale-95 touch-manipulation text-muted-foreground hover:text-destructive"
+          className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 active:scale-95 touch-manipulation group"
         >
-          <div className="p-1.5 rounded-xl transition-all duration-200">
-            <LogOut className="h-5 w-5" />
+          <div className="p-1 rounded-lg transition-all duration-200 group-hover:bg-destructive/10">
+            <LogOut className="h-4 w-4 text-muted-foreground group-hover:text-destructive transition-colors" />
           </div>
-          <span className="text-[9px] font-medium">Logout</span>
+          <span className="text-[9px] font-medium text-muted-foreground group-hover:text-destructive transition-colors">
+            Logout
+          </span>
         </button>
       </div>
     </motion.nav>

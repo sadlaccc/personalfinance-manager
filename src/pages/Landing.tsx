@@ -61,39 +61,39 @@ const benefits = [
 
 const testimonials = [
   {
-    name: 'Sarah Johnson',
+    name: 'Wanjiku Kamau',
     role: 'Freelance Designer',
-    content: 'IncomeFlow has transformed how I manage my freelance income. The analytics are incredibly insightful!',
+    content: 'Pesa Safi imebadilisha jinsi ninavyodhibiti pesa zangu. The analytics are incredibly insightful!',
     rating: 5,
-    avatar: 'SJ',
+    avatar: 'WK',
   },
   {
-    name: 'Michael Chen',
+    name: 'Brian Ochieng',
     role: 'Software Engineer',
-    content: 'Finally, a finance app that actually makes sense. I saved $500 in my first month just by tracking properly.',
+    content: 'Finally, a finance app that makes sense for Kenyans. I saved KSh 50,000 in my first month!',
     rating: 5,
-    avatar: 'MC',
+    avatar: 'BO',
   },
   {
-    name: 'Emily Rodriguez',
+    name: 'Faith Njeri',
     role: 'Small Business Owner',
     content: 'The goal-setting feature keeps me motivated. I hit my savings target 2 months early!',
     rating: 5,
-    avatar: 'ER',
+    avatar: 'FN',
   },
   {
-    name: 'David Kim',
+    name: 'David Mwangi',
     role: 'Marketing Manager',
     content: 'Simple, beautiful, and effective. This is exactly what I needed for personal finance.',
     rating: 5,
-    avatar: 'DK',
+    avatar: 'DM',
   },
   {
-    name: 'Lisa Thompson',
+    name: 'Grace Akinyi',
     role: 'Teacher',
-    content: 'I recommend IncomeFlow to everyone. Its so easy to use and the insights are game-changing.',
+    content: 'I recommend Pesa Safi to everyone. Its so easy to use and the insights are game-changing.',
     rating: 5,
-    avatar: 'LT',
+    avatar: 'GA',
   },
 ];
 
@@ -135,7 +135,7 @@ export default function Landing() {
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                 <Wallet className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg tracking-tight">IncomeFlow</span>
+              <span className="font-display font-bold text-lg tracking-tight">Pesa Safi</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -231,7 +231,7 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={heroDashboard} 
-                  alt="IncomeFlow Dashboard Preview" 
+                  alt="Pesa Safi Dashboard Preview" 
                   className="w-full h-auto"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
@@ -492,10 +492,10 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <Wallet className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-lg">IncomeFlow</span>
+                <span className="font-display font-bold text-lg">Pesa Safi</span>
               </Link>
               <p className="text-sm text-muted-foreground mb-4">
-                Smart financial management for everyone.
+                Smart money management for Kenyans 🇰🇪
               </p>
               <div className="flex items-center gap-3">
                 <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
@@ -574,7 +574,7 @@ export default function Landing() {
           {/* Bottom Footer */}
           <div className="py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-muted-foreground">
-              © 2024 IncomeFlow. All rights reserved.
+              © 2024 Pesa Safi. Made in Nairobi 🇰🇪
             </p>
             <div className="flex items-center gap-4">
               {footerLinks.legal.map((link) => (

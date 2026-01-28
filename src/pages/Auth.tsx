@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TrendingUp, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Wallet, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -93,7 +94,7 @@ const Auth = () => {
     } else {
       toast({
         title: 'Account created!',
-        description: 'Welcome to IncomeFlow. You are now signed in.',
+        description: 'Karibu Pesa Safi. You are now signed in.',
       });
     }
   };
@@ -116,15 +117,15 @@ const Auth = () => {
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="bg-gradient-income p-3 rounded-2xl shadow-lg">
-            <TrendingUp className="w-8 h-8 text-income-foreground" />
+          <div className="bg-gradient-to-br from-primary to-accent p-3 rounded-2xl shadow-lg">
+            <Wallet className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground">
-              IncomeFlow
+              Pesa Safi
             </h1>
             <p className="text-sm text-muted-foreground">
-              Personal Finance Tracker
+              Smart Money Management
             </p>
           </div>
         </div>
@@ -177,6 +178,10 @@ const Auth = () => {
                       />
                     </div>
                     {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+                  </div>
+
+                  <div className="flex justify-end">
+                    <ResetPasswordDialog />
                   </div>
 
                   <Button 
@@ -268,7 +273,7 @@ const Auth = () => {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Track your income and expenses with ease
+          Manage your finances the smart way 🇰🇪
         </p>
       </motion.div>
     </div>

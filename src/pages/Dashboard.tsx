@@ -102,7 +102,7 @@ const Dashboard = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8"
+      className="space-y-4"
     >
       {/* Greeting Widget */}
       <motion.div variants={itemVariants}>
@@ -110,40 +110,40 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatsCard
           title="Monthly Income"
-          value={`$${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          subtitle="All sources combined"
-          icon={<TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />}
+          value={`KSh ${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle="All sources"
+          icon={<TrendingUp className="w-5 h-5" />}
           variant="income"
         />
         <StatsCard
           title="Monthly Expenses"
-          value={`$${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={`KSh ${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`}
-          icon={<TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />}
+          icon={<TrendingDown className="w-5 h-5" />}
           variant="destructive"
         />
         <StatsCard
           title="Net Monthly"
-          value={`${netMonthly >= 0 ? '+' : ''}$${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          subtitle={netMonthly >= 0 ? 'You\'re in the green!' : 'Spending exceeds income'}
-          icon={<Wallet className="w-5 h-5 sm:w-6 sm:h-6" />}
+          value={`${netMonthly >= 0 ? '+' : ''}KSh ${Math.abs(netMonthly).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle={netMonthly >= 0 ? 'Pesa safi!' : 'Over budget'}
+          icon={<Wallet className="w-5 h-5" />}
           variant={netMonthly >= 0 ? 'income' : 'destructive'}
         />
         <StatsCard
           title="Yearly Projection"
-          value={`${netYearly >= 0 ? '+' : ''}$${netYearly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          subtitle="Net savings/loss"
-          icon={<DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />}
+          value={`${netYearly >= 0 ? '+' : ''}KSh ${Math.abs(netYearly).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          subtitle="Net savings"
+          icon={<DollarSign className="w-5 h-5" />}
           variant="primary"
         />
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Recent Income Sources */}
-        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
+        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-lg sm:text-xl font-bold text-foreground">
@@ -216,7 +216,7 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Chart, Subscription and Notifications */}
-        <motion.div variants={itemVariants} className="space-y-4 sm:space-y-6">
+        <motion.div variants={itemVariants} className="space-y-3">
           <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
@@ -224,28 +224,28 @@ const Dashboard = () => {
           <NotificationWidget />
           
           {/* Quick Stats */}
-          <div className="bg-card border border-border rounded-2xl p-4 sm:p-6">
-            <h3 className="font-display font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">
+          <div className="bg-card border border-border rounded-xl p-4">
+            <h3 className="font-display font-semibold text-foreground mb-3 text-sm">
               Budget Overview
             </h3>
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">Total Income</span>
-                <span className="text-xs sm:text-sm font-medium text-income">
-                  +${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                <span className="text-xs text-muted-foreground">Total Income</span>
+                <span className="text-xs font-medium text-income">
+                  +KSh {incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs sm:text-sm text-muted-foreground">Total Expenses</span>
-                <span className="text-xs sm:text-sm font-medium text-destructive">
-                  -${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                <span className="text-xs text-muted-foreground">Total Expenses</span>
+                <span className="text-xs font-medium text-destructive">
+                  -KSh {expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </span>
               </div>
-              <div className="border-t border-border pt-2 sm:pt-3">
+              <div className="border-t border-border pt-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs sm:text-sm font-medium text-foreground">Net Balance</span>
-                  <span className={`text-xs sm:text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
-                    {netMonthly >= 0 ? '+' : ''}${netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  <span className="text-xs font-medium text-foreground">Net Balance</span>
+                  <span className={`text-xs font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
+                    {netMonthly >= 0 ? '+' : ''}KSh {netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                   </span>
                 </div>
               </div>
