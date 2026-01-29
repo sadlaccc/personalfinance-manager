@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Download, FileSpreadsheet } from 'lucide-react';
+import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Download, Users, Building2, Rocket } from 'lucide-react';
 import pricingHero from '@/assets/pricing-hero.png';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const plans = [
+const personalPlans = [
   {
     id: 'starter',
     name: 'Starter',
@@ -64,6 +64,45 @@ const plans = [
   },
 ];
 
+const businessPlans = [
+  {
+    id: 'team',
+    name: 'Team',
+    price: 2499,
+    users: 5,
+    description: 'Perfect for small teams',
+    icon: Users,
+    cta: 'Start Team Trial',
+    popular: false,
+    gradient: 'from-sky-500 to-blue-600',
+    features: ['Up to 5 users', 'Shared dashboard', 'Team analytics', 'Priority support'],
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    price: 7999,
+    users: 20,
+    description: 'Growing organizations',
+    icon: Building2,
+    cta: 'Start Business Trial',
+    popular: true,
+    gradient: 'from-violet-500 to-purple-600',
+    features: ['Up to 20 users', 'Advanced reports', 'Role management', 'API access', 'Dedicated support'],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    price: null,
+    users: 'Unlimited',
+    description: 'Custom solutions for large orgs',
+    icon: Rocket,
+    cta: 'Contact Sales',
+    popular: false,
+    gradient: 'from-amber-500 to-orange-600',
+    features: ['Unlimited users', 'Custom integrations', 'SSO & Security', 'SLA guarantee', 'Dedicated manager'],
+  },
+];
+
 const features = [
   { name: 'Income sources', starter: '5', plus: '15', pro: 'Unlimited', premium: 'Unlimited' },
   { name: 'Expense tracking', starter: 'Basic', plus: 'Advanced', pro: 'Advanced', premium: 'Advanced' },
@@ -98,6 +137,10 @@ const faqs = [
     question: 'Is my data secure?',
     answer: 'Yes, we use bank-level 256-bit SSL encryption. Your data is always protected.',
   },
+  {
+    question: 'What is included in business plans?',
+    answer: 'Business plans include team management, shared dashboards, role-based access control, and dedicated support for your organization.',
+  },
 ];
 
 const containerVariants = {
@@ -125,7 +168,7 @@ export default function Pricing() {
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                   <Wallet className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-lg">IncomeFlow</span>
+                <span className="font-display font-bold text-lg">Fedha Flow</span>
               </Link>
 
               <nav className="hidden md:flex items-center gap-6">
@@ -177,9 +220,19 @@ export default function Pricing() {
           </motion.div>
         </section>
 
-        {/* Pricing Cards - Compact */}
+        {/* Personal Plans */}
         <section className="pb-10 sm:pb-14">
           <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-6"
+            >
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Personal Plans</h2>
+              <p className="text-muted-foreground text-sm">For individuals managing personal finances</p>
+            </motion.div>
+
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -187,7 +240,7 @@ export default function Pricing() {
               viewport={{ once: true, margin: "-50px" }}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-5xl mx-auto"
             >
-              {plans.map((plan) => (
+              {personalPlans.map((plan) => (
                 <motion.div
                   key={plan.name}
                   variants={itemVariants}
@@ -202,7 +255,6 @@ export default function Pricing() {
                     WebkitBackdropFilter: 'blur(20px)',
                   }}
                 >
-                  {/* Glass overlay effect */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/5 via-transparent to-white/5 pointer-events-none" />
                   
                   {plan.popular && (
@@ -231,7 +283,6 @@ export default function Pricing() {
                     </div>
                   </div>
 
-                  {/* Export badge for Pro/Premium */}
                   {(plan.id === 'pro' || plan.id === 'premium') && (
                     <div className="relative flex items-center gap-1.5 mb-3 px-2 py-1 rounded-md bg-accent/10 border border-accent/20 w-fit">
                       <Download className="w-3 h-3 text-accent" />
@@ -257,8 +308,101 @@ export default function Pricing() {
           </div>
         </section>
 
+        {/* Business Plans */}
+        <section className="py-10 sm:py-14 bg-muted/20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-6"
+            >
+              <Badge variant="secondary" className="mb-3 px-3 py-1">
+                <Building2 className="w-3 h-3 mr-1" />
+                For Teams
+              </Badge>
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Business Plans</h2>
+              <p className="text-muted-foreground text-sm">Collaborative finance management for organizations</p>
+            </motion.div>
+
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto"
+            >
+              {businessPlans.map((plan) => (
+                <motion.div
+                  key={plan.name}
+                  variants={itemVariants}
+                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                  className={`relative rounded-xl border ${
+                    plan.popular
+                      ? 'border-violet-500/50 bg-gradient-to-b from-violet-500/10 via-background/80 to-background/60 shadow-xl shadow-violet-500/20'
+                      : 'border-border/50 bg-card/40 hover:border-primary/40 hover:bg-card/60'
+                  } backdrop-blur-xl p-5 sm:p-6 flex flex-col transition-all duration-300`}
+                >
+                  {plan.popular && (
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg px-2.5 py-0.5 text-[10px]">
+                        Best Value
+                      </Badge>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${plan.gradient} flex items-center justify-center shadow-lg`}>
+                      <plan.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-bold">{plan.name}</h3>
+                      <p className="text-xs text-muted-foreground">{plan.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    {plan.price ? (
+                      <div className="flex items-baseline gap-0.5">
+                        <span className="text-xs text-muted-foreground">KSh</span>
+                        <span className="text-3xl font-bold">{plan.price.toLocaleString()}</span>
+                        <span className="text-muted-foreground text-xs">/mo</span>
+                      </div>
+                    ) : (
+                      <span className="text-2xl font-bold">Custom Pricing</span>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {typeof plan.users === 'number' ? `Up to ${plan.users} users` : 'Unlimited users'}
+                    </p>
+                  </div>
+
+                  <ul className="space-y-2 mb-6 flex-1">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-2 text-sm">
+                        <Check className="w-4 h-4 text-success flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link to={plan.id === 'enterprise' ? '/contact' : '/auth'} className="w-full">
+                    <Button
+                      className={`w-full ${plan.popular ? 'bg-gradient-to-r from-violet-500 to-purple-600 hover:opacity-90' : ''}`}
+                      variant={plan.popular ? 'default' : 'outline'}
+                      size="sm"
+                    >
+                      {plan.cta}
+                      <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                    </Button>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
         {/* Feature Comparison - Compact */}
-        <section className="py-10 sm:py-12 bg-muted/20">
+        <section className="py-10 sm:py-12">
           <div className="container mx-auto px-4 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -267,7 +411,7 @@ export default function Pricing() {
               transition={{ duration: 0.5 }}
               className="text-center mb-6"
             >
-              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Compare Features</h2>
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Compare Personal Features</h2>
               <p className="text-muted-foreground text-sm">See what's included in each plan</p>
             </motion.div>
 
@@ -281,7 +425,7 @@ export default function Pricing() {
                 <TableHeader>
                   <TableRow className="border-border/50">
                     <TableHead className="w-[180px] text-xs">Feature</TableHead>
-                    {plans.map((plan) => (
+                    {personalPlans.map((plan) => (
                       <TableHead key={plan.id} className="text-center">
                         <div className="flex flex-col items-center gap-0.5">
                           <plan.icon className={`w-4 h-4 ${plan.popular ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -318,7 +462,7 @@ export default function Pricing() {
         </section>
 
         {/* FAQ - Compact */}
-        <section className="py-10 sm:py-12">
+        <section className="py-10 sm:py-12 bg-muted/20">
           <div className="container mx-auto px-4 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -398,14 +542,14 @@ export default function Pricing() {
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <Link to="/" className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Wallet className="w-2.5 h-2.5 text-primary-foreground" />
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <Wallet className="w-3 h-3 text-primary-foreground" />
                 </div>
-                <span className="font-display font-semibold text-sm">IncomeFlow</span>
-              </Link>
+                <span className="font-display font-bold text-sm">Fedha Flow</span>
+              </div>
               <p className="text-xs text-muted-foreground">
-                © 2026 IncomeFlow. All rights reserved.
+                © {new Date().getFullYear()} Fedha Flow. Made in Nairobi 🇰🇪
               </p>
             </div>
           </div>

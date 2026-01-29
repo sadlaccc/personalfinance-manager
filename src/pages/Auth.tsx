@@ -7,13 +7,27 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wallet, Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Wallet, Mail, Lock, User, Loader2, Phone, Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
 import { z } from 'zod';
+import { supabase } from '@/integrations/supabase/client';
+
+const CURRENCIES = [
+  { code: 'KES', name: 'Kenya Shilling (KSh)', symbol: 'KSh' },
+  { code: 'USD', name: 'US Dollar ($)', symbol: '$' },
+  { code: 'EUR', name: 'Euro (€)', symbol: '€' },
+  { code: 'GBP', name: 'British Pound (£)', symbol: '£' },
+  { code: 'TZS', name: 'Tanzanian Shilling', symbol: 'TSh' },
+  { code: 'UGX', name: 'Ugandan Shilling', symbol: 'USh' },
+  { code: 'ZAR', name: 'South African Rand', symbol: 'R' },
+  { code: 'NGN', name: 'Nigerian Naira', symbol: '₦' },
+];
 
 const emailSchema = z.string().email('Please enter a valid email address');
 const passwordSchema = z.string().min(6, 'Password must be at least 6 characters');
+const phoneSchema = z.string().min(10, 'Please enter a valid phone number').regex(/^[+]?[0-9]{10,15}$/, 'Invalid phone format');
 
 const Auth = () => {
   const { user, signIn, signUp, loading } = useAuth();
@@ -27,7 +41,9 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [phone, setPhone] = useState('');
+  const [currency, setCurrency] = useState('KES');
+  const [errors, setErrors] = useState<{ email?: string; password?: string; fullName?: string; phone?: string }>({});
 
   useEffect(() => {
     if (user) {
@@ -35,8 +51,8 @@ const Auth = () => {
     }
   }, [user, navigate]);
 
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
+  const validateForm = (isSignUp = false) => {
+    const newErrors: { email?: string; password?: string; fullName?: string; phone?: string } = {};
     
     const emailResult = emailSchema.safeParse(email);
     if (!emailResult.success) {
@@ -48,13 +64,23 @@ const Auth = () => {
       newErrors.password = passwordResult.error.errors[0].message;
     }
     
+    if (isSignUp) {
+      if (!fullName.trim()) {
+        newErrors.fullName = 'Full name is required';
+      }
+      const phoneResult = phoneSchema.safeParse(phone);
+      if (!phoneResult.success) {
+        newErrors.phone = phoneResult.error.errors[0].message;
+      }
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm(false)) return;
     
     setIsSubmitting(true);
     const { error } = await signIn(email, password);
@@ -73,13 +99,13 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm(true)) return;
     
     setIsSubmitting(true);
-    const { error } = await signUp(email, password, fullName);
-    setIsSubmitting(false);
+    const { error, data } = await signUp(email, password, fullName);
     
     if (error) {
+      setIsSubmitting(false);
       let message = error.message;
       if (error.message.includes('already registered')) {
         message = 'This email is already registered. Please sign in instead.';
@@ -91,10 +117,17 @@ const Auth = () => {
         title: 'Sign up failed',
         description: message,
       });
-    } else {
+    } else if (data?.user) {
+      // Update profile with phone and currency
+      await supabase
+        .from('profiles')
+        .update({ phone, currency })
+        .eq('user_id', data.user.id);
+      
+      setIsSubmitting(false);
       toast({
         title: 'Account created!',
-        description: 'Karibu Pesa Safi. You are now signed in.',
+        description: 'Karibu Fedha Flow. You are now signed in.',
       });
     }
   };
@@ -122,10 +155,10 @@ const Auth = () => {
           </div>
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground">
-              Pesa Safi
+              Fedha Flow
             </h1>
             <p className="text-sm text-muted-foreground">
-              Smart Money Management
+              Smart Budgeting & Savings
             </p>
           </div>
         </div>
@@ -204,7 +237,7 @@ const Auth = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name (optional)</Label>
+                    <Label htmlFor="signup-name">Full Name <span className="text-destructive">*</span></Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
@@ -214,12 +247,50 @@ const Auth = () => {
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="pl-10 rounded-xl"
+                        required
                       />
+                    </div>
+                    {errors.fullName && <p className="text-sm text-destructive">{errors.fullName}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-phone">Phone Number <span className="text-destructive">*</span></Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="signup-phone"
+                        type="tel"
+                        placeholder="+254 712 345 678"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="pl-10 rounded-xl"
+                        required
+                      />
+                    </div>
+                    {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-currency">Preferred Currency <span className="text-destructive">*</span></Label>
+                    <div className="relative">
+                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                      <Select value={currency} onValueChange={setCurrency}>
+                        <SelectTrigger className="pl-10 rounded-xl">
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CURRENCIES.map((curr) => (
+                            <SelectItem key={curr.code} value={curr.code}>
+                              {curr.symbol} - {curr.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Email <span className="text-destructive">*</span></Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input
@@ -236,7 +307,7 @@ const Auth = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
+                    <Label htmlFor="signup-password">Password <span className="text-destructive">*</span></Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input

@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 export interface Subscription {
   id: string;
   user_id: string;
-  plan_type: 'starter' | 'plus' | 'pro' | 'premium';
-  billing_cycle: '1_month' | '6_months' | '1_year' | '2_years';
+  plan_type: 'starter' | 'plus' | 'pro' | 'premium' | 'team' | 'business' | 'enterprise';
+  billing_cycle: 'monthly';
   status: 'active' | 'cancelled' | 'expired' | 'trial';
   current_period_start: string;
   current_period_end: string;
@@ -17,55 +17,25 @@ export interface Subscription {
   updated_at: string;
 }
 
-export type BillingCycle = '1_month' | '6_months' | '1_year' | '2_years';
-
-export interface PlanPricing {
-  '1_month': number;
-  '6_months': number;
-  '1_year': number;
-  '2_years': number;
-}
-
-export const BILLING_CYCLE_LABELS: Record<BillingCycle, string> = {
-  '1_month': '1 Month',
-  '6_months': '6 Months',
-  '1_year': '1 Year',
-  '2_years': '2 Years',
+// Monthly prices only - one option per plan
+export const PLAN_PRICES: Record<string, number> = {
+  starter: 49,
+  plus: 149,
+  pro: 499,
+  premium: 1099,
+  team: 2499,
+  business: 7999,
+  enterprise: 0, // Custom pricing
 };
 
-export const BILLING_CYCLE_MONTHS: Record<BillingCycle, number> = {
-  '1_month': 1,
-  '6_months': 6,
-  '1_year': 12,
-  '2_years': 24,
-};
-
-// Prices with discounts: 6mo (10%), 1yr (20%), 2yr (30%)
-export const PLAN_PRICES: Record<string, PlanPricing> = {
-  starter: {
-    '1_month': 49,
-    '6_months': 265,     // 49*6 * 0.90
-    '1_year': 470,       // 49*12 * 0.80
-    '2_years': 823,      // 49*24 * 0.70
-  },
-  plus: {
-    '1_month': 149,
-    '6_months': 805,     // 149*6 * 0.90
-    '1_year': 1430,      // 149*12 * 0.80
-    '2_years': 2503,     // 149*24 * 0.70
-  },
-  pro: {
-    '1_month': 499,
-    '6_months': 2695,    // 499*6 * 0.90
-    '1_year': 4790,      // 499*12 * 0.80
-    '2_years': 8383,     // 499*24 * 0.70
-  },
-  premium: {
-    '1_month': 1099,
-    '6_months': 5935,    // 1099*6 * 0.90
-    '1_year': 10550,     // 1099*12 * 0.80
-    '2_years': 18463,    // 1099*24 * 0.70
-  },
+export const PLAN_LABELS: Record<string, string> = {
+  starter: 'Starter',
+  plus: 'Plus',
+  pro: 'Pro',
+  premium: 'Premium',
+  team: 'Team (5 users)',
+  business: 'Business (20 users)',
+  enterprise: 'Enterprise',
 };
 
 export function useSubscription() {
@@ -93,13 +63,11 @@ export function useSubscription() {
     mutationFn: async ({
       phone,
       planType,
-      billingCycle,
     }: {
       phone: string;
-      planType: 'starter' | 'plus' | 'pro' | 'premium';
-      billingCycle: BillingCycle;
+      planType: 'starter' | 'plus' | 'pro' | 'premium' | 'team' | 'business';
     }) => {
-      const amount = PLAN_PRICES[planType][billingCycle];
+      const amount = PLAN_PRICES[planType];
       
       if (amount === 0) {
         // Free plan - create subscription directly
@@ -110,7 +78,7 @@ export function useSubscription() {
         const { error } = await supabase.from('subscriptions').upsert({
           user_id: user!.id,
           plan_type: planType,
-          billing_cycle: billingCycle,
+          billing_cycle: 'monthly',
           status: 'active',
           current_period_start: now.toISOString(),
           current_period_end: periodEnd.toISOString(),
@@ -121,7 +89,7 @@ export function useSubscription() {
       }
 
       const { data, error } = await supabase.functions.invoke('mpesa-stk-push', {
-        body: { phone, amount, planType, billingCycle },
+        body: { phone, amount, planType, billingCycle: 'monthly' },
       });
 
       if (error) throw error;
