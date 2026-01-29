@@ -68,10 +68,10 @@ export function AppSidebar() {
             {!isCollapsed && (
               <div className="overflow-hidden">
                 <h1 className="font-display text-base sm:text-lg font-bold text-foreground truncate">
-                  Pesa Safi
+                  Fedha Flow
                 </h1>
                 <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                  Smart Money
+                  Smart Budgeting
                 </p>
               </div>
             )}

@@ -1,15 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor, Loader2 } from 'lucide-react';
+import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor, Loader2, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/components/ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { EditProfileDialog } from '@/components/EditProfileDialog';
 import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+const CURRENCIES = [
+  { code: 'KES', name: 'Kenya Shilling (KSh)', symbol: 'KSh' },
+  { code: 'USD', name: 'US Dollar ($)', symbol: '$' },
+  { code: 'EUR', name: 'Euro (€)', symbol: '€' },
+  { code: 'GBP', name: 'British Pound (£)', symbol: '£' },
+  { code: 'TZS', name: 'Tanzanian Shilling', symbol: 'TSh' },
+  { code: 'UGX', name: 'Ugandan Shilling', symbol: 'USh' },
+  { code: 'ZAR', name: 'South African Rand', symbol: 'R' },
+  { code: 'NGN', name: 'Nigerian Naira', symbol: '₦' },
+];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,6 +43,14 @@ const Settings = () => {
   const { user } = useAuth();
   const { profile, isLoading, updateProfile, isUpdating } = useProfile();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currency, setCurrency] = useState('KES');
+  const [isUpdatingCurrency, setIsUpdatingCurrency] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setCurrency((profile as any).currency || 'KES');
+    }
+  }, [profile]);
 
   const getInitials = (name: string | null | undefined, email: string | undefined) => {
     if (name) {
@@ -51,6 +73,26 @@ const Settings = () => {
         setEditDialogOpen(false);
       },
     });
+  };
+
+  const handleCurrencyChange = async (newCurrency: string) => {
+    if (!user?.id) return;
+    
+    setIsUpdatingCurrency(true);
+    setCurrency(newCurrency);
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({ currency: newCurrency })
+      .eq('user_id', user.id);
+    
+    setIsUpdatingCurrency(false);
+    
+    if (error) {
+      toast.error('Failed to update currency');
+    } else {
+      toast.success('Currency updated successfully');
+    }
   };
 
   return (
@@ -97,6 +139,48 @@ const Settings = () => {
               </Button>
             </div>
           )}
+        </motion.div>
+
+        {/* Currency Section */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-income/10 rounded-xl">
+              <Globe className="w-5 h-5 text-income" />
+            </div>
+            <div>
+              <h3 className="font-display font-semibold text-foreground">Currency</h3>
+              <p className="text-sm text-muted-foreground">Set your preferred currency</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="currency-select" className="flex flex-col gap-1">
+                <span>Display Currency</span>
+                <span className="text-sm font-normal text-muted-foreground">
+                  All amounts will be displayed in this currency
+                </span>
+              </Label>
+              <div className="w-48">
+                <Select 
+                  value={currency} 
+                  onValueChange={handleCurrencyChange}
+                  disabled={isUpdatingCurrency}
+                >
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map((curr) => (
+                      <SelectItem key={curr.code} value={curr.code}>
+                        {curr.symbol} - {curr.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Notifications Section */}

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { useSubscription, PLAN_PRICES, BILLING_CYCLE_LABELS, BillingCycle } from '@/hooks/useSubscription';
+import { useSubscription, PLAN_PRICES } from '@/hooks/useSubscription';
 import { UpgradeDialog } from './UpgradeDialog';
 
 const planIcons: Record<string, typeof Zap> = {
@@ -68,10 +68,8 @@ export function SubscriptionCard() {
               <>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-muted/50 space-y-1">
-                    <span className="text-xs text-muted-foreground">Billing Cycle</span>
-                    <p className="font-medium text-sm">
-                      {BILLING_CYCLE_LABELS[subscription.billing_cycle as BillingCycle] || subscription.billing_cycle}
-                    </p>
+                    <span className="text-xs text-muted-foreground">Billing</span>
+                    <p className="font-medium text-sm">Monthly</p>
                   </div>
                   <div className="p-3 rounded-lg bg-muted/50 space-y-1">
                     <span className="text-xs text-muted-foreground">Next Payment</span>
@@ -115,11 +113,11 @@ export function SubscriptionCard() {
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 text-center">
-                    <p className="text-xl font-bold text-primary">KSh {PLAN_PRICES.pro['1_month']}</p>
+                    <p className="text-xl font-bold text-primary">KSh {PLAN_PRICES.pro}</p>
                     <p className="text-xs text-muted-foreground mt-1">Pro / month</p>
                   </div>
                   <div className="p-4 rounded-xl bg-accent/5 border border-accent/20 text-center">
-                    <p className="text-xl font-bold text-accent">KSh {PLAN_PRICES.premium['1_month']}</p>
+                    <p className="text-xl font-bold text-accent">KSh {PLAN_PRICES.premium}</p>
                     <p className="text-xs text-muted-foreground mt-1">Premium / month</p>
                   </div>
                 </div>

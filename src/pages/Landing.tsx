@@ -63,7 +63,7 @@ const testimonials = [
   {
     name: 'Wanjiku Kamau',
     role: 'Freelance Designer',
-    content: 'Pesa Safi imebadilisha jinsi ninavyodhibiti pesa zangu. The analytics are incredibly insightful!',
+    content: 'Fedha Flow imebadilisha jinsi ninavyodhibiti pesa zangu. The analytics are incredibly insightful!',
     rating: 5,
     avatar: 'WK',
   },
@@ -91,7 +91,7 @@ const testimonials = [
   {
     name: 'Grace Akinyi',
     role: 'Teacher',
-    content: 'I recommend Pesa Safi to everyone. Its so easy to use and the insights are game-changing.',
+    content: 'I recommend Fedha Flow to everyone. Its so easy to use and the insights are game-changing.',
     rating: 5,
     avatar: 'GA',
   },
@@ -135,7 +135,7 @@ export default function Landing() {
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                 <Wallet className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg tracking-tight">Pesa Safi</span>
+              <span className="font-display font-bold text-lg tracking-tight">Fedha Flow</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -231,7 +231,7 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={heroDashboard} 
-                  alt="Pesa Safi Dashboard Preview" 
+                  alt="Fedha Flow Dashboard Preview" 
                   className="w-full h-auto"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
@@ -574,7 +574,7 @@ export default function Landing() {
           {/* Bottom Footer */}
           <div className="py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-muted-foreground">
-              © 2024 Pesa Safi. Made in Nairobi 🇰🇪
+              © {new Date().getFullYear()} Fedha Flow. Made in Nairobi 🇰🇪
             </p>
             <div className="flex items-center gap-4">
               {footerLinks.legal.map((link) => (
