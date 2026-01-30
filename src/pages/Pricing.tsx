@@ -25,7 +25,7 @@ const personalPlans = [
   {
     id: 'starter',
     name: 'Starter',
-    price: 49,
+    price: 99,
     description: 'Essential tools for personal finance',
     icon: Zap,
     cta: 'Get Started',
@@ -168,7 +168,7 @@ export default function Pricing() {
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                   <Wallet className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-lg">Fedha Flow</span>
+                <span className="font-display font-bold text-lg">FedhaFlow</span>
               </Link>
 
               <nav className="hidden md:flex items-center gap-6">
@@ -546,10 +546,10 @@ export default function Pricing() {
                 <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <Wallet className="w-3 h-3 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-sm">Fedha Flow</span>
+                <span className="font-display font-bold text-sm">FedhaFlow</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} Fedha Flow. Made in Nairobi 🇰🇪
+                © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
               </p>
             </div>
           </div>

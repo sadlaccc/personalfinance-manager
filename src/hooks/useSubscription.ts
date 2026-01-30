@@ -19,7 +19,7 @@ export interface Subscription {
 
 // Monthly prices only - one option per plan
 export const PLAN_PRICES: Record<string, number> = {
-  starter: 49,
+  starter: 99,
   plus: 149,
   pro: 499,
   premium: 1099,

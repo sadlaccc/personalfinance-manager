@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Wallet, PiggyBank, BarChart3, Target, LogOut } from 'lucide-react';
+import { Home, Wallet, PiggyBank, BarChart3, Target, Settings, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +9,7 @@ const navItems = [
   { path: '/sources', icon: Wallet, label: 'Income' },
   { path: '/expenses', icon: PiggyBank, label: 'Expenses' },
   { path: '/goals', icon: Target, label: 'Budget' },
-  { path: '/analytics', icon: BarChart3, label: 'Stats' },
+  { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNavigation() {
@@ -59,17 +59,14 @@ export function BottomNavigation() {
           );
         })}
         
-        {/* Modern Logout button */}
+        {/* Power/Logout button on right corner */}
         <button
           onClick={() => signOut()}
-          className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 active:scale-95 touch-manipulation group"
+          className="flex flex-col items-center justify-center gap-0.5 w-12 h-full transition-all duration-200 active:scale-95 touch-manipulation group"
         >
-          <div className="p-1 rounded-lg transition-all duration-200 group-hover:bg-destructive/10">
-            <LogOut className="h-4 w-4 text-muted-foreground group-hover:text-destructive transition-colors" />
+          <div className="p-1.5 rounded-full bg-destructive/10 transition-all duration-200 group-hover:bg-destructive/20">
+            <Power className="h-4 w-4 text-destructive transition-colors" />
           </div>
-          <span className="text-[9px] font-medium text-muted-foreground group-hover:text-destructive transition-colors">
-            Logout
-          </span>
         </button>
       </div>
     </motion.nav>
