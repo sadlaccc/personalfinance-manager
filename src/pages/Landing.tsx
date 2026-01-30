@@ -63,7 +63,7 @@ const testimonials = [
   {
     name: 'Wanjiku Kamau',
     role: 'Freelance Designer',
-    content: 'Fedha Flow imebadilisha jinsi ninavyodhibiti pesa zangu. The analytics are incredibly insightful!',
+    content: 'FedhaFlow imebadilisha jinsi ninavyodhibiti pesa zangu. The analytics are incredibly insightful!',
     rating: 5,
     avatar: 'WK',
   },
@@ -91,7 +91,7 @@ const testimonials = [
   {
     name: 'Grace Akinyi',
     role: 'Teacher',
-    content: 'I recommend Fedha Flow to everyone. Its so easy to use and the insights are game-changing.',
+    content: 'I recommend FedhaFlow to everyone. Its so easy to use and the insights are game-changing.',
     rating: 5,
     avatar: 'GA',
   },
@@ -135,7 +135,7 @@ export default function Landing() {
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
                 <Wallet className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="font-display font-bold text-lg tracking-tight">Fedha Flow</span>
+              <span className="font-display font-bold text-lg tracking-tight">FedhaFlow</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -231,7 +231,7 @@ export default function Landing() {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={heroDashboard} 
-                  alt="Fedha Flow Dashboard Preview" 
+                  alt="FedhaFlow Dashboard Preview" 
                   className="w-full h-auto"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
@@ -574,7 +574,7 @@ export default function Landing() {
           {/* Bottom Footer */}
           <div className="py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-xs sm:text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Fedha Flow. Made in Nairobi 🇰🇪
+              © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
             </p>
             <div className="flex items-center gap-4">
               {footerLinks.legal.map((link) => (

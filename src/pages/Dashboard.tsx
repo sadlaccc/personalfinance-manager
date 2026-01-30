@@ -10,6 +10,7 @@ import { SubscriptionCard } from '@/components/SubscriptionCard';
 import { Button } from '@/components/ui/button';
 import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
 import { useExpenses } from '@/hooks/useExpenses';
+import { useProfile } from '@/hooks/useProfile';
 import { 
   DollarSign, 
   TrendingUp, 
@@ -38,6 +39,7 @@ const itemVariants = {
 const Dashboard = () => {
   const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources();
   const { stats: expenseStats, isLoading: expenseLoading } = useExpenses();
+  const { formatAmount, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
@@ -87,7 +89,7 @@ const Dashboard = () => {
   const recentSources = incomeSources.slice(0, 3);
   const netMonthly = incomeStats.totalMonthly - expenseStats.totalMonthly;
   const netYearly = incomeStats.totalYearly - expenseStats.totalYearly;
-  const isLoading = incomeLoading || expenseLoading;
+  const isLoading = incomeLoading || expenseLoading || profileLoading;
 
   if (isLoading) {
     return (
@@ -113,28 +115,28 @@ const Dashboard = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatsCard
           title="Monthly Income"
-          value={`KSh ${incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={formatAmount(incomeStats.totalMonthly)}
           subtitle="All sources"
           icon={<TrendingUp className="w-5 h-5" />}
           variant="income"
         />
         <StatsCard
           title="Monthly Expenses"
-          value={`KSh ${expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={formatAmount(expenseStats.totalMonthly)}
           subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`}
           icon={<TrendingDown className="w-5 h-5" />}
           variant="destructive"
         />
         <StatsCard
           title="Net Monthly"
-          value={`${netMonthly >= 0 ? '+' : ''}KSh ${Math.abs(netMonthly).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          subtitle={netMonthly >= 0 ? 'Pesa safi!' : 'Over budget'}
+          value={`${netMonthly >= 0 ? '+' : ''}${formatAmount(Math.abs(netMonthly))}`}
+          subtitle={netMonthly >= 0 ? 'Great progress!' : 'Over budget'}
           icon={<Wallet className="w-5 h-5" />}
           variant={netMonthly >= 0 ? 'income' : 'destructive'}
         />
         <StatsCard
           title="Yearly Projection"
-          value={`${netYearly >= 0 ? '+' : ''}KSh ${Math.abs(netYearly).toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
+          value={`${netYearly >= 0 ? '+' : ''}${formatAmount(Math.abs(netYearly))}`}
           subtitle="Net savings"
           icon={<DollarSign className="w-5 h-5" />}
           variant="primary"
@@ -232,20 +234,20 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Total Income</span>
                 <span className="text-xs font-medium text-income">
-                  +KSh {incomeStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  +{formatAmount(incomeStats.totalMonthly)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Total Expenses</span>
                 <span className="text-xs font-medium text-destructive">
-                  -KSh {expenseStats.totalMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  -{formatAmount(expenseStats.totalMonthly)}
                 </span>
               </div>
               <div className="border-t border-border pt-2">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-foreground">Net Balance</span>
                   <span className={`text-xs font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
-                    {netMonthly >= 0 ? '+' : ''}KSh {netMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    {netMonthly >= 0 ? '+' : ''}{formatAmount(netMonthly)}
                   </span>
                 </div>
               </div>

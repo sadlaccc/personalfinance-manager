@@ -118,16 +118,23 @@ const Auth = () => {
         description: message,
       });
     } else if (data?.user) {
+      // Small delay to ensure profile is created by trigger first
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Update profile with phone and currency
-      await supabase
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ phone, currency })
         .eq('user_id', data.user.id);
       
+      if (updateError) {
+        console.error('Profile update error:', updateError);
+      }
+      
       setIsSubmitting(false);
       toast({
         title: 'Account created!',
-        description: 'Karibu Fedha Flow. You are now signed in.',
+        description: 'Karibu FedhaFlow. You are now signed in.',
       });
     }
   };
@@ -155,7 +162,7 @@ const Auth = () => {
           </div>
           <div>
             <h1 className="font-display text-3xl font-bold text-foreground">
-              Fedha Flow
+              FedhaFlow
             </h1>
             <p className="text-sm text-muted-foreground">
               Smart Budgeting & Savings

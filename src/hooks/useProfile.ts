@@ -8,8 +8,28 @@ export interface Profile {
   user_id: string;
   full_name: string | null;
   avatar_url: string | null;
+  email: string | null;
+  phone: string | null;
+  currency: string;
   created_at: string;
   updated_at: string;
+}
+
+// Currency formatting helper
+export const CURRENCY_SYMBOLS: Record<string, string> = {
+  KES: 'KSh',
+  USD: '$',
+  EUR: '€',
+  GBP: '£',
+  TZS: 'TSh',
+  UGX: 'USh',
+  ZAR: 'R',
+  NGN: '₦',
+};
+
+export function formatCurrency(amount: number, currencyCode: string = 'KES'): string {
+  const symbol = CURRENCY_SYMBOLS[currencyCode] || currencyCode;
+  return `${symbol} ${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 }
 
 export function useProfile() {
@@ -38,7 +58,7 @@ export function useProfile() {
   });
 
   const updateProfile = useMutation({
-    mutationFn: async (updates: { full_name?: string; avatar_url?: string }) => {
+    mutationFn: async (updates: { full_name?: string; avatar_url?: string; phone?: string; currency?: string }) => {
       if (!user?.id) throw new Error('Not authenticated');
 
       const { data, error } = await supabase
@@ -70,10 +90,16 @@ export function useProfile() {
     },
   });
 
+  const currency = profile?.currency || 'KES';
+  const currencySymbol = CURRENCY_SYMBOLS[currency] || currency;
+
   return {
     profile,
     isLoading,
     updateProfile: updateProfile.mutate,
     isUpdating: updateProfile.isPending,
+    currency,
+    currencySymbol,
+    formatAmount: (amount: number) => formatCurrency(amount, currency),
   };
 }

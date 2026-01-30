@@ -68,7 +68,7 @@ export function AppSidebar() {
             {!isCollapsed && (
               <div className="overflow-hidden">
                 <h1 className="font-display text-base sm:text-lg font-bold text-foreground truncate">
-                  Fedha Flow
+                  FedhaFlow
                 </h1>
                 <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                   Smart Budgeting
