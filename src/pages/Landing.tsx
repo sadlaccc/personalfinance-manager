@@ -12,15 +12,15 @@ import {
 } from '@/components/ui/carousel';
 import { 
   Wallet, 
-  PiggyBank, 
-  BarChart3, 
-  Target, 
+  CircleDollarSign, 
+  LineChart, 
+  Goal, 
   Shield, 
-  Zap,
+  Sparkles,
   ArrowRight,
-  Check,
+  CheckCircle2,
   Star,
-  Twitter,
+  Send,
   Linkedin,
   Github,
   Mail
@@ -36,17 +36,17 @@ const features = [
     description: 'Monitor all your income sources in one place.',
   },
   {
-    icon: PiggyBank,
+    icon: CircleDollarSign,
     title: 'Manage Expenses',
     description: 'Keep track of where your money goes.',
   },
   {
-    icon: Target,
+    icon: Goal,
     title: 'Set Goals',
     description: 'Create savings goals and track progress.',
   },
   {
-    icon: BarChart3,
+    icon: LineChart,
     title: 'Analytics',
     description: 'Visualize your financial data with charts.',
   },
@@ -182,7 +182,7 @@ export default function Landing() {
               transition={{ duration: 0.6 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 border border-primary/20">
-                <Zap className="w-4 h-4" />
+                <Sparkles className="w-4 h-4" />
                 Smart Financial Management
               </div>
               <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
@@ -212,9 +212,7 @@ export default function Landing() {
               <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
                 {benefits.map((benefit) => (
                   <div key={benefit} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <div className="w-5 h-5 rounded-full bg-success/10 flex items-center justify-center">
-                      <Check className="w-3 h-3 text-success" />
-                    </div>
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                     {benefit}
                   </div>
                 ))}
@@ -492,19 +490,19 @@ export default function Landing() {
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                   <Wallet className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <span className="font-display font-bold text-lg">Pesa Safi</span>
+                <span className="font-display font-bold text-lg">FedhaFlow</span>
               </Link>
               <p className="text-sm text-muted-foreground mb-4">
                 Smart money management for Kenyans 🇰🇪
               </p>
               <div className="flex items-center gap-3">
-                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
-                  <Twitter className="w-4 h-4" />
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:scale-105">
+                  <Send className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:scale-105">
                   <Linkedin className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors">
+                <a href="#" className="w-8 h-8 rounded-lg bg-card border border-border flex items-center justify-center hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200 hover:scale-105">
                   <Github className="w-4 h-4" />
                 </a>
               </div>

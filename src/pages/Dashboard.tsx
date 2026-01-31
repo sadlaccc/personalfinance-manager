@@ -4,7 +4,7 @@ import { StatsCard } from '@/components/StatsCard';
 import { IncomeCard } from '@/components/IncomeCard';
 import { IncomeChart } from '@/components/IncomeChart';
 import { AddIncomeDialog } from '@/components/AddIncomeDialog';
-import { NotificationWidget } from '@/components/NotificationWidget';
+
 import { GreetingWidget } from '@/components/GreetingWidget';
 import { SubscriptionCard } from '@/components/SubscriptionCard';
 import { Button } from '@/components/ui/button';
@@ -222,8 +222,6 @@ const Dashboard = () => {
           <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
-          {/* Notifications Widget */}
-          <NotificationWidget />
           
           {/* Quick Stats */}
           <div className="bg-card border border-border rounded-xl p-4">
