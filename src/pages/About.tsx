@@ -4,27 +4,27 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
 import { 
-  Wallet, 
-  Users, 
-  Target, 
-  Heart,
+  TrendingUp, 
+  Users2, 
+  Goal, 
+  ShieldCheck,
   ArrowRight,
   ArrowLeft
 } from 'lucide-react';
 
 const values = [
   {
-    icon: Users,
+    icon: Users2,
     title: 'User-Centric',
     description: 'We build features that our users actually need, not what we think they need.',
   },
   {
-    icon: Target,
+    icon: Goal,
     title: 'Simplicity First',
     description: 'Complex finances made simple. No jargon, no clutter, just clarity.',
   },
   {
-    icon: Heart,
+    icon: ShieldCheck,
     title: 'Privacy Matters',
     description: 'Your financial data is yours. We never sell or share your information.',
   },
@@ -46,10 +46,10 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-income flex items-center justify-center shadow-md">
+                <TrendingUp className="w-4 h-4 text-income-foreground" />
               </div>
-              <span className="font-display font-bold text-lg">IncomeFlow</span>
+              <span className="font-display font-bold text-lg">FedhaFlow</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -91,7 +91,7 @@ export default function About() {
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-6">
               About{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                IncomeFlow
+                FedhaFlow
               </span>
             </h1>
             <p className="text-lg text-muted-foreground">
@@ -139,15 +139,15 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  IncomeFlow was born from a simple frustration: managing personal finances 
+                  FedhaFlow was born from a simple frustration: managing personal finances 
                   shouldn't require a degree in accounting or expensive software.
                 </p>
                 <p>
-                  We started in 2023 with a clear vision – to create a financial management 
+                  We started in Nairobi with a clear vision – to create a financial management 
                   tool that's powerful enough for complex needs yet simple enough for anyone to use.
                 </p>
                 <p>
-                  Today, we help thousands of users track their income, manage expenses, and 
+                  Today, we help thousands of Kenyans track their income, manage expenses, and 
                   achieve their savings goals. Our commitment to simplicity and privacy 
                   remains at the core of everything we do.
                 </p>
@@ -161,8 +161,8 @@ export default function About() {
               className="relative"
             >
               <div className="aspect-square rounded-3xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Wallet className="w-16 h-16 text-primary-foreground" />
+                <div className="w-32 h-32 rounded-2xl bg-gradient-income flex items-center justify-center shadow-2xl">
+                  <TrendingUp className="w-16 h-16 text-income-foreground" />
                 </div>
               </div>
             </motion.div>
@@ -237,17 +237,17 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-3 h-3 text-primary-foreground" />
+              <div className="w-6 h-6 rounded-lg bg-gradient-income flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-income-foreground" />
               </div>
-              <span className="font-semibold text-sm">IncomeFlow</span>
+              <span className="font-display font-semibold text-sm">FedhaFlow</span>
             </div>
             <nav className="flex items-center gap-6 text-sm text-muted-foreground">
               <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
               <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
             </nav>
             <p className="text-sm text-muted-foreground">
-              © 2024 IncomeFlow. All rights reserved.
+              © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
             </p>
           </div>
         </div>

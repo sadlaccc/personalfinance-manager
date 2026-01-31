@@ -10,9 +10,9 @@ import { PageTransition } from '@/components/PageTransition';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  Wallet, 
+  TrendingUp, 
   Mail, 
-  MessageSquare,
+  MessageCircle,
   Send,
   ArrowLeft,
   MapPin,
@@ -23,13 +23,13 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email',
-    value: 'support@incomeflow.app',
+    value: 'support@fedhaflow.app',
     description: 'Send us an email anytime',
   },
   {
     icon: MapPin,
     title: 'Location',
-    value: 'Nairobi, Kenya',
+    value: 'Nairobi, Kenya 🇰🇪',
     description: 'Where we\'re based',
   },
   {
@@ -92,10 +92,10 @@ export default function Contact() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-xl bg-gradient-income flex items-center justify-center shadow-md">
+                <TrendingUp className="w-4 h-4 text-income-foreground" />
               </div>
-              <span className="font-display font-bold text-lg">IncomeFlow</span>
+              <span className="font-display font-bold text-lg">FedhaFlow</span>
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -135,7 +135,7 @@ export default function Contact() {
             className="max-w-2xl"
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-3">
-              <MessageSquare className="w-3.5 h-3.5" />
+              <MessageCircle className="w-3.5 h-3.5" />
               Get in Touch
             </div>
             <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2">
@@ -292,10 +292,10 @@ export default function Contact() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-2.5 h-2.5 text-primary-foreground" />
+              <div className="w-5 h-5 rounded-md bg-gradient-income flex items-center justify-center">
+                <TrendingUp className="w-2.5 h-2.5 text-income-foreground" />
               </div>
-              <span className="font-display font-semibold text-sm">IncomeFlow</span>
+              <span className="font-display font-semibold text-sm">FedhaFlow</span>
             </div>
             <nav className="flex items-center gap-4 text-xs text-muted-foreground">
               <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
@@ -303,7 +303,7 @@ export default function Contact() {
               <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
             </nav>
             <p className="text-xs text-muted-foreground">
-              © 2026 IncomeFlow. All rights reserved.
+              © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
             </p>
           </div>
         </div>
