@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Check, X, Sparkles, Zap, ArrowRight, HelpCircle, Wallet, TrendingUp, Crown, Download, Users, Building2, Rocket } from 'lucide-react';
+import { CheckCircle2, X, Sparkles, Flame, ArrowRight, HelpCircle, TrendingUp, Crown, Download, Users, Building2, Rocket } from 'lucide-react';
 import pricingHero from '@/assets/pricing-hero.png';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +27,7 @@ const personalPlans = [
     name: 'Starter',
     price: 99,
     description: 'Essential tools for personal finance',
-    icon: Zap,
+    icon: Flame,
     cta: 'Get Started',
     popular: false,
     gradient: 'from-muted to-muted/50',
@@ -165,8 +165,8 @@ export default function Pricing() {
           <div className="container mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between h-14">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
-                  <Wallet className="w-4 h-4 text-primary-foreground" />
+                <div className="w-8 h-8 rounded-xl bg-gradient-income flex items-center justify-center shadow-lg shadow-primary/25">
+                  <TrendingUp className="w-4 h-4 text-income-foreground" />
                 </div>
                 <span className="font-display font-bold text-lg">FedhaFlow</span>
               </Link>
@@ -379,7 +379,7 @@ export default function Pricing() {
                   <ul className="space-y-2 mb-6 flex-1">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center gap-2 text-sm">
-                        <Check className="w-4 h-4 text-success flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -444,7 +444,7 @@ export default function Pricing() {
                         return (
                           <TableCell key={plan} className="text-center py-2">
                             {value === true ? (
-                              <Check className="w-4 h-4 text-success mx-auto" />
+                              <CheckCircle2 className="w-4 h-4 text-success mx-auto" />
                             ) : value === false ? (
                               <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
                             ) : (
@@ -543,8 +543,8 @@ export default function Pricing() {
           <div className="container mx-auto px-4 sm:px-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Wallet className="w-3 h-3 text-primary-foreground" />
+                <div className="w-6 h-6 rounded-lg bg-gradient-income flex items-center justify-center">
+                  <TrendingUp className="w-3 h-3 text-income-foreground" />
                 </div>
                 <span className="font-display font-bold text-sm">FedhaFlow</span>
               </div>
