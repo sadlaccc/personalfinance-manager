@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
-import { IncomeCategory } from '@/types/income';
-import { Frequency, frequencyMultipliers } from '@/types/expense';
+import { IncomeCategory, frequencyMultipliers } from '@/types/income';
+import { Frequency } from '@/types/expense';
 
 export interface IncomeSource {
   id: string;

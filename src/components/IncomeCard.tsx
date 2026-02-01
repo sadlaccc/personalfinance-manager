@@ -1,6 +1,5 @@
 import { IncomeSource } from '@/hooks/useIncomeSources';
-import { categoryLabels, categoryColors } from '@/types/income';
-import { frequencyMultipliers } from '@/types/expense';
+import { categoryLabels, categoryColors, frequencyMultipliers } from '@/types/income';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, TrendingUp, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';

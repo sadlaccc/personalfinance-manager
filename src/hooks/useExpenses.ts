@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
-import { Expense, ExpenseCategory, ExpenseStats, frequencyMultipliers } from '@/types/expense';
+import { Expense, ExpenseCategory, ExpenseStats } from '@/types/expense';
 
 export function useExpenses() {
   const { user } = useAuth();
@@ -92,10 +92,10 @@ export function useExpenses() {
 
     let totalMonthly = 0;
 
+    // Calculate all expenses at full amount regardless of frequency
     expenses.forEach(expense => {
-      const monthlyAmount = expense.amount * frequencyMultipliers[expense.frequency];
-      totalMonthly += monthlyAmount;
-      byCategory[expense.category] += monthlyAmount;
+      totalMonthly += expense.amount;
+      byCategory[expense.category] += expense.amount;
     });
 
     return {

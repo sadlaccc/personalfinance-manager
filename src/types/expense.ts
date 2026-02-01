@@ -10,7 +10,7 @@ export type ExpenseCategory =
   | 'savings' 
   | 'other';
 
-export type Frequency = 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly' | 'one-time';
+export type Frequency = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly' | 'one-time';
 
 export interface Expense {
   id: string;
@@ -58,11 +58,12 @@ export const expenseCategoryColors: Record<ExpenseCategory, string> = {
   other: 'bg-slate-500',
 };
 
-export const frequencyMultipliers: Record<Frequency, number> = {
-  'monthly': 1,
-  'weekly': 4.33,
-  'biweekly': 2.17,
-  'quarterly': 1/3,
-  'yearly': 1/12,
-  'one-time': 0,
+export const frequencyLabels: Record<Frequency, string> = {
+  'daily': 'Daily',
+  'weekly': 'Weekly',
+  'biweekly': 'Bi-weekly',
+  'monthly': 'Monthly',
+  'quarterly': 'Quarterly',
+  'yearly': 'Yearly',
+  'one-time': 'One-time',
 };

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Wallet, PiggyBank, BarChart3, Target, Settings, Power } from 'lucide-react';
+import { Home, Wallet, Receipt, LineChart, Target, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,9 +7,9 @@ import { useAuth } from '@/contexts/AuthContext';
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/sources', icon: Wallet, label: 'Income' },
-  { path: '/expenses', icon: PiggyBank, label: 'Expenses' },
+  { path: '/expenses', icon: Receipt, label: 'Expenses' },
   { path: '/goals', icon: Target, label: 'Budget' },
-  { path: '/settings', icon: Settings, label: 'Settings' },
+  { path: '/analytics', icon: LineChart, label: 'Analytics' },
 ];
 
 export function BottomNavigation() {
