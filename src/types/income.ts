@@ -11,7 +11,7 @@ export interface IncomeSource {
   name: string;
   amount: number;
   category: IncomeCategory;
-  frequency: 'monthly' | 'weekly' | 'biweekly' | 'yearly' | 'one-time';
+  frequency: 'daily' | 'monthly' | 'weekly' | 'biweekly' | 'yearly' | 'one-time';
   description?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -43,6 +43,7 @@ export const categoryColors: Record<IncomeCategory, string> = {
 };
 
 export const frequencyMultipliers: Record<IncomeSource['frequency'], number> = {
+  'daily': 30,
   'monthly': 1,
   'weekly': 4.33,
   'biweekly': 2.17,

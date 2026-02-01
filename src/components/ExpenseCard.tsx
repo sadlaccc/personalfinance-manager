@@ -1,4 +1,4 @@
-import { Expense, expenseCategoryLabels, expenseCategoryColors, frequencyMultipliers } from '@/types/expense';
+import { Expense, expenseCategoryLabels, expenseCategoryColors, frequencyLabels } from '@/types/expense';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MoreHorizontal, Edit, Trash2, ArrowDownCircle, Calendar } from 'lucide-react';
@@ -18,18 +18,11 @@ interface ExpenseCardProps {
 }
 
 export function ExpenseCard({ expense, onEdit, onDelete }: ExpenseCardProps) {
-  const monthlyAmount = expense.amount * frequencyMultipliers[expense.frequency];
   const formattedAmount = new Intl.NumberFormat('en-KE', {
     style: 'currency',
     currency: 'KES',
     minimumFractionDigits: 0,
   }).format(expense.amount);
-
-  const formattedMonthly = new Intl.NumberFormat('en-KE', {
-    style: 'currency',
-    currency: 'KES',
-    minimumFractionDigits: 0,
-  }).format(monthlyAmount);
 
   return (
     <Card className="group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300">
@@ -52,8 +45,8 @@ export function ExpenseCard({ expense, onEdit, onDelete }: ExpenseCardProps) {
                 )}>
                   {expenseCategoryLabels[expense.category]}
                 </span>
-                <span className="text-xs text-muted-foreground capitalize">
-                  {expense.frequency}
+                <span className="text-xs text-muted-foreground">
+                  {frequencyLabels[expense.frequency]}
                 </span>
               </div>
             </div>
@@ -92,11 +85,6 @@ export function ExpenseCard({ expense, onEdit, onDelete }: ExpenseCardProps) {
             <p className="text-2xl font-bold text-destructive">
               {formattedAmount}
             </p>
-            {expense.frequency !== 'monthly' && expense.frequency !== 'one-time' && (
-              <p className="text-sm text-muted-foreground">
-                {formattedMonthly}/mo
-              </p>
-            )}
           </div>
           <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
             <Calendar className="w-3.5 h-3.5" />

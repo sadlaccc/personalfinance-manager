@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Expense, ExpenseCategory, expenseCategoryLabels, Frequency } from '@/types/expense';
+import { Expense, ExpenseCategory, expenseCategoryLabels, Frequency, frequencyLabels } from '@/types/expense';
 import { ArrowDownCircle, DollarSign, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,7 @@ interface AddExpenseDialogProps {
 }
 
 const categories: ExpenseCategory[] = ['housing', 'utilities', 'food', 'transportation', 'healthcare', 'entertainment', 'shopping', 'debt', 'savings', 'other'];
-const frequencies: Frequency[] = ['monthly', 'weekly', 'biweekly', 'quarterly', 'yearly', 'one-time'];
+const frequencies: Frequency[] = ['daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly', 'one-time'];
 
 export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense }: AddExpenseDialogProps) {
   const [name, setName] = useState('');
@@ -168,7 +168,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
                 <SelectContent>
                   {frequencies.map((freq) => (
                     <SelectItem key={freq} value={freq}>
-                      {freq.charAt(0).toUpperCase() + freq.slice(1)}
+                      {frequencyLabels[freq]}
                     </SelectItem>
                   ))}
                 </SelectContent>
