@@ -18,10 +18,14 @@ import {
   Plus,
   ArrowRight,
   Loader2,
-  Wallet
+  Wallet,
+  ChevronLeft,
+  ChevronRight,
+  Calendar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { format, addMonths, subMonths } from 'date-fns';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,12 +41,20 @@ const itemVariants = {
 };
 
 const Dashboard = () => {
-  const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources();
-  const { stats: expenseStats, isLoading: expenseLoading } = useExpenses();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const selectedMonth = selectedDate.getMonth();
+  const selectedYear = selectedDate.getFullYear();
+
+  const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { stats: expenseStats, isLoading: expenseLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
   const { formatAmount, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
+
+  const handlePrevMonth = () => setSelectedDate(prev => subMonths(prev, 1));
+  const handleNextMonth = () => setSelectedDate(prev => addMonths(prev, 1));
+  const handleCurrentMonth = () => setSelectedDate(new Date());
 
   const handleEdit = (income: IncomeSource) => {
     setEditingIncome(income);
@@ -90,6 +102,7 @@ const Dashboard = () => {
   const netMonthly = incomeStats.totalMonthly - expenseStats.totalMonthly;
   const netYearly = incomeStats.totalYearly - expenseStats.totalYearly;
   const isLoading = incomeLoading || expenseLoading || profileLoading;
+  const isCurrentMonth = selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear();
 
   if (isLoading) {
     return (
@@ -106,9 +119,37 @@ const Dashboard = () => {
       animate="visible"
       className="space-y-4"
     >
-      {/* Greeting Widget */}
-      <motion.div variants={itemVariants}>
+      {/* Month Selector & Greeting */}
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <GreetingWidget />
+        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handlePrevMonth}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <button
+            onClick={handleCurrentMonth}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[140px] justify-center"
+          >
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium">
+              {format(selectedDate, 'MMMM yyyy')}
+            </span>
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handleNextMonth}
+            disabled={isCurrentMonth}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}

@@ -3,20 +3,37 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
 import { Expense, ExpenseCategory, ExpenseStats } from '@/types/expense';
+import { startOfMonth, endOfMonth, format } from 'date-fns';
 
-export function useExpenses() {
+interface UseExpensesOptions {
+  month?: number; // 0-11
+  year?: number;
+}
+
+export function useExpenses(options?: UseExpensesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Default to current month/year if not specified
+  const now = new Date();
+  const selectedMonth = options?.month ?? now.getMonth();
+  const selectedYear = options?.year ?? now.getFullYear();
 
   const { data: expenses = [], isLoading } = useQuery({
-    queryKey: ['expenses', user?.id],
+    queryKey: ['expenses', user?.id, selectedMonth, selectedYear],
     queryFn: async () => {
       if (!user) return [];
+      
+      // Calculate date range for the selected month
+      const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
+      const monthEnd = endOfMonth(new Date(selectedYear, selectedMonth));
       
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
-        .order('created_at', { ascending: false });
+        .gte('date', format(monthStart, 'yyyy-MM-dd'))
+        .lte('date', format(monthEnd, 'yyyy-MM-dd'))
+        .order('date', { ascending: false });
 
       if (error) throw error;
       return data as Expense[];
@@ -110,6 +127,8 @@ export function useExpenses() {
     expenses,
     stats,
     isLoading,
+    selectedMonth,
+    selectedYear,
     addExpense: addMutation.mutateAsync,
     updateExpense: (id: string, updates: Partial<Omit<Expense, 'id' | 'user_id' | 'created_at'>>) => 
       updateMutation.mutateAsync({ id, updates }),

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Wallet, Receipt, LineChart, Target, Power } from 'lucide-react';
+import { Home, Wallet, Receipt, LineChart, Target, Settings, Power } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,8 +8,8 @@ const navItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
   { path: '/sources', icon: Wallet, label: 'Income' },
   { path: '/expenses', icon: Receipt, label: 'Expenses' },
-  { path: '/goals', icon: Target, label: 'Budget' },
   { path: '/analytics', icon: LineChart, label: 'Analytics' },
+  { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function BottomNavigation() {
@@ -62,10 +62,10 @@ export function BottomNavigation() {
         {/* Power/Logout button on right corner */}
         <button
           onClick={() => signOut()}
-          className="flex flex-col items-center justify-center gap-0.5 w-12 h-full transition-all duration-200 active:scale-95 touch-manipulation group"
+          className="flex flex-col items-center justify-center gap-0.5 w-10 h-full transition-all duration-200 active:scale-95 touch-manipulation group"
         >
-          <div className="p-1.5 rounded-full bg-destructive/10 transition-all duration-200 group-hover:bg-destructive/20">
-            <Power className="h-4 w-4 text-destructive transition-colors" />
+          <div className="p-1 rounded-full bg-destructive/10 transition-all duration-200 group-hover:bg-destructive/20">
+            <Power className="h-3.5 w-3.5 text-destructive transition-colors" />
           </div>
         </button>
       </div>
