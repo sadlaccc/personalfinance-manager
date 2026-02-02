@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
-import { IncomeCategory, frequencyMultipliers } from '@/types/income';
+import { IncomeCategory } from '@/types/income';
 import { Frequency } from '@/types/expense';
+import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 export interface IncomeSource {
   id: string;
@@ -25,19 +26,35 @@ export interface IncomeStats {
   sourceCount: number;
 }
 
-export function useIncomeSources() {
+interface UseIncomeSourcesOptions {
+  month?: number; // 0-11
+  year?: number;
+}
+
+export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Default to current month/year if not specified
+  const now = new Date();
+  const selectedMonth = options?.month ?? now.getMonth();
+  const selectedYear = options?.year ?? now.getFullYear();
 
   const { data: incomeSources = [], isLoading } = useQuery({
-    queryKey: ['income-sources', user?.id],
+    queryKey: ['income-sources', user?.id, selectedMonth, selectedYear],
     queryFn: async () => {
       if (!user) return [];
+      
+      // Calculate date range for the selected month
+      const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
+      const monthEnd = endOfMonth(new Date(selectedYear, selectedMonth));
       
       const { data, error } = await supabase
         .from('income_sources')
         .select('*')
-        .order('created_at', { ascending: false });
+        .gte('date', format(monthStart, 'yyyy-MM-dd'))
+        .lte('date', format(monthEnd, 'yyyy-MM-dd'))
+        .order('date', { ascending: false });
 
       if (error) throw error;
       return data as IncomeSource[];
@@ -109,10 +126,10 @@ export function useIncomeSources() {
 
     let totalMonthly = 0;
 
+    // Calculate all income at full amount for the month
     incomeSources.forEach(source => {
-      const monthlyAmount = source.amount * frequencyMultipliers[source.frequency];
-      totalMonthly += monthlyAmount;
-      byCategory[source.category] += monthlyAmount;
+      totalMonthly += source.amount;
+      byCategory[source.category] += source.amount;
     });
 
     return {
@@ -127,6 +144,8 @@ export function useIncomeSources() {
     incomeSources,
     stats,
     isLoading,
+    selectedMonth,
+    selectedYear,
     addIncomeSource: addMutation.mutateAsync,
     updateIncomeSource: (id: string, updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>>) => 
       updateMutation.mutateAsync({ id, updates }),

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useExpenses } from '@/hooks/useExpenses';
 import { Expense, ExpenseCategory, expenseCategoryLabels } from '@/types/expense';
-import { Plus, Search, Filter, Loader2 } from 'lucide-react';
+import { Plus, Search, Filter, Loader2, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { format, addMonths, subMonths } from 'date-fns';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,12 +30,21 @@ const itemVariants = {
 };
 
 const Expenses = () => {
-  const { expenses, addExpense, updateExpense, deleteExpense, isLoading } = useExpenses();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const selectedMonth = selectedDate.getMonth();
+  const selectedYear = selectedDate.getFullYear();
+
+  const { expenses, addExpense, updateExpense, deleteExpense, isLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<ExpenseCategory[]>([]);
+
+  const handlePrevMonth = () => setSelectedDate(prev => subMonths(prev, 1));
+  const handleNextMonth = () => setSelectedDate(prev => addMonths(prev, 1));
+  const handleCurrentMonth = () => setSelectedDate(new Date());
+  const isCurrentMonth = selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear();
 
   const handleEdit = (expense: Expense) => {
     setEditingExpense(expense);
@@ -102,15 +112,47 @@ const Expenses = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      {/* Month Selector */}
+      <div className="flex items-center justify-center sm:justify-start">
+        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handlePrevMonth}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <button
+            onClick={handleCurrentMonth}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[140px] justify-center"
+          >
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium">
+              {format(selectedDate, 'MMMM yyyy')}
+            </span>
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg"
+            onClick={handleNextMonth}
+            disabled={isCurrentMonth}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h2 className="font-display text-2xl font-bold text-foreground">
-            All Expenses
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+            Expenses
           </h2>
-          <p className="text-muted-foreground">
-            {expenses.length} total expense{expenses.length !== 1 ? 's' : ''}
+          <p className="text-sm text-muted-foreground">
+            {expenses.length} expense{expenses.length !== 1 ? 's' : ''} in {format(selectedDate, 'MMMM')}
           </p>
         </div>
         <Button 
