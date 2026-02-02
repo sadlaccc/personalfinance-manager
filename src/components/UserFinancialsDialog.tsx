@@ -22,13 +22,14 @@ interface UserFinancialsDialogProps {
   userName: string | null;
 }
 
-const frequencyMultipliers: Record<string, number> = {
-  daily: 30,
-  weekly: 4,
-  biweekly: 2,
-  monthly: 1,
-  quarterly: 1 / 3,
-  yearly: 1 / 12,
+const frequencyLabels: Record<string, string> = {
+  daily: 'Daily',
+  weekly: 'Weekly',
+  biweekly: 'Bi-weekly',
+  monthly: 'Monthly',
+  quarterly: 'Quarterly',
+  yearly: 'Yearly',
+  'one-time': 'One-time',
 };
 
 const categoryColors: Record<string, string> = {
@@ -61,6 +62,7 @@ export function UserFinancialsDialog({
   const handlePreviousMonth = () => setSelectedMonth(prev => subMonths(prev, 1));
   const handleNextMonth = () => setSelectedMonth(prev => addMonths(prev, 1));
 
+  // Filter expenses by selected month
   const monthlyExpenses = useMemo(() => {
     return expenses.filter(expense => {
       const expenseDate = new Date(expense.date);
@@ -68,12 +70,17 @@ export function UserFinancialsDialog({
     });
   }, [expenses, selectedMonth]);
 
-  const stats = useMemo(() => {
-    const totalMonthlyIncome = income.reduce((sum, i) => {
-      const multiplier = frequencyMultipliers[i.frequency] || 1;
-      return sum + (i.amount * multiplier);
-    }, 0);
+  // Filter income by selected month
+  const monthlyIncome = useMemo(() => {
+    return income.filter(source => {
+      const incomeDate = new Date(source.created_at);
+      return isSameMonth(incomeDate, selectedMonth);
+    });
+  }, [income, selectedMonth]);
 
+  const stats = useMemo(() => {
+    // Sum actual income recorded in the month
+    const totalMonthlyIncome = monthlyIncome.reduce((sum, i) => sum + i.amount, 0);
     const totalMonthlyExpenses = monthlyExpenses.reduce((sum, e) => sum + e.amount, 0);
     const netIncome = totalMonthlyIncome - totalMonthlyExpenses;
 
@@ -82,7 +89,7 @@ export function UserFinancialsDialog({
       totalExpenses: totalMonthlyExpenses,
       netIncome,
     };
-  }, [income, monthlyExpenses]);
+  }, [monthlyIncome, monthlyExpenses]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -178,7 +185,7 @@ export function UserFinancialsDialog({
                   Expenses ({monthlyExpenses.length})
                 </TabsTrigger>
                 <TabsTrigger value="income">
-                  Income Sources ({income.length})
+                  Income ({monthlyIncome.length})
                 </TabsTrigger>
               </TabsList>
 
@@ -209,8 +216,8 @@ export function UserFinancialsDialog({
                             <p className="font-semibold text-red-500">
                               -KES {expense.amount.toLocaleString()}
                             </p>
-                            <p className="text-xs text-muted-foreground capitalize">
-                              {expense.frequency}
+                            <p className="text-xs text-muted-foreground">
+                              {frequencyLabels[expense.frequency] || expense.frequency}
                             </p>
                           </div>
                         </div>
@@ -227,9 +234,9 @@ export function UserFinancialsDialog({
 
               <TabsContent value="income">
                 <ScrollArea className="h-[300px]">
-                  {income.length > 0 ? (
+                  {monthlyIncome.length > 0 ? (
                     <div className="space-y-2 pr-4">
-                      {income.map((source) => (
+                      {monthlyIncome.map((source) => (
                         <div 
                           key={source.id} 
                           className="flex items-center justify-between p-3 rounded-lg border bg-card"
@@ -247,8 +254,8 @@ export function UserFinancialsDialog({
                             <p className="font-semibold text-green-500">
                               +KES {source.amount.toLocaleString()}
                             </p>
-                            <p className="text-xs text-muted-foreground capitalize">
-                              {source.frequency}
+                            <p className="text-xs text-muted-foreground">
+                              {frequencyLabels[source.frequency] || source.frequency}
                             </p>
                           </div>
                         </div>
@@ -257,7 +264,7 @@ export function UserFinancialsDialog({
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-12">
                       <TrendingUp className="h-12 w-12 mb-2 opacity-50" />
-                      <p>No income sources found</p>
+                      <p>No income for {format(selectedMonth, 'MMMM yyyy')}</p>
                     </div>
                   )}
                 </ScrollArea>

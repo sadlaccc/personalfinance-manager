@@ -51,12 +51,20 @@ const EXPENSE_COLORS: Record<ExpenseCategory, string> = {
 };
 
 const Analytics = () => {
-  const { stats: incomeStats, incomeSources, isLoading: incomeLoading } = useIncomeSources();
-  const { expenses, isLoading: expenseLoading } = useExpenses();
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   
   const currentMonth = getMonth(selectedMonth) + 1;
   const currentYear = getYear(selectedMonth);
+  
+  // Pass month/year to filter income by selected month
+  const { stats: incomeStats, incomeSources, isLoading: incomeLoading } = useIncomeSources({
+    month: selectedMonth.getMonth(),
+    year: selectedMonth.getFullYear()
+  });
+  const { expenses, isLoading: expenseLoading } = useExpenses({
+    month: selectedMonth.getMonth(),
+    year: selectedMonth.getFullYear()
+  });
   const { budgets, upsertBudget, copyFromMonth, isUpdating, isCopying } = useCategoryBudgets(currentMonth, currentYear);
 
   const isLoading = incomeLoading || expenseLoading;
@@ -100,32 +108,15 @@ const Analytics = () => {
     };
   }, [monthlyExpenses]);
 
-  // Get historical data for the last 6 months
+  // Historical data shows current month stats for the selected period
   const historicalData = useMemo(() => {
-    const months = [];
-    for (let i = 5; i >= 0; i--) {
-      const monthDate = subMonths(selectedMonth, i);
-      const monthStart = startOfMonth(monthDate);
-      const monthEnd = endOfMonth(monthDate);
-      
-      const monthExpenses = expenses.filter(expense => {
-        const expenseDate = parseISO(expense.date);
-        return expenseDate >= monthStart && expenseDate <= monthEnd;
-      });
-
-      // Count expenses at their full amount for the month they were paid
-      const expenseTotal = monthExpenses.reduce((sum, expense) => {
-        return sum + expense.amount;
-      }, 0);
-
-      months.push({
-        name: format(monthDate, 'MMM'),
-        income: Math.round(incomeStats.totalMonthly),
-        expenses: Math.round(expenseTotal),
-      });
-    }
-    return months;
-  }, [expenses, selectedMonth, incomeStats.totalMonthly]);
+    // For historical trend, show the current month's income vs expenses
+    return [{
+      name: format(selectedMonth, 'MMM'),
+      income: Math.round(incomeStats.totalMonthly),
+      expenses: Math.round(monthlyExpenseStats.totalMonthly),
+    }];
+  }, [selectedMonth, incomeStats.totalMonthly, monthlyExpenseStats.totalMonthly]);
 
   // Income category breakdown data
   const incomeCategoryData = Object.entries(incomeStats.byCategory)
