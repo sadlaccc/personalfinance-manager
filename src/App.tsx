@@ -20,6 +20,7 @@ import Pricing from "./pages/Pricing";
 import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/AdminDashboard";
+ import BusinessAdminDashboard from "./pages/BusinessAdminDashboard";
 import { Loader2 } from "lucide-react";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ function AppRoutes() {
                 <Route path="/analytics" element={<Analytics />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                 <Route path="/business-admin" element={<BusinessAdminDashboard />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
