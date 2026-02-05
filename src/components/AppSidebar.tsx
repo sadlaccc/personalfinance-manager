@@ -10,7 +10,8 @@ import {
   Target,
   LogOut,
   X,
-  Shield
+   Shield,
+   Building2
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -31,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserRole } from '@/hooks/useUserRole';
+ import { useSubscription } from '@/hooks/useSubscription';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -49,7 +51,13 @@ export function AppSidebar() {
   const { signOut, user } = useAuth();
   const isMobile = useIsMobile();
   const { isAdmin } = useUserRole();
+   const { subscription } = useSubscription();
   const isCollapsed = state === 'collapsed';
+ 
+   // Check if user has business-tier plan
+   const isBusinessPlan = subscription?.plan_type === 'business' || 
+                          subscription?.plan_type === 'enterprise' || 
+                          subscription?.plan_type === 'team';
 
   const handleNavClick = () => {
     if (isMobile) {
@@ -148,6 +156,35 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+ 
+         {/* Business Admin Section - Only visible for business plan subscribers */}
+         {isBusinessPlan && !isAdmin && (
+           <SidebarGroup>
+             <SidebarGroupLabel className={cn(
+               "text-xs font-medium text-muted-foreground uppercase tracking-wider",
+               isCollapsed && "sr-only"
+             )}>
+               Business
+             </SidebarGroupLabel>
+             <SidebarGroupContent>
+               <SidebarMenu>
+                 <SidebarMenuItem>
+                   <SidebarMenuButton asChild tooltip="Business Dashboard">
+                     <NavLink 
+                       to="/business-admin"
+                       onClick={handleNavClick}
+                       className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                       activeClassName="bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md hover:from-amber-500 hover:to-orange-500 hover:text-white"
+                     >
+                       <Building2 className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                       {!isCollapsed && <span className="font-medium text-sm sm:text-base">Business Dashboard</span>}
+                     </NavLink>
+                   </SidebarMenuButton>
+                 </SidebarMenuItem>
+               </SidebarMenu>
+             </SidebarGroupContent>
+           </SidebarGroup>
+         )}
 
         <SidebarGroup className="mt-auto">
           <SidebarGroupLabel className={cn(
