@@ -1,4 +1,3 @@
- import { useState } from 'react';
  import { useQuery } from '@tanstack/react-query';
  import { supabase } from '@/integrations/supabase/client';
  import { useAuth } from '@/contexts/AuthContext';
@@ -14,17 +13,19 @@
    Mail, 
    Building2,
    Crown,
-   Search,
    RefreshCw,
  } from 'lucide-react';
  import { format } from 'date-fns';
  import { toast } from 'sonner';
  import { Navigate } from 'react-router-dom';
+ import { InviteTeamMemberDialog } from '@/components/InviteTeamMemberDialog';
+ import { CompanySettingsDialog } from '@/components/CompanySettingsDialog';
+ import { ManagePermissionsDialog } from '@/components/ManagePermissionsDialog';
+ import { SendTeamDigestDialog } from '@/components/SendTeamDigestDialog';
  
  export default function BusinessAdminDashboard() {
    const { user } = useAuth();
    const { subscription, isLoading: subLoading } = useSubscription();
-   const [searchTerm, setSearchTerm] = useState('');
  
    // Check if user has business plan
    const isBusinessPlan = subscription?.plan_type === 'business' || subscription?.plan_type === 'enterprise' || subscription?.plan_type === 'team';
@@ -60,13 +61,30 @@
      enabled: !!user && isBusinessPlan,
    });
  
+   // Fetch team members count
+   const { data: teamMembersCount = 0 } = useQuery({
+     queryKey: ['team-members-count', user?.id],
+     queryFn: async () => {
+       if (!user) return 0;
+       const { count, error } = await supabase
+         .from('team_members')
+         .select('*', { count: 'exact', head: true })
+         .eq('team_owner_id', user.id)
+         .neq('status', 'revoked');
+ 
+       if (error) return 0;
+       return count || 0;
+     },
+     enabled: !!user && isBusinessPlan,
+   });
+ 
    // Redirect if not on business plan
    if (!subLoading && !isBusinessPlan) {
      return <Navigate to="/dashboard" replace />;
    }
  
    const maxTeamSize = subscription?.plan_type === 'business' ? 20 : subscription?.plan_type === 'enterprise' ? 999 : 5;
-   const currentTeamSize = 1; // For now, just the owner
+   const currentTeamSize = teamMembersCount + 1; // +1 for owner
  
    const handleExportReport = () => {
      const reportData = [
@@ -231,16 +249,6 @@
              </CardDescription>
            </CardHeader>
            <CardContent className="space-y-4">
-             <div className="relative">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-               <Input
-                 placeholder="Search team members..."
-                 value={searchTerm}
-                 onChange={(e) => setSearchTerm(e.target.value)}
-                 className="pl-9"
-               />
-             </div>
-             
              {/* Current user as team owner */}
              <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
                <div className="flex items-center gap-3">
@@ -258,10 +266,12 @@
                </Badge>
              </div>
  
-             <Button className="w-full" variant="outline" disabled>
-               <Users className="w-4 h-4 mr-2" />
-               Invite Team Member (Coming Soon)
-             </Button>
+             <InviteTeamMemberDialog maxTeamSize={maxTeamSize} currentTeamSize={currentTeamSize}>
+               <Button className="w-full" variant="outline">
+                 <Users className="w-4 h-4 mr-2" />
+                 Invite Team Member
+               </Button>
+             </InviteTeamMemberDialog>
            </CardContent>
          </Card>
  
@@ -280,18 +290,24 @@
                <Download className="w-4 h-4 mr-3" />
                Export Financial Report
              </Button>
-             <Button className="w-full justify-start" variant="outline" disabled>
-               <Mail className="w-4 h-4 mr-3" />
-               Send Team Digest (Coming Soon)
-             </Button>
-             <Button className="w-full justify-start" variant="outline" disabled>
-               <Users className="w-4 h-4 mr-3" />
-               Manage Permissions (Coming Soon)
-             </Button>
-             <Button className="w-full justify-start" variant="outline" disabled>
-               <Building2 className="w-4 h-4 mr-3" />
-               Company Settings (Coming Soon)
-             </Button>
+             <SendTeamDigestDialog teamStats={teamStats}>
+               <Button className="w-full justify-start" variant="outline">
+                 <Mail className="w-4 h-4 mr-3" />
+                 Send Team Digest
+               </Button>
+             </SendTeamDigestDialog>
+             <ManagePermissionsDialog>
+               <Button className="w-full justify-start" variant="outline">
+                 <Users className="w-4 h-4 mr-3" />
+                 Manage Permissions
+               </Button>
+             </ManagePermissionsDialog>
+             <CompanySettingsDialog>
+               <Button className="w-full justify-start" variant="outline">
+                 <Building2 className="w-4 h-4 mr-3" />
+                 Company Settings
+               </Button>
+             </CompanySettingsDialog>
            </CardContent>
          </Card>
        </div>

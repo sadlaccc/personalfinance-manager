@@ -80,6 +80,42 @@ export type Database = {
         }
         Relationships: []
       }
+      company_settings: {
+        Row: {
+          company_logo_url: string | null
+          company_name: string | null
+          created_at: string
+          currency: string | null
+          fiscal_year_start: number | null
+          id: string
+          industry: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_logo_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          currency?: string | null
+          fiscal_year_start?: number | null
+          id?: string
+          industry?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_logo_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          currency?: string | null
+          fiscal_year_start?: number | null
+          id?: string
+          industry?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -292,6 +328,45 @@ export type Database = {
           trial_ends_at?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          id: string
+          invited_at: string
+          member_email: string
+          member_user_id: string | null
+          role: string
+          status: string
+          team_owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invited_at?: string
+          member_email: string
+          member_user_id?: string | null
+          role?: string
+          status?: string
+          team_owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          invited_at?: string
+          member_email?: string
+          member_user_id?: string | null
+          role?: string
+          status?: string
+          team_owner_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
