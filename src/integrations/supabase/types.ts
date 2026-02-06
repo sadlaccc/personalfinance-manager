@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_id: string
+          category: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured: boolean
+          id: string
+          published: boolean
+          published_at: string | null
+          slug: string
+          title: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          author_id: string
+          category?: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          author_id?: string
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured?: boolean
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       budget_goals: {
         Row: {
           created_at: string
@@ -113,6 +161,39 @@ export type Database = {
           industry?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          read: boolean
+          replied: boolean
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          read?: boolean
+          replied?: boolean
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          read?: boolean
+          replied?: boolean
+          subject?: string
         }
         Relationships: []
       }
@@ -367,6 +448,39 @@ export type Database = {
           status?: string
           team_owner_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_feedback: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          page_url: string | null
+          rating: number | null
+          resolved: boolean
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          page_url?: string | null
+          rating?: number | null
+          resolved?: boolean
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          page_url?: string | null
+          rating?: number | null
+          resolved?: boolean
+          type?: string
+          user_id?: string | null
         }
         Relationships: []
       }

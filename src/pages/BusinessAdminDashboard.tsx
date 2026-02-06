@@ -83,7 +83,7 @@
      return <Navigate to="/dashboard" replace />;
    }
  
-   const maxTeamSize = subscription?.plan_type === 'business' ? 20 : subscription?.plan_type === 'enterprise' ? 999 : 5;
+   const maxTeamSize = subscription?.plan_type === 'business' ? 5 : subscription?.plan_type === 'enterprise' ? 999 : 2;
    const currentTeamSize = teamMembersCount + 1; // +1 for owner
  
    const handleExportReport = () => {
