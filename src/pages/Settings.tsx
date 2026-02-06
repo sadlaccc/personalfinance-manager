@@ -67,8 +67,8 @@ const Settings = () => {
     return 'U';
   };
 
-  const handleSaveProfile = (name: string) => {
-    updateProfile({ full_name: name }, {
+  const handleSaveProfile = (data: { name: string; phone?: string }) => {
+    updateProfile({ full_name: data.name, phone: data.phone }, {
       onSuccess: () => {
         setEditDialogOpen(false);
       },
@@ -333,6 +333,7 @@ const Settings = () => {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         currentName={profile?.full_name || null}
+        currentPhone={profile?.phone || null}
         onSave={handleSaveProfile}
         isLoading={isUpdating}
       />

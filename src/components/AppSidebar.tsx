@@ -38,8 +38,9 @@ const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Income Sources', url: '/sources', icon: Wallet },
   { title: 'Expenses', url: '/expenses', icon: ArrowDownCircle },
-  { title: 'Budget & Goals', url: '/goals', icon: Target },
-  { title: 'Analytics', url: '/analytics', icon: PieChart },
+  { title: 'Budgets', url: '/budget', icon: PieChart },
+  { title: 'Savings Goals', url: '/goals', icon: Target },
+  { title: 'Analytics', url: '/analytics', icon: TrendingUp },
 ];
 
 const secondaryNavItems = [

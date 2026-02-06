@@ -17,6 +17,9 @@ import { UserAnalyticsCharts } from '@/components/UserAnalyticsCharts';
 import { UserFinancialsDialog } from '@/components/UserFinancialsDialog';
 import { RoleManagementDialog } from '@/components/RoleManagementDialog';
 import { AdminSubscriptionDialog } from '@/components/AdminSubscriptionDialog';
+import { AdminBlogManager } from '@/components/AdminBlogManager';
+import { AdminContactMessages } from '@/components/AdminContactMessages';
+import { AdminFeedback } from '@/components/AdminFeedback';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -725,6 +728,13 @@ export default function AdminDashboard() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Blog, Contact Messages, and Feedback Sections */}
+        <motion.div variants={itemVariants} className="space-y-6">
+          <AdminBlogManager />
+          <AdminContactMessages />
+          <AdminFeedback />
+        </motion.div>
       </motion.div>
     </Layout>
   );

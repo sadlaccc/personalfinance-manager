@@ -16,7 +16,8 @@ interface EditProfileDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentName: string | null;
-  onSave: (name: string) => void;
+  currentPhone?: string | null;
+  onSave: (data: { name: string; phone?: string }) => void;
   isLoading: boolean;
 }
 
@@ -24,20 +25,23 @@ export function EditProfileDialog({
   open,
   onOpenChange,
   currentName,
+  currentPhone,
   onSave,
   isLoading,
 }: EditProfileDialogProps) {
   const [name, setName] = useState(currentName || '');
+  const [phone, setPhone] = useState(currentPhone || '');
 
   useEffect(() => {
     if (open) {
       setName(currentName || '');
+      setPhone(currentPhone || '');
     }
-  }, [open, currentName]);
+  }, [open, currentName, currentPhone]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(name);
+    onSave({ name, phone });
   };
 
   return (
@@ -58,6 +62,17 @@ export function EditProfileDialog({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your full name"
+                className="rounded-xl"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+254 7XX XXX XXX"
                 className="rounded-xl"
               />
             </div>
