@@ -5,7 +5,7 @@
  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
  import { Badge } from '@/components/ui/badge';
  import { Button } from '@/components/ui/button';
- import { Input } from '@/components/ui/input';
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
  import { 
    Users, 
    TrendingUp, 
@@ -14,6 +14,7 @@
    Building2,
    Crown,
    RefreshCw,
+   BarChart3,
  } from 'lucide-react';
  import { format } from 'date-fns';
  import { toast } from 'sonner';
@@ -22,6 +23,7 @@
  import { CompanySettingsDialog } from '@/components/CompanySettingsDialog';
  import { ManagePermissionsDialog } from '@/components/ManagePermissionsDialog';
  import { SendTeamDigestDialog } from '@/components/SendTeamDigestDialog';
+ import { TeamAnalyticsView } from '@/components/TeamAnalyticsView';
  
  export default function BusinessAdminDashboard() {
    const { user } = useAuth();
@@ -169,170 +171,187 @@
          </CardContent>
        </Card>
  
-       {/* Stats Grid */}
-       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-         <Card>
-           <CardContent className="p-4">
-             <div className="flex items-center justify-between">
-               <div>
-                 <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Income</p>
-                 <p className="text-xl md:text-2xl font-bold text-income mt-1">
-                   KSh {isLoading ? '...' : teamStats?.totalIncome?.toLocaleString() || 0}
-                 </p>
-               </div>
-               <div className="p-2 rounded-lg bg-income/10">
-                 <TrendingUp className="w-5 h-5 text-income" />
-               </div>
-             </div>
-           </CardContent>
-         </Card>
- 
-         <Card>
-           <CardContent className="p-4">
-             <div className="flex items-center justify-between">
-               <div>
-                 <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Expenses</p>
-                 <p className="text-xl md:text-2xl font-bold text-expense mt-1">
-                   KSh {isLoading ? '...' : teamStats?.totalExpenses?.toLocaleString() || 0}
-                 </p>
-               </div>
-               <div className="p-2 rounded-lg bg-expense/10">
-                 <TrendingUp className="w-5 h-5 text-expense rotate-180" />
-               </div>
-             </div>
-           </CardContent>
-         </Card>
- 
-         <Card>
-           <CardContent className="p-4">
-             <div className="flex items-center justify-between">
-               <div>
-                 <p className="text-xs text-muted-foreground uppercase tracking-wider">Net Income</p>
-                 <p className={`text-xl md:text-2xl font-bold mt-1 ${(teamStats?.netIncome || 0) >= 0 ? 'text-income' : 'text-expense'}`}>
-                   KSh {isLoading ? '...' : teamStats?.netIncome?.toLocaleString() || 0}
-                 </p>
-               </div>
-               <div className="p-2 rounded-lg bg-primary/10">
-                 <TrendingUp className="w-5 h-5 text-primary" />
-               </div>
-             </div>
-           </CardContent>
-         </Card>
- 
-         <Card>
-           <CardContent className="p-4">
-             <div className="flex items-center justify-between">
-               <div>
-                 <p className="text-xs text-muted-foreground uppercase tracking-wider">Goals Progress</p>
-                 <p className="text-xl md:text-2xl font-bold text-primary mt-1">
-                   {isLoading ? '...' : `${teamStats?.goalsProgress || 0}%`}
-                 </p>
-               </div>
-               <div className="p-2 rounded-lg bg-primary/10">
-                 <Users className="w-5 h-5 text-primary" />
-               </div>
-             </div>
-           </CardContent>
-         </Card>
-       </div>
- 
-       {/* Team Management Section */}
-       <div className="grid gap-6 lg:grid-cols-2">
-         <Card>
-           <CardHeader>
-             <CardTitle className="flex items-center gap-2">
-               <Users className="w-5 h-5" />
-               Team Members
-             </CardTitle>
-             <CardDescription>
-               Manage your team ({currentTeamSize}/{maxTeamSize === 999 ? '∞' : maxTeamSize} seats used)
-             </CardDescription>
-           </CardHeader>
-           <CardContent className="space-y-4">
-             {/* Current user as team owner */}
-             <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
-               <div className="flex items-center gap-3">
-                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-semibold">
-                   {user?.email?.charAt(0).toUpperCase()}
-                 </div>
-                 <div>
-                   <p className="font-medium">{user?.email}</p>
-                   <p className="text-xs text-muted-foreground">Account Owner</p>
-                 </div>
-               </div>
-               <Badge variant="outline" className="border-amber-500 text-amber-500">
-                 <Crown className="w-3 h-3 mr-1" />
-                 Owner
-               </Badge>
-             </div>
- 
-             <InviteTeamMemberDialog maxTeamSize={maxTeamSize} currentTeamSize={currentTeamSize}>
-               <Button className="w-full" variant="outline">
-                 <Users className="w-4 h-4 mr-2" />
-                 Invite Team Member
-               </Button>
-             </InviteTeamMemberDialog>
-           </CardContent>
-         </Card>
- 
-         <Card>
-           <CardHeader>
-             <CardTitle className="flex items-center gap-2">
-               <Mail className="w-5 h-5" />
-               Quick Actions
-             </CardTitle>
-             <CardDescription>
-               Common business management tasks
-             </CardDescription>
-           </CardHeader>
-           <CardContent className="space-y-3">
-             <Button className="w-full justify-start" variant="outline" onClick={handleExportReport}>
-               <Download className="w-4 h-4 mr-3" />
-               Export Financial Report
-             </Button>
-             <SendTeamDigestDialog teamStats={teamStats}>
-               <Button className="w-full justify-start" variant="outline">
-                 <Mail className="w-4 h-4 mr-3" />
-                 Send Team Digest
-               </Button>
-             </SendTeamDigestDialog>
-             <ManagePermissionsDialog>
-               <Button className="w-full justify-start" variant="outline">
-                 <Users className="w-4 h-4 mr-3" />
-                 Manage Permissions
-               </Button>
-             </ManagePermissionsDialog>
-             <CompanySettingsDialog>
-               <Button className="w-full justify-start" variant="outline">
-                 <Building2 className="w-4 h-4 mr-3" />
-                 Company Settings
-               </Button>
-             </CompanySettingsDialog>
-           </CardContent>
-         </Card>
-       </div>
- 
-       {/* Summary Cards */}
-       <div className="grid gap-4 md:grid-cols-3">
-         <Card>
-           <CardContent className="p-4 text-center">
-             <p className="text-3xl font-bold text-primary">{teamStats?.incomeCount || 0}</p>
-             <p className="text-sm text-muted-foreground mt-1">Income Sources</p>
-           </CardContent>
-         </Card>
-         <Card>
-           <CardContent className="p-4 text-center">
-             <p className="text-3xl font-bold text-primary">{teamStats?.expenseCount || 0}</p>
-             <p className="text-sm text-muted-foreground mt-1">Expense Records</p>
-           </CardContent>
-         </Card>
-         <Card>
-           <CardContent className="p-4 text-center">
-             <p className="text-3xl font-bold text-primary">{teamStats?.totalGoals || 0}</p>
-             <p className="text-sm text-muted-foreground mt-1">Budget Goals</p>
-           </CardContent>
-         </Card>
-       </div>
-     </div>
-   );
- }
+        {/* Tabs for Overview and Analytics */}
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="overview" className="gap-2">
+              <Users className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Team Analytics
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Income</p>
+                      <p className="text-lg md:text-xl font-bold text-income mt-1">
+                        KSh {isLoading ? '...' : teamStats?.totalIncome?.toLocaleString() || 0}
+                      </p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-income/10">
+                      <TrendingUp className="w-4 h-4 text-income" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Total Expenses</p>
+                      <p className="text-lg md:text-xl font-bold text-expense mt-1">
+                        KSh {isLoading ? '...' : teamStats?.totalExpenses?.toLocaleString() || 0}
+                      </p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-expense/10">
+                      <TrendingUp className="w-4 h-4 text-expense rotate-180" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Net Income</p>
+                      <p className={`text-lg md:text-xl font-bold mt-1 ${(teamStats?.netIncome || 0) >= 0 ? 'text-income' : 'text-expense'}`}>
+                        KSh {isLoading ? '...' : teamStats?.netIncome?.toLocaleString() || 0}
+                      </p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Goals Progress</p>
+                      <p className="text-lg md:text-xl font-bold text-primary mt-1">
+                        {isLoading ? '...' : `${teamStats?.goalsProgress || 0}%`}
+                      </p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Users className="w-4 h-4 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Team Management Section */}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Users className="w-4 h-4" />
+                    Team Members
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    {currentTeamSize}/{maxTeamSize === 999 ? '∞' : maxTeamSize} seats used
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {/* Current user as team owner */}
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-semibold text-sm">
+                        {user?.email?.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm truncate max-w-[150px]">{user?.email}</p>
+                        <p className="text-xs text-muted-foreground">Owner</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      <Crown className="w-3 h-3 mr-1" />
+                      Owner
+                    </Badge>
+                  </div>
+
+                  <InviteTeamMemberDialog maxTeamSize={maxTeamSize} currentTeamSize={currentTeamSize}>
+                    <Button className="w-full" variant="outline" size="sm">
+                      <Users className="w-4 h-4 mr-2" />
+                      Invite Member
+                    </Button>
+                  </InviteTeamMemberDialog>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Mail className="w-4 h-4" />
+                    Quick Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <Button className="w-full justify-start" variant="outline" size="sm" onClick={handleExportReport}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Report
+                  </Button>
+                  <SendTeamDigestDialog teamStats={teamStats}>
+                    <Button className="w-full justify-start" variant="outline" size="sm">
+                      <Mail className="w-4 h-4 mr-2" />
+                      Send Digest
+                    </Button>
+                  </SendTeamDigestDialog>
+                  <ManagePermissionsDialog>
+                    <Button className="w-full justify-start" variant="outline" size="sm">
+                      <Users className="w-4 h-4 mr-2" />
+                      Permissions
+                    </Button>
+                  </ManagePermissionsDialog>
+                  <CompanySettingsDialog>
+                    <Button className="w-full justify-start" variant="outline" size="sm">
+                      <Building2 className="w-4 h-4 mr-2" />
+                      Settings
+                    </Button>
+                  </CompanySettingsDialog>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid gap-3 grid-cols-3">
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-2xl font-bold text-primary">{teamStats?.incomeCount || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Income Sources</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-2xl font-bold text-primary">{teamStats?.expenseCount || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Expenses</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-3 text-center">
+                  <p className="text-2xl font-bold text-primary">{teamStats?.totalGoals || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Goals</p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <TeamAnalyticsView />
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
