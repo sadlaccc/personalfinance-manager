@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   Wallet, 
   ArrowRight,
@@ -13,77 +16,54 @@ import {
   User
 } from 'lucide-react';
 
-const blogPosts = [
-  {
-    id: 1,
-    title: '10 Simple Ways to Save Money This Month',
-    excerpt: 'Discover practical tips to cut expenses and boost your savings without sacrificing your lifestyle.',
-    category: 'Savings',
-    author: 'IncomeFlow Team',
-    date: '2026-01-20',
-    readTime: '5 min read',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Understanding Your Spending Patterns',
-    excerpt: 'Learn how to analyze your expenses and identify areas where you can optimize your budget.',
-    category: 'Budgeting',
-    author: 'IncomeFlow Team',
-    date: '2026-01-15',
-    readTime: '7 min read',
-    featured: false,
-  },
-  {
-    id: 3,
-    title: 'Setting Financial Goals That Actually Work',
-    excerpt: 'A comprehensive guide to creating SMART financial goals and staying motivated to achieve them.',
-    category: 'Goals',
-    author: 'IncomeFlow Team',
-    date: '2026-01-10',
-    readTime: '6 min read',
-    featured: false,
-  },
-  {
-    id: 4,
-    title: 'The Beginner\'s Guide to Personal Finance',
-    excerpt: 'Everything you need to know to start managing your money like a pro, even with no prior experience.',
-    category: 'Getting Started',
-    author: 'IncomeFlow Team',
-    date: '2026-01-05',
-    readTime: '10 min read',
-    featured: true,
-  },
-  {
-    id: 5,
-    title: 'How to Build an Emergency Fund',
-    excerpt: 'Why you need an emergency fund and step-by-step instructions to build one that protects your future.',
-    category: 'Savings',
-    author: 'IncomeFlow Team',
-    date: '2025-12-28',
-    readTime: '8 min read',
-    featured: false,
-  },
-  {
-    id: 6,
-    title: 'Tracking Expenses: Manual vs Automatic',
-    excerpt: 'Compare different expense tracking methods and find the one that works best for your lifestyle.',
-    category: 'Budgeting',
-    author: 'IncomeFlow Team',
-    date: '2025-12-20',
-    readTime: '4 min read',
-    featured: false,
-  },
-];
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  category: string;
+  slug: string;
+  published: boolean;
+  featured: boolean;
+  published_at: string | null;
+  created_at: string;
+  views: number;
+}
 
 const categoryColors: Record<string, string> = {
   'Savings': 'bg-success/10 text-success',
   'Budgeting': 'bg-primary/10 text-primary',
   'Goals': 'bg-accent/10 text-accent',
   'Getting Started': 'bg-ticket/10 text-ticket',
+  'General': 'bg-muted text-muted-foreground',
+  'Tips': 'bg-income/10 text-income',
+  'News': 'bg-expense/10 text-expense',
+};
+
+// Estimate read time based on content length
+const estimateReadTime = (content: string): string => {
+  const wordsPerMinute = 200;
+  const words = content.split(/\s+/).length;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} min read`;
 };
 
 export default function Blog() {
+  // Fetch published blog posts from database
+  const { data: blogPosts = [], isLoading } = useQuery({
+    queryKey: ['public-blog-posts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('published', true)
+        .order('published_at', { ascending: false });
+
+      if (error) throw error;
+      return data as BlogPost[];
+    },
+  });
+
   const featuredPosts = blogPosts.filter(post => post.featured);
   const regularPosts = blogPosts.filter(post => !post.featured);
 
@@ -130,7 +110,7 @@ export default function Blog() {
         </header>
 
         {/* Hero */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-muted/30">
+        <section className="py-8 sm:py-12 bg-muted/30">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -138,18 +118,49 @@ export default function Blog() {
               transition={{ duration: 0.5 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-                IncomeFlow Blog
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
+                FedhaFlow Blog
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-muted-foreground">
                 Tips, guides, and insights to help you master your personal finances.
               </p>
             </motion.div>
           </div>
         </section>
 
+        {/* Loading State */}
+        {isLoading && (
+          <section className="py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-6 w-full mt-2" />
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && blogPosts.length === 0 && (
+          <section className="py-16">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <p className="text-muted-foreground">No blog posts yet. Check back soon!</p>
+            </div>
+          </section>
+        )}
+
         {/* Featured Posts */}
-        {featuredPosts.length > 0 && (
+        {!isLoading && featuredPosts.length > 0 && (
           <section className="py-12">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="font-display text-2xl font-bold mb-6">Featured</h2>
@@ -178,7 +189,7 @@ export default function Blog() {
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {new Date(post.date).toLocaleDateString('en-US', { 
+                            {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric', 
                               year: 'numeric' 
@@ -186,7 +197,7 @@ export default function Blog() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
-                            {post.readTime}
+                            {estimateReadTime(post.content)}
                           </div>
                         </div>
                       </CardContent>
@@ -199,11 +210,12 @@ export default function Blog() {
         )}
 
         {/* All Posts */}
-        <section className="py-12 bg-muted/30">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="font-display text-2xl font-bold mb-6">All Posts</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularPosts.map((post, index) => (
+        {!isLoading && regularPosts.length > 0 && (
+          <section className="py-12 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="font-display text-2xl font-bold mb-6">All Posts</h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {regularPosts.map((post, index) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -224,14 +236,14 @@ export default function Blog() {
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          {new Date(post.date).toLocaleDateString('en-US', { 
+                          {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', { 
                             month: 'short', 
                             day: 'numeric'
                           })}
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {post.readTime}
+                          {estimateReadTime(post.content)}
                         </div>
                       </div>
                     </CardContent>
@@ -241,23 +253,24 @@ export default function Blog() {
             </div>
           </div>
         </section>
+        )}
 
         {/* CTA */}
-        <section className="py-16 bg-gradient-to-r from-primary to-accent">
+        <section className="py-12 bg-gradient-to-r from-primary to-accent">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-primary-foreground mb-4">
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-primary-foreground mb-3">
                 Ready to Take Control?
               </h2>
-              <p className="text-primary-foreground/80 mb-6 max-w-lg mx-auto">
-                Start your financial journey today with IncomeFlow.
+              <p className="text-primary-foreground/80 mb-4 max-w-lg mx-auto text-sm">
+                Start your financial journey today with FedhaFlow.
               </p>
               <Link to="/auth">
-                <Button size="lg" variant="secondary">
+                <Button size="default" variant="secondary">
                   Get Started Free
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -267,9 +280,9 @@ export default function Blog() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 border-t border-border">
+        <footer className="py-6 border-t border-border">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} IncomeFlow. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} FedhaFlow. All rights reserved.</p>
           </div>
         </footer>
       </div>
