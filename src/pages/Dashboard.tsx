@@ -117,10 +117,10 @@ const Dashboard = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4"
+      className="space-y-6"
     >
       {/* Month Selector & Greeting */}
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <GreetingWidget />
         <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
           <Button
@@ -153,7 +153,7 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Monthly Income"
           value={formatAmount(incomeStats.totalMonthly)}
@@ -184,9 +184,9 @@ const Dashboard = () => {
         />
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Income Sources */}
-        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-3">
+        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-lg sm:text-xl font-bold text-foreground">
@@ -220,21 +220,21 @@ const Dashboard = () => {
           </div>
 
           {recentSources.length === 0 ? (
-            <div className="bg-card border border-border rounded-2xl p-6 sm:p-12 text-center">
-              <div className="bg-secondary w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+            <div className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center">
+              <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-income" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2 text-sm sm:text-base">
+              <h3 className="font-semibold text-foreground mb-2 text-base">
                 No income sources yet
               </h3>
-              <p className="text-muted-foreground mb-4 text-xs sm:text-sm">
-                Start tracking your income
+              <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
+                Start tracking your earnings by adding your first income source
               </p>
               <Button 
-                size="sm"
                 onClick={() => setDialogOpen(true)}
-                className="rounded-xl bg-gradient-income hover:opacity-90 text-xs sm:text-sm"
+                className="rounded-xl bg-gradient-income hover:opacity-90"
               >
+                <Plus className="w-4 h-4 mr-2" />
                 Add Your First Income
               </Button>
             </div>
@@ -259,33 +259,32 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Chart, Subscription and Notifications */}
-        <motion.div variants={itemVariants} className="space-y-3">
+        <motion.div variants={itemVariants} className="space-y-4">
           <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
-          
           {/* Quick Stats */}
           <div className="bg-card border border-border rounded-xl p-4">
-            <h3 className="font-display font-semibold text-foreground mb-3 text-sm">
+            <h3 className="font-display font-semibold text-foreground mb-4 text-sm">
               Budget Overview
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Total Income</span>
-                <span className="text-xs font-medium text-income">
+                <span className="text-sm text-muted-foreground">Total Income</span>
+                <span className="text-sm font-medium text-income">
                   +{formatAmount(incomeStats.totalMonthly)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Total Expenses</span>
-                <span className="text-xs font-medium text-destructive">
+                <span className="text-sm text-muted-foreground">Total Expenses</span>
+                <span className="text-sm font-medium text-destructive">
                   -{formatAmount(expenseStats.totalMonthly)}
                 </span>
               </div>
-              <div className="border-t border-border pt-2">
+              <div className="border-t border-border pt-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-foreground">Net Balance</span>
-                  <span className={`text-xs font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
+                  <span className="text-sm font-medium text-foreground">Net Balance</span>
+                  <span className={`text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
                     {netMonthly >= 0 ? '+' : ''}{formatAmount(netMonthly)}
                   </span>
                 </div>

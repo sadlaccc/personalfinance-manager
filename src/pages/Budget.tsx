@@ -113,23 +113,27 @@ const Budget = () => {
       className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Monthly Budgets</h1>
-          <p className="text-muted-foreground text-sm">Set and track your spending limits</p>
+      <motion.div variants={itemVariants} className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-display text-2xl font-bold text-foreground">Monthly Budgets</h1>
+            <p className="text-muted-foreground text-sm">Set and track your spending limits</p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <CopyBudgetDialog
+              currentMonth={currentMonth}
+              currentYear={currentYear}
+              onCopy={copyFromMonth}
+              isCopying={isCopying}
+            />
+            <SetBudgetDialog 
+              onSubmit={upsertBudget} 
+              existingBudgets={budgets} 
+              isUpdating={isUpdating}
+            />
+          </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <CopyBudgetDialog
-            currentMonth={currentMonth}
-            currentYear={currentYear}
-            onCopy={copyFromMonth}
-            isCopying={isCopying}
-          />
-          <SetBudgetDialog 
-            onSubmit={upsertBudget} 
-            existingBudgets={budgets} 
-            isUpdating={isUpdating}
-          />
+        <div className="flex items-center justify-center sm:justify-start">
           <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={handlePreviousMonth}>
               <ChevronLeft className="h-4 w-4" />
@@ -237,12 +241,16 @@ const Budget = () => {
 
       {/* Budget Cards Grid */}
       {budgets.length === 0 ? (
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-12 text-center">
-          <div className="bg-secondary w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <PiggyBank className="w-8 h-8 text-muted-foreground" />
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <PiggyBank className="w-8 h-8 text-primary" />
           </div>
-          <h3 className="font-semibold text-foreground mb-2">No budgets set for {format(selectedMonth, 'MMMM')}</h3>
-          <p className="text-muted-foreground mb-4">Set category budgets to track your spending limits</p>
+          <h3 className="font-semibold text-foreground mb-2">
+            No budgets set for {format(selectedMonth, 'MMMM')}
+          </h3>
+          <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
+            Set category budgets to track your spending limits and stay on top of your finances
+          </p>
           <SetBudgetDialog onSubmit={upsertBudget} existingBudgets={budgets} isUpdating={isUpdating} />
         </motion.div>
       ) : (

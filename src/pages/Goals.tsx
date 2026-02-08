@@ -189,21 +189,22 @@ const Goals = () => {
       {goals.length === 0 ? (
         <motion.div 
           variants={itemVariants}
-          className="bg-card border border-border rounded-2xl p-12 text-center"
+          className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center"
         >
-          <div className="bg-secondary w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Target className="w-8 h-8 text-muted-foreground" />
+          <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Target className="w-8 h-8 text-income" />
           </div>
           <h3 className="font-semibold text-foreground mb-2">
             No savings goals yet
           </h3>
-          <p className="text-muted-foreground mb-4">
-            Create your first goal to start tracking your savings
+          <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
+            Set financial goals to track your progress and stay motivated on your savings journey
           </p>
           <Button 
             onClick={() => setDialogOpen(true)}
             className="rounded-xl bg-gradient-income hover:opacity-90"
           >
+            <Plus className="w-4 h-4 mr-2" />
             Create Your First Goal
           </Button>
         </motion.div>

@@ -203,12 +203,29 @@ const Sources = () => {
 
       {/* Sources Grid */}
       {filteredSources.length === 0 ? (
-        <div className="bg-card border border-border rounded-2xl p-12 text-center">
-          <p className="text-muted-foreground">
+        <div className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center">
+          <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-income" />
+          </div>
+          <h3 className="font-semibold text-foreground mb-2">
             {searchQuery || selectedCategories.length > 0
-              ? 'No income sources match your filters'
-              : 'No income sources yet. Add your first one!'}
+              ? 'No matching sources'
+              : 'No income sources yet'}
+          </h3>
+          <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
+            {searchQuery || selectedCategories.length > 0
+              ? 'Try adjusting your search or filters'
+              : 'Add your first income source to start tracking your earnings'}
           </p>
+          {!(searchQuery || selectedCategories.length > 0) && (
+            <Button 
+              onClick={() => setDialogOpen(true)}
+              className="rounded-xl bg-gradient-income hover:opacity-90 gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Income Source
+            </Button>
+          )}
         </div>
       ) : (
         <motion.div
