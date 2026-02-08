@@ -203,12 +203,29 @@ const Expenses = () => {
 
       {/* Expenses Grid */}
       {filteredExpenses.length === 0 ? (
-        <div className="bg-card border border-border rounded-2xl p-12 text-center">
-          <p className="text-muted-foreground">
+        <div className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center">
+          <div className="bg-gradient-to-br from-destructive/20 to-destructive/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-destructive" />
+          </div>
+          <h3 className="font-semibold text-foreground mb-2">
             {searchQuery || selectedCategories.length > 0
-              ? 'No expenses match your filters'
-              : 'No expenses yet. Add your first one!'}
+              ? 'No matching expenses'
+              : 'No expenses yet'}
+          </h3>
+          <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
+            {searchQuery || selectedCategories.length > 0
+              ? 'Try adjusting your search or filters'
+              : 'Start tracking your spending by adding your first expense'}
           </p>
+          {!(searchQuery || selectedCategories.length > 0) && (
+            <Button 
+              onClick={() => setDialogOpen(true)}
+              className="rounded-xl bg-destructive hover:bg-destructive/90 gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Expense
+            </Button>
+          )}
         </div>
       ) : (
         <motion.div
