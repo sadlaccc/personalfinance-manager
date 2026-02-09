@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { PiggyBank, Loader2, ChevronLeft, ChevronRight, Calendar, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react';
+import { PiggyBank, Loader2, ChevronLeft, ChevronRight, Calendar, AlertTriangle, CheckCircle, TrendingUp, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { SetBudgetDialog } from '@/components/SetBudgetDialog';
+import { EditBudgetDialog } from '@/components/EditBudgetDialog';
 import { CopyBudgetDialog } from '@/components/CopyBudgetDialog';
 import { useCategoryBudgets } from '@/hooks/useCategoryBudgets';
 import { useExpenses } from '@/hooks/useExpenses';
@@ -38,12 +39,20 @@ const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   other: 'bg-slate-500',
 };
 
+interface Budget {
+  id: string;
+  category: string;
+  budget_amount: number;
+}
+
 const Budget = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const currentMonth = getMonth(selectedMonth) + 1;
   const currentYear = getYear(selectedMonth);
 
-  const { budgets, upsertBudget, copyFromMonth, isUpdating, isCopying, isLoading: budgetsLoading } = useCategoryBudgets(currentMonth, currentYear);
+  const { budgets, upsertBudget, deleteBudget, copyFromMonth, isUpdating, isCopying, isLoading: budgetsLoading } = useCategoryBudgets(currentMonth, currentYear);
   const { expenses, isLoading: expensesLoading } = useExpenses({
     month: selectedMonth.getMonth(),
     year: selectedMonth.getFullYear()
@@ -96,6 +105,15 @@ const Budget = () => {
   const handlePreviousMonth = () => setSelectedMonth(prev => subMonths(prev, 1));
   const handleNextMonth = () => setSelectedMonth(prev => addMonths(prev, 1));
   const handleCurrentMonth = () => setSelectedMonth(new Date());
+
+  const handleEditBudget = (budget: Budget) => {
+    setEditingBudget(budget);
+    setEditDialogOpen(true);
+  };
+
+  const handleDeleteBudget = async (id: string) => {
+    await deleteBudget(id);
+  };
 
   if (isLoading) {
     return (
@@ -161,58 +179,58 @@ const Budget = () => {
       </motion.div>
 
       {/* Summary Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="bg-gradient-to-br from-primary/5 to-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-primary/10 rounded-lg">
-                <PiggyBank className="w-5 h-5 text-primary" />
+                <PiggyBank className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
               <span className="text-xs text-muted-foreground">Total Budget</span>
             </div>
-            <p className="text-xl font-bold text-foreground">
+            <p className="text-lg sm:text-xl font-bold text-foreground">
               KSh {summaryStats.totalBudget.toLocaleString()}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-destructive/5 to-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-destructive/10 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-destructive" />
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
               </div>
               <span className="text-xs text-muted-foreground">Total Spent</span>
             </div>
-            <p className="text-xl font-bold text-destructive">
+            <p className="text-lg sm:text-xl font-bold text-destructive">
               KSh {summaryStats.totalSpent.toLocaleString()}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className={`bg-gradient-to-br ${summaryStats.remaining >= 0 ? 'from-income/5' : 'from-destructive/5'} to-card`}>
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <div className={`p-2 rounded-lg ${summaryStats.remaining >= 0 ? 'bg-income/10' : 'bg-destructive/10'}`}>
-                <CheckCircle className={`w-5 h-5 ${summaryStats.remaining >= 0 ? 'text-income' : 'text-destructive'}`} />
+                <CheckCircle className={`w-4 h-4 sm:w-5 sm:h-5 ${summaryStats.remaining >= 0 ? 'text-income' : 'text-destructive'}`} />
               </div>
               <span className="text-xs text-muted-foreground">Remaining</span>
             </div>
-            <p className={`text-xl font-bold ${summaryStats.remaining >= 0 ? 'text-income' : 'text-destructive'}`}>
+            <p className={`text-lg sm:text-xl font-bold ${summaryStats.remaining >= 0 ? 'text-income' : 'text-destructive'}`}>
               KSh {Math.abs(summaryStats.remaining).toLocaleString()}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gradient-to-br from-category-rental/5 to-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-category-rental/10 rounded-lg">
-                <AlertTriangle className="w-5 h-5 text-category-rental" />
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-category-rental" />
               </div>
               <span className="text-xs text-muted-foreground">Over Budget</span>
             </div>
-            <p className="text-xl font-bold text-foreground">
+            <p className="text-lg sm:text-xl font-bold text-foreground">
               {summaryStats.overBudgetCount} / {budgets.length}
             </p>
           </CardContent>
@@ -221,10 +239,10 @@ const Budget = () => {
 
       {/* Overall Progress */}
       {budgets.length > 0 && (
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-semibold text-foreground">Overall Budget Usage</h2>
-            <span className={`text-xl font-bold ${summaryStats.utilizationRate > 100 ? 'text-destructive' : 'text-primary'}`}>
+            <h2 className="font-display font-semibold text-foreground text-sm sm:text-base">Overall Budget Usage</h2>
+            <span className={`text-lg sm:text-xl font-bold ${summaryStats.utilizationRate > 100 ? 'text-destructive' : 'text-primary'}`}>
               {summaryStats.utilizationRate.toFixed(0)}%
             </span>
           </div>
@@ -232,7 +250,7 @@ const Budget = () => {
             value={Math.min(summaryStats.utilizationRate, 100)} 
             className={`h-3 ${summaryStats.utilizationRate > 100 ? '[&>div]:bg-destructive' : summaryStats.utilizationRate > 80 ? '[&>div]:bg-yellow-500' : '[&>div]:bg-income'}`}
           />
-          <div className="flex justify-between text-sm text-muted-foreground mt-2">
+          <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mt-2">
             <span>KSh {summaryStats.totalSpent.toLocaleString()} spent</span>
             <span>KSh {summaryStats.totalBudget.toLocaleString()} budgeted</span>
           </div>
@@ -263,29 +281,46 @@ const Budget = () => {
             const remaining = budget.budget_amount - spent;
 
             return (
-              <Card key={budget.id} className="overflow-hidden">
+              <Card 
+                key={budget.id} 
+                className="overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                onClick={() => handleEditBudget(budget)}
+              >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-medium flex items-center gap-2">
                       <div className={`w-3 h-3 rounded-full ${CATEGORY_COLORS[budget.category as ExpenseCategory] || 'bg-gray-500'}`} />
                       {expenseCategoryLabels[budget.category as ExpenseCategory] || budget.category}
                     </CardTitle>
-                    {isOverBudget ? (
-                      <Badge variant="destructive" className="text-xs">
-                        <AlertTriangle className="h-3 w-3 mr-1" />
-                        Over Budget
-                      </Badge>
-                    ) : isNearLimit ? (
-                      <Badge variant="secondary" className="text-xs bg-yellow-500/20 text-yellow-600">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        Near Limit
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-600">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        On Track
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {isOverBudget ? (
+                        <Badge variant="destructive" className="text-xs">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          Over
+                        </Badge>
+                      ) : isNearLimit ? (
+                        <Badge variant="secondary" className="text-xs bg-yellow-500/20 text-yellow-600">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          Near
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-600">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          OK
+                        </Badge>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditBudget(budget);
+                        }}
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -312,6 +347,16 @@ const Budget = () => {
           })}
         </motion.div>
       )}
+
+      {/* Edit Budget Dialog */}
+      <EditBudgetDialog
+        budget={editingBudget}
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onUpdate={upsertBudget}
+        onDelete={handleDeleteBudget}
+        isUpdating={isUpdating}
+      />
     </motion.div>
   );
 };

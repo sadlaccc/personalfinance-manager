@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ExpenseCard } from '@/components/ExpenseCard';
+import { ExpenseSummaryCard } from '@/components/ExpenseSummaryCard';
 import { AddExpenseDialog } from '@/components/AddExpenseDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,40 +113,8 @@ const Expenses = () => {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Month Selector */}
-      <div className="flex items-center justify-center sm:justify-start">
-        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={handlePrevMonth}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <button
-            onClick={handleCurrentMonth}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[140px] justify-center"
-          >
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">
-              {format(selectedDate, 'MMMM yyyy')}
-            </span>
-          </button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={handleNextMonth}
-            disabled={isCurrentMonth}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Header */}
+    <div className="space-y-6">
+      {/* Header with Month Selector */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
@@ -155,14 +124,47 @@ const Expenses = () => {
             {expenses.length} expense{expenses.length !== 1 ? 's' : ''} in {format(selectedDate, 'MMMM')}
           </p>
         </div>
-        <Button 
-          onClick={() => setDialogOpen(true)}
-          className="rounded-xl bg-destructive hover:bg-destructive/90 transition-opacity gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Add Expense
-        </Button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-lg"
+              onClick={handlePrevMonth}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <button
+              onClick={handleCurrentMonth}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[120px] justify-center"
+            >
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">
+                {format(selectedDate, 'MMM yyyy')}
+              </span>
+            </button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-lg"
+              onClick={handleNextMonth}
+              disabled={isCurrentMonth}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <Button 
+            onClick={() => setDialogOpen(true)}
+            className="rounded-xl bg-destructive hover:bg-destructive/90 transition-opacity gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Add Expense</span>
+          </Button>
+        </div>
       </div>
+
+      {/* Summary Card */}
+      <ExpenseSummaryCard expenses={expenses} selectedDate={selectedDate} />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">

@@ -101,25 +101,25 @@ const footerLinks = {
   product: [
     { label: 'Features', href: '#features' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Security', href: '#' },
-    { label: 'Roadmap', href: '#' },
+    { label: 'Security', href: '/about' },
+    { label: 'Roadmap', href: '/about' },
   ],
   company: [
     { label: 'About', href: '/about' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Careers', href: '#' },
+    { label: 'Careers', href: '/contact' },
     { label: 'Contact', href: '/contact' },
   ],
   resources: [
-    { label: 'Help Center', href: '#' },
-    { label: 'Community', href: '#' },
-    { label: 'Guides', href: '#' },
-    { label: 'API Docs', href: '#' },
+    { label: 'Help Center', href: '/contact' },
+    { label: 'Community', href: '/blog' },
+    { label: 'Guides', href: '/blog' },
+    { label: 'API Docs', href: '/contact' },
   ],
   legal: [
-    { label: 'Privacy', href: '#' },
-    { label: 'Terms', href: '#' },
-    { label: 'Cookies', href: '#' },
+    { label: 'Privacy', href: '/about' },
+    { label: 'Terms', href: '/about' },
+    { label: 'Cookies', href: '/about' },
   ],
 };
 
