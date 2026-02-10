@@ -95,29 +95,40 @@ export default function BlogPost() {
     }
   };
 
+  // Strip markdown bold/italic markers from text
+  const cleanMarkdown = (text: string) => {
+    return text
+      .replace(/\*\*\*(.*?)\*\*\*/g, '$1')
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      .replace(/_(.*?)_/g, '$1');
+  };
+
   // Render markdown-like content with simple formatting
   const renderContent = (content: string) => {
     const paragraphs = content.split('\n\n');
     return paragraphs.map((paragraph, index) => {
+      const cleaned = cleanMarkdown(paragraph);
       // Handle headers
       if (paragraph.startsWith('# ')) {
         return (
           <h1 key={index} className="text-2xl sm:text-3xl font-bold text-foreground mt-8 mb-4">
-            {paragraph.slice(2)}
+            {cleanMarkdown(paragraph.slice(2))}
           </h1>
         );
       }
       if (paragraph.startsWith('## ')) {
         return (
           <h2 key={index} className="text-xl sm:text-2xl font-semibold text-foreground mt-6 mb-3">
-            {paragraph.slice(3)}
+            {cleanMarkdown(paragraph.slice(3))}
           </h2>
         );
       }
       if (paragraph.startsWith('### ')) {
         return (
           <h3 key={index} className="text-lg sm:text-xl font-semibold text-foreground mt-5 mb-2">
-            {paragraph.slice(4)}
+            {cleanMarkdown(paragraph.slice(4))}
           </h3>
         );
       }
@@ -127,7 +138,7 @@ export default function BlogPost() {
         return (
           <ul key={index} className="list-disc list-inside space-y-2 my-4 text-muted-foreground">
             {items.map((item, i) => (
-              <li key={i} className="leading-relaxed">{item.slice(2)}</li>
+              <li key={i} className="leading-relaxed">{cleanMarkdown(item.slice(2))}</li>
             ))}
           </ul>
         );
@@ -138,7 +149,7 @@ export default function BlogPost() {
         return (
           <ol key={index} className="list-decimal list-inside space-y-2 my-4 text-muted-foreground">
             {items.map((item, i) => (
-              <li key={i} className="leading-relaxed">{item.replace(/^\d+\.\s*/, '')}</li>
+              <li key={i} className="leading-relaxed">{cleanMarkdown(item.replace(/^\d+\.\s*/, ''))}</li>
             ))}
           </ol>
         );
@@ -146,7 +157,7 @@ export default function BlogPost() {
       // Regular paragraphs
       return (
         <p key={index} className="text-muted-foreground leading-relaxed my-4">
-          {paragraph}
+          {cleaned}
         </p>
       );
     });

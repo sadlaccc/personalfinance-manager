@@ -62,21 +62,28 @@ const getGreetingData = () => {
 export function GreetingWidget({ className }: GreetingWidgetProps) {
   const { user } = useAuth();
   const { profile } = useProfile();
-  const [isVisible, setIsVisible] = useState(true);
+  
+  // Only show greeting once per login session
+  const [isVisible, setIsVisible] = useState(() => {
+    const shown = sessionStorage.getItem('greeting_shown');
+    return !shown;
+  });
   
   const greetingData = useMemo(() => getGreetingData(), []);
   const Icon = greetingData.icon;
   
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
 
-  // Auto-hide after 8 seconds
+  // Auto-hide after 8 seconds and mark as shown
   useEffect(() => {
+    if (!isVisible) return;
+    sessionStorage.setItem('greeting_shown', 'true');
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 8000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isVisible]);
 
   return (
     <AnimatePresence>
