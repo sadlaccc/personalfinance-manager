@@ -5,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { TrendingUp, TrendingDown, Wallet, BarChart3 } from 'lucide-react';
 import { IncomeSource } from '@/hooks/useIncomeSources';
 import { Expense } from '@/types/expense';
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, subDays } from 'date-fns';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subDays } from 'date-fns';
 
 interface FinancialSummaryCardProps {
   incomeSources: IncomeSource[];
@@ -14,13 +14,14 @@ interface FinancialSummaryCardProps {
   formatAmount: (amount: number) => string;
 }
 
-type PeriodOption = 'month' | 'week' | '7days' | '30days' | 'all';
+type PeriodOption = 'month' | 'week' | '7days' | '30days' | 'year' | 'all';
 
 const periodLabels: Record<PeriodOption, string> = {
   month: 'This Month',
   week: 'This Week',
   '7days': 'Last 7 Days',
   '30days': 'Last 30 Days',
+  year: 'This Year',
   all: 'All',
 };
 
@@ -38,6 +39,8 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
           return d >= subDays(now, 7) && d <= now;
         case '30days':
           return d >= subDays(now, 30) && d <= now;
+        case 'year':
+          return d >= startOfYear(now) && d <= endOfYear(now);
         case 'all':
           return true;
         case 'month':

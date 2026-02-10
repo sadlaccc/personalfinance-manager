@@ -3,20 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingDown, TrendingUp, Receipt, PieChart, CalendarDays } from 'lucide-react';
 import { Expense, ExpenseCategory, expenseCategoryLabels } from '@/types/expense';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, subDays } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subDays } from 'date-fns';
 
 interface ExpenseSummaryCardProps {
   expenses: Expense[];
   selectedDate: Date;
 }
 
-type PeriodOption = 'month' | 'week' | '7days' | '30days' | 'all';
+type PeriodOption = 'month' | 'week' | '7days' | '30days' | 'year' | 'all';
 
 const periodLabels: Record<PeriodOption, string> = {
   month: 'This Month',
   week: 'This Week',
   '7days': 'Last 7 Days',
   '30days': 'Last 30 Days',
+  year: 'This Year',
   all: 'All Time',
 };
 
@@ -47,6 +48,8 @@ export function ExpenseSummaryCard({ expenses, selectedDate }: ExpenseSummaryCar
           return expDate >= subDays(now, 7) && expDate <= now;
         case '30days':
           return expDate >= subDays(now, 30) && expDate <= now;
+        case 'year':
+          return expDate >= startOfYear(now) && expDate <= endOfYear(now);
         case 'all':
           return true;
         case 'month':
