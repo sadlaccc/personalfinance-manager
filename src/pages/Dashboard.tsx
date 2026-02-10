@@ -4,7 +4,7 @@ import { StatsCard } from '@/components/StatsCard';
 import { IncomeCard } from '@/components/IncomeCard';
 import { IncomeChart } from '@/components/IncomeChart';
 import { AddIncomeDialog } from '@/components/AddIncomeDialog';
-
+import { FinancialSummaryCard } from '@/components/FinancialSummaryCard';
 import { GreetingWidget } from '@/components/GreetingWidget';
 import { SubscriptionCard } from '@/components/SubscriptionCard';
 import { Button } from '@/components/ui/button';
@@ -46,7 +46,7 @@ const Dashboard = () => {
   const selectedYear = selectedDate.getFullYear();
 
   const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
-  const { stats: expenseStats, isLoading: expenseLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
+  const { expenses, stats: expenseStats, isLoading: expenseLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
   const { formatAmount, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -181,6 +181,16 @@ const Dashboard = () => {
           subtitle="Net savings"
           icon={<DollarSign className="w-5 h-5" />}
           variant="primary"
+        />
+      </motion.div>
+
+      {/* Financial Summary with Period Selector */}
+      <motion.div variants={itemVariants}>
+        <FinancialSummaryCard
+          incomeSources={incomeSources}
+          expenses={expenses}
+          selectedDate={selectedDate}
+          formatAmount={formatAmount}
         />
       </motion.div>
 
