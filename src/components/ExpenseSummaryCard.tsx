@@ -1,13 +1,24 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingDown, TrendingUp, Receipt, PieChart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TrendingDown, TrendingUp, Receipt, PieChart, CalendarDays } from 'lucide-react';
 import { Expense, ExpenseCategory, expenseCategoryLabels } from '@/types/expense';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, subDays } from 'date-fns';
 
 interface ExpenseSummaryCardProps {
   expenses: Expense[];
   selectedDate: Date;
 }
+
+type PeriodOption = 'month' | 'week' | '7days' | '30days' | 'all';
+
+const periodLabels: Record<PeriodOption, string> = {
+  month: 'This Month',
+  week: 'This Week',
+  '7days': 'Last 7 Days',
+  '30days': 'Last 30 Days',
+  all: 'All Time',
+};
 
 const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   housing: 'bg-blue-500',
@@ -23,29 +34,48 @@ const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
 };
 
 export function ExpenseSummaryCard({ expenses, selectedDate }: ExpenseSummaryCardProps) {
+  const [period, setPeriod] = useState<PeriodOption>('month');
+
+  const filteredExpenses = useMemo(() => {
+    const now = new Date();
+    return expenses.filter(exp => {
+      const expDate = new Date(exp.date);
+      switch (period) {
+        case 'week':
+          return expDate >= startOfWeek(now, { weekStartsOn: 1 }) && expDate <= endOfWeek(now, { weekStartsOn: 1 });
+        case '7days':
+          return expDate >= subDays(now, 7) && expDate <= now;
+        case '30days':
+          return expDate >= subDays(now, 30) && expDate <= now;
+        case 'all':
+          return true;
+        case 'month':
+        default:
+          return expDate >= startOfMonth(selectedDate) && expDate <= endOfMonth(selectedDate);
+      }
+    });
+  }, [expenses, period, selectedDate]);
+
   const summary = useMemo(() => {
-    const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-    const count = expenses.length;
+    const total = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const count = filteredExpenses.length;
     const average = count > 0 ? total / count : 0;
 
-    // Group by category
     const byCategory: Record<string, number> = {};
-    expenses.forEach(exp => {
+    filteredExpenses.forEach(exp => {
       byCategory[exp.category] = (byCategory[exp.category] || 0) + exp.amount;
     });
 
-    // Sort categories by amount
     const sortedCategories = Object.entries(byCategory)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 4);
 
-    // Find highest expense
-    const highest = expenses.length > 0 
-      ? expenses.reduce((max, exp) => exp.amount > max.amount ? exp : max, expenses[0])
+    const highest = filteredExpenses.length > 0
+      ? filteredExpenses.reduce((max, exp) => exp.amount > max.amount ? exp : max, filteredExpenses[0])
       : null;
 
     return { total, count, average, sortedCategories, highest };
-  }, [expenses]);
+  }, [filteredExpenses]);
 
   if (expenses.length === 0) {
     return null;
@@ -54,12 +84,27 @@ export function ExpenseSummaryCard({ expenses, selectedDate }: ExpenseSummaryCar
   return (
     <Card className="bg-gradient-to-br from-destructive/5 via-card to-card border-destructive/20">
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium flex items-center gap-2">
-          <div className="p-1.5 bg-destructive/10 rounded-lg">
-            <PieChart className="h-4 w-4 text-destructive" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <div className="p-1.5 bg-destructive/10 rounded-lg">
+              <PieChart className="h-4 w-4 text-destructive" />
+            </div>
+            Expense Summary
+          </CardTitle>
+          <div className="flex items-center gap-1 flex-wrap">
+            {(Object.keys(periodLabels) as PeriodOption[]).map((opt) => (
+              <Button
+                key={opt}
+                variant={period === opt ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 text-xs rounded-lg px-2.5"
+                onClick={() => setPeriod(opt)}
+              >
+                {periodLabels[opt]}
+              </Button>
+            ))}
           </div>
-          {format(selectedDate, 'MMMM yyyy')} Summary
-        </CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Stats Grid */}
@@ -136,6 +181,12 @@ export function ExpenseSummaryCard({ expenses, selectedDate }: ExpenseSummaryCar
                 KSh {summary.highest.amount.toLocaleString()}
               </span>
             </div>
+          </div>
+        )}
+
+        {filteredExpenses.length === 0 && (
+          <div className="text-center py-4 text-sm text-muted-foreground">
+            No expenses found for this period
           </div>
         )}
       </CardContent>
