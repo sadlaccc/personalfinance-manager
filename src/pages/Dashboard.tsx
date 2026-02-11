@@ -176,9 +176,9 @@ const Dashboard = () => {
           variant={netMonthly >= 0 ? 'income' : 'destructive'}
         />
         <StatsCard
-          title="Yearly Projection"
-          value={`${netYearly >= 0 ? '+' : ''}${formatAmount(Math.abs(netYearly))}`}
-          subtitle="Net savings"
+          title="Savings Rate"
+          value={`${incomeStats.totalMonthly > 0 ? Math.round(((incomeStats.totalMonthly - expenseStats.totalMonthly) / incomeStats.totalMonthly) * 100) : 0}%`}
+          subtitle={`${incomeStats.sourceCount} source${incomeStats.sourceCount !== 1 ? 's' : ''}`}
           icon={<DollarSign className="w-5 h-5" />}
           variant="primary"
         />
