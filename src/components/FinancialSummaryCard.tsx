@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, Wallet, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, BarChart3, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { IncomeSource } from '@/hooks/useIncomeSources';
 import { Expense } from '@/types/expense';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subDays } from 'date-fns';
@@ -74,7 +74,7 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
   const hasData = summary.incomeCount > 0 || summary.expenseCount > 0;
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 via-card to-card border-primary/20">
+    <Card className="border-border/50 shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <CardTitle className="text-base font-medium flex items-center gap-2">
@@ -87,9 +87,13 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
             {(Object.keys(periodLabels) as PeriodOption[]).map((opt) => (
               <Button
                 key={opt}
-                variant={period === opt ? 'default' : 'ghost'}
+                variant={period === opt ? 'default' : 'outline'}
                 size="sm"
-                className="h-7 text-xs rounded-lg px-2.5"
+                className={`h-7 text-xs rounded-full px-3 ${
+                  period === opt 
+                    ? 'bg-primary text-primary-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
                 onClick={() => setPeriod(opt)}
               >
                 {periodLabels[opt]}
@@ -100,53 +104,79 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasData ? (
-          <div className="text-center py-4 text-sm text-muted-foreground">
+          <div className="text-center py-6 text-sm text-muted-foreground">
             No financial data for this period
           </div>
         ) : (
           <>
-            {/* Income vs Expense bars */}
+            {/* Income vs Expense */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-income" />
-                  <span className="text-xs text-muted-foreground">Income ({summary.incomeCount})</span>
+              <div className="p-4 rounded-xl bg-income/5 border border-income/15 space-y-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <ArrowUpRight className="h-4 w-4 text-income" />
+                  <span className="text-xs font-medium text-muted-foreground">Income ({summary.incomeCount})</span>
                 </div>
-                <p className="text-lg font-bold text-income">{formatAmount(summary.totalIncome)}</p>
+                <p className="text-xl font-bold text-income">{formatAmount(summary.totalIncome)}</p>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <TrendingDown className="h-4 w-4 text-destructive" />
-                  <span className="text-xs text-muted-foreground">Expenses ({summary.expenseCount})</span>
+              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/15 space-y-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <ArrowDownRight className="h-4 w-4 text-destructive" />
+                  <span className="text-xs font-medium text-muted-foreground">Expenses ({summary.expenseCount})</span>
                 </div>
-                <p className="text-lg font-bold text-destructive">{formatAmount(summary.totalExpenses)}</p>
+                <p className="text-xl font-bold text-destructive">{formatAmount(summary.totalExpenses)}</p>
               </div>
             </div>
 
             {/* Expense ratio bar */}
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Expense-to-Income Ratio</span>
-                <span className="font-medium">{summary.expenseRatio.toFixed(0)}%</span>
+                <span className="text-muted-foreground font-medium">Expense-to-Income Ratio</span>
+                <span className={`font-semibold ${
+                  summary.expenseRatio > 90 ? 'text-destructive' : 
+                  summary.expenseRatio > 70 ? 'text-warning' : 'text-income'
+                }`}>
+                  {summary.expenseRatio.toFixed(0)}%
+                </span>
               </div>
-              <Progress value={summary.expenseRatio} className="h-2" />
+              <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    summary.expenseRatio > 90 ? 'bg-destructive' :
+                    summary.expenseRatio > 70 ? 'bg-warning' : 'bg-income'
+                  }`}
+                  style={{ width: `${Math.min(summary.expenseRatio, 100)}%` }}
+                />
+              </div>
             </div>
 
             {/* Net & Savings */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-background/50 rounded-xl text-center">
-                <Wallet className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-                <p className={`text-base font-bold ${summary.net >= 0 ? 'text-income' : 'text-destructive'}`}>
+              <div className={`p-4 rounded-xl text-center border ${
+                summary.net >= 0 
+                  ? 'bg-income/5 border-income/15' 
+                  : 'bg-destructive/5 border-destructive/15'
+              }`}>
+                <Wallet className="h-5 w-5 mx-auto mb-1.5 text-muted-foreground" />
+                <p className={`text-lg font-bold ${summary.net >= 0 ? 'text-income' : 'text-destructive'}`}>
                   {summary.net >= 0 ? '+' : ''}{formatAmount(summary.net)}
                 </p>
-                <p className="text-xs text-muted-foreground">Net Balance</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Net Balance</p>
               </div>
-              <div className="p-3 bg-background/50 rounded-xl text-center">
-                <TrendingUp className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-                <p className={`text-base font-bold ${summary.savingsRate >= 20 ? 'text-income' : summary.savingsRate > 0 ? 'text-warning' : 'text-destructive'}`}>
+              <div className={`p-4 rounded-xl text-center border ${
+                summary.savingsRate >= 20 
+                  ? 'bg-income/5 border-income/15' 
+                  : summary.savingsRate > 0 
+                    ? 'bg-warning/5 border-warning/15' 
+                    : 'bg-destructive/5 border-destructive/15'
+              }`}>
+                <TrendingUp className="h-5 w-5 mx-auto mb-1.5 text-muted-foreground" />
+                <p className={`text-lg font-bold ${
+                  summary.savingsRate >= 20 ? 'text-income' : 
+                  summary.savingsRate > 0 ? 'text-warning' : 'text-destructive'
+                }`}>
                   {summary.savingsRate.toFixed(0)}%
                 </p>
-                <p className="text-xs text-muted-foreground">Savings Rate</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Savings Rate</p>
               </div>
             </div>
           </>
