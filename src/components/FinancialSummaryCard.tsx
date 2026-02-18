@@ -1,8 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, Wallet, BarChart3, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, Wallet, BarChart3, ArrowUpRight, ArrowDownRight, PiggyBank } from 'lucide-react';
 import { IncomeSource } from '@/hooks/useIncomeSources';
 import { Expense } from '@/types/expense';
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, startOfYear, endOfYear, subDays } from 'date-fns';
@@ -74,10 +73,10 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
   const hasData = summary.incomeCount > 0 || summary.expenseCount > 0;
 
   return (
-    <Card className="border-border/50 shadow-sm">
-      <CardHeader className="pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <CardTitle className="text-base font-medium flex items-center gap-2">
+    <Card className="border-border/50 shadow-sm overflow-hidden">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <CardTitle className="text-base font-semibold flex items-center gap-2.5">
             <div className="p-1.5 bg-primary/10 rounded-lg">
               <BarChart3 className="h-4 w-4 text-primary" />
             </div>
@@ -87,12 +86,12 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
             {(Object.keys(periodLabels) as PeriodOption[]).map((opt) => (
               <Button
                 key={opt}
-                variant={period === opt ? 'default' : 'outline'}
+                variant={period === opt ? 'default' : 'ghost'}
                 size="sm"
                 className={`h-7 text-xs rounded-full px-3 ${
                   period === opt 
                     ? 'bg-primary text-primary-foreground shadow-sm' 
-                    : 'text-muted-foreground hover:text-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
                 }`}
                 onClick={() => setPeriod(opt)}
               >
@@ -104,23 +103,36 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
       </CardHeader>
       <CardContent className="space-y-4">
         {!hasData ? (
-          <div className="text-center py-6 text-sm text-muted-foreground">
-            No financial data for this period
+          <div className="relative overflow-hidden text-center py-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
+            <div className="relative z-10">
+              <div className="bg-gradient-to-br from-primary/15 to-primary/5 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <PiggyBank className="w-7 h-7 text-primary" />
+              </div>
+              <h4 className="font-display font-semibold text-foreground mb-1">No data for this period</h4>
+              <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                Add income or expenses to see your financial summary here
+              </p>
+            </div>
           </div>
         ) : (
           <>
             {/* Income vs Expense */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-income/5 border border-income/15 space-y-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <ArrowUpRight className="h-4 w-4 text-income" />
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 rounded-xl bg-income/5 border border-income/15 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 bg-income/15 rounded-md">
+                    <ArrowUpRight className="h-3.5 w-3.5 text-income" />
+                  </div>
                   <span className="text-xs font-medium text-muted-foreground">Income ({summary.incomeCount})</span>
                 </div>
                 <p className="text-xl font-bold text-income">{formatAmount(summary.totalIncome)}</p>
               </div>
-              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/15 space-y-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <ArrowDownRight className="h-4 w-4 text-destructive" />
+              <div className="p-4 rounded-xl bg-destructive/5 border border-destructive/15 space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <div className="p-1 bg-destructive/15 rounded-md">
+                    <ArrowDownRight className="h-3.5 w-3.5 text-destructive" />
+                  </div>
                   <span className="text-xs font-medium text-muted-foreground">Expenses ({summary.expenseCount})</span>
                 </div>
                 <p className="text-xl font-bold text-destructive">{formatAmount(summary.totalExpenses)}</p>
@@ -128,7 +140,7 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
             </div>
 
             {/* Expense ratio bar */}
-            <div className="space-y-2">
+            <div className="space-y-2 px-1">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Expense-to-Income Ratio</span>
                 <span className={`font-semibold ${
@@ -138,7 +150,7 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
                   {summary.expenseRatio.toFixed(0)}%
                 </span>
               </div>
-              <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+              <div className="h-2 bg-muted/60 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
                     summary.expenseRatio > 90 ? 'bg-destructive' :
@@ -156,11 +168,15 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
                   ? 'bg-income/5 border-income/15' 
                   : 'bg-destructive/5 border-destructive/15'
               }`}>
-                <Wallet className="h-5 w-5 mx-auto mb-1.5 text-muted-foreground" />
+                <div className={`w-9 h-9 rounded-lg mx-auto mb-2 flex items-center justify-center ${
+                  summary.net >= 0 ? 'bg-income/15' : 'bg-destructive/15'
+                }`}>
+                  <Wallet className="h-4.5 w-4.5 text-muted-foreground" />
+                </div>
                 <p className={`text-lg font-bold ${summary.net >= 0 ? 'text-income' : 'text-destructive'}`}>
                   {summary.net >= 0 ? '+' : ''}{formatAmount(summary.net)}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Net Balance</p>
+                <p className="text-xs text-muted-foreground mt-1">Net Balance</p>
               </div>
               <div className={`p-4 rounded-xl text-center border ${
                 summary.savingsRate >= 20 
@@ -169,14 +185,19 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
                     ? 'bg-warning/5 border-warning/15' 
                     : 'bg-destructive/5 border-destructive/15'
               }`}>
-                <TrendingUp className="h-5 w-5 mx-auto mb-1.5 text-muted-foreground" />
+                <div className={`w-9 h-9 rounded-lg mx-auto mb-2 flex items-center justify-center ${
+                  summary.savingsRate >= 20 ? 'bg-income/15' : 
+                  summary.savingsRate > 0 ? 'bg-warning/15' : 'bg-destructive/15'
+                }`}>
+                  <TrendingUp className="h-4.5 w-4.5 text-muted-foreground" />
+                </div>
                 <p className={`text-lg font-bold ${
                   summary.savingsRate >= 20 ? 'text-income' : 
                   summary.savingsRate > 0 ? 'text-warning' : 'text-destructive'
                 }`}>
                   {summary.savingsRate.toFixed(0)}%
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">Savings Rate</p>
+                <p className="text-xs text-muted-foreground mt-1">Savings Rate</p>
               </div>
             </div>
           </>

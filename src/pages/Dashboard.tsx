@@ -31,13 +31,13 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.08 }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
 
 const Dashboard = () => {
@@ -100,7 +100,6 @@ const Dashboard = () => {
 
   const recentSources = incomeSources.slice(0, 3);
   const netMonthly = incomeStats.totalMonthly - expenseStats.totalMonthly;
-  const netYearly = incomeStats.totalYearly - expenseStats.totalYearly;
   const isLoading = incomeLoading || expenseLoading || profileLoading;
   const isCurrentMonth = selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear();
 
@@ -117,16 +116,16 @@ const Dashboard = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-6"
+      className="space-y-5 max-w-[1400px] mx-auto"
     >
       {/* Month Selector & Greeting */}
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <GreetingWidget />
-        <div className="flex items-center gap-2 bg-card border border-border rounded-xl p-1">
+        <div className="flex items-center gap-1.5 bg-card border border-border/60 rounded-xl p-1 shadow-sm">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-lg"
+            className="h-8 w-8 rounded-lg hover:bg-muted"
             onClick={handlePrevMonth}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -135,15 +134,15 @@ const Dashboard = () => {
             onClick={handleCurrentMonth}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[140px] justify-center"
           >
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">
+            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <span className="text-sm font-semibold text-foreground">
               {format(selectedDate, 'MMMM yyyy')}
             </span>
           </button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-lg"
+            className="h-8 w-8 rounded-lg hover:bg-muted"
             onClick={handleNextMonth}
             disabled={isCurrentMonth}
           >
@@ -153,7 +152,7 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatsCard
           title="Monthly Income"
           value={formatAmount(incomeStats.totalMonthly)}
@@ -184,7 +183,7 @@ const Dashboard = () => {
         />
       </motion.div>
 
-      {/* Financial Summary with Period Selector */}
+      {/* Financial Summary */}
       <motion.div variants={itemVariants}>
         <FinancialSummaryCard
           incomeSources={incomeSources}
@@ -194,15 +193,16 @@ const Dashboard = () => {
         />
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent Income Sources */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg sm:text-xl font-bold text-foreground">
+              <h2 className="font-display text-lg font-bold text-foreground">
                 Recent Income
               </h2>
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Your latest income sources
               </p>
             </div>
@@ -210,52 +210,59 @@ const Dashboard = () => {
               <Button 
                 variant="outline"
                 size="sm"
-                className="rounded-xl gap-2 text-xs sm:text-sm"
+                className="rounded-xl gap-1.5 text-xs border-border/60"
                 asChild
               >
                 <Link to="/sources">
                   View All
-                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </Button>
               <Button 
                 size="sm"
                 onClick={() => setDialogOpen(true)}
-                className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-2 text-xs sm:text-sm"
+                className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-1.5 text-xs shadow-sm"
               >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                <Plus className="w-3.5 h-3.5" />
                 Add
               </Button>
             </div>
           </div>
 
           {recentSources.length === 0 ? (
-            <div className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center">
-              <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-8 h-8 text-income" />
+            <div className="relative overflow-hidden bg-card border border-border/50 rounded-2xl p-10 sm:p-14 text-center">
+              {/* Decorative background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-income/5 via-transparent to-primary/5" />
+              <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-income/5 blur-2xl" />
+              <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
+              
+              <div className="relative z-10">
+                <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
+                  <DollarSign className="w-8 h-8 text-income" />
+                </div>
+                <h3 className="font-display font-bold text-foreground mb-2 text-lg">
+                  No income sources yet
+                </h3>
+                <p className="text-muted-foreground mb-7 text-sm max-w-sm mx-auto leading-relaxed">
+                  Start tracking your earnings by adding your first income source. You'll see trends and insights here.
+                </p>
+                <Button 
+                  onClick={() => setDialogOpen(true)}
+                  className="rounded-xl bg-gradient-income hover:opacity-90 shadow-md px-6"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Your First Income
+                </Button>
               </div>
-              <h3 className="font-semibold text-foreground mb-2 text-base">
-                No income sources yet
-              </h3>
-              <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
-                Start tracking your earnings by adding your first income source
-              </p>
-              <Button 
-                onClick={() => setDialogOpen(true)}
-                className="rounded-xl bg-gradient-income hover:opacity-90"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Your First Income
-              </Button>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {recentSources.map((income, index) => (
                 <motion.div
                   key={income.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                 >
                   <IncomeCard
                     income={income}
@@ -268,30 +275,31 @@ const Dashboard = () => {
           )}
         </motion.div>
 
-        {/* Chart, Subscription and Notifications */}
+        {/* Sidebar */}
         <motion.div variants={itemVariants} className="space-y-4">
           <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
           {/* Quick Stats */}
-          <div className="bg-card border border-border rounded-xl p-4">
-            <h3 className="font-display font-semibold text-foreground mb-4 text-sm">
+          <div className="bg-card border border-border/50 rounded-2xl p-5 shadow-sm">
+            <h3 className="font-display font-semibold text-foreground mb-4 text-sm flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
               Budget Overview
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Total Income</span>
-                <span className="text-sm font-medium text-income">
+                <span className="text-sm font-semibold text-income">
                   +{formatAmount(incomeStats.totalMonthly)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Total Expenses</span>
-                <span className="text-sm font-medium text-destructive">
+                <span className="text-sm font-semibold text-destructive">
                   -{formatAmount(expenseStats.totalMonthly)}
                 </span>
               </div>
-              <div className="border-t border-border pt-3">
+              <div className="border-t border-border/50 pt-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-foreground">Net Balance</span>
                   <span className={`text-sm font-bold ${netMonthly >= 0 ? 'text-income' : 'text-destructive'}`}>
