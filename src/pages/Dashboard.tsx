@@ -21,7 +21,11 @@ import {
   Wallet,
   ChevronLeft,
   ChevronRight,
-  Calendar
+  Calendar,
+  Receipt,
+  Target,
+  BarChart3,
+  Lightbulb
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -39,6 +43,21 @@ const itemVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
 };
+
+const quickActions = [
+  { label: 'Add Income', icon: TrendingUp, href: '/sources', color: 'bg-income/10 text-income' },
+  { label: 'Add Expense', icon: Receipt, href: '/expenses', color: 'bg-destructive/10 text-destructive' },
+  { label: 'Set Goal', icon: Target, href: '/goals', color: 'bg-primary/10 text-primary' },
+  { label: 'Analytics', icon: BarChart3, href: '/analytics', color: 'bg-ticket/10 text-ticket' },
+];
+
+const financialTips = [
+  "Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings.",
+  "Review your subscriptions monthly — cancel what you don't use.",
+  "Set up a 3-month emergency fund as your first savings goal.",
+  "Track every expense for 30 days to find hidden spending patterns.",
+  "Automate your savings — pay yourself first each month.",
+];
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -103,6 +122,9 @@ const Dashboard = () => {
   const isLoading = incomeLoading || expenseLoading || profileLoading;
   const isCurrentMonth = selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear();
 
+  // Pick a random daily tip
+  const dailyTip = financialTips[new Date().getDate() % financialTips.length];
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -122,12 +144,7 @@ const Dashboard = () => {
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <GreetingWidget />
         <div className="flex items-center gap-1.5 bg-card border border-border/60 rounded-xl p-1 shadow-sm">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg hover:bg-muted"
-            onClick={handlePrevMonth}
-          >
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted" onClick={handlePrevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <button
@@ -140,8 +157,7 @@ const Dashboard = () => {
             </span>
           </button>
           <Button
-            variant="ghost"
-            size="icon"
+            variant="ghost" size="icon"
             className="h-8 w-8 rounded-lg hover:bg-muted"
             onClick={handleNextMonth}
             disabled={isCurrentMonth}
@@ -183,6 +199,22 @@ const Dashboard = () => {
         />
       </motion.div>
 
+      {/* Quick Actions */}
+      <motion.div variants={itemVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {quickActions.map((action) => (
+          <Link key={action.label} to={action.href}>
+            <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer group">
+              <div className={`p-2 rounded-lg ${action.color}`}>
+                <action.icon className="w-4 h-4" />
+              </div>
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                {action.label}
+              </span>
+            </div>
+          </Link>
+        ))}
+      </motion.div>
+
       {/* Financial Summary */}
       <motion.div variants={itemVariants}>
         <FinancialSummaryCard
@@ -199,20 +231,11 @@ const Dashboard = () => {
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="font-display text-lg font-bold text-foreground">
-                Recent Income
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Your latest income sources
-              </p>
+              <h2 className="font-display text-lg font-bold text-foreground">Recent Income</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">Your latest income sources</p>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="outline"
-                size="sm"
-                className="rounded-xl gap-1.5 text-xs border-border/60"
-                asChild
-              >
+              <Button variant="outline" size="sm" className="rounded-xl gap-1.5 text-xs border-border/60" asChild>
                 <Link to="/sources">
                   View All
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -231,25 +254,18 @@ const Dashboard = () => {
 
           {recentSources.length === 0 ? (
             <div className="relative overflow-hidden bg-card border border-border/50 rounded-2xl p-10 sm:p-14 text-center">
-              {/* Decorative background */}
               <div className="absolute inset-0 bg-gradient-to-br from-income/5 via-transparent to-primary/5" />
               <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-income/5 blur-2xl" />
               <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
-              
               <div className="relative z-10">
                 <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
                   <DollarSign className="w-8 h-8 text-income" />
                 </div>
-                <h3 className="font-display font-bold text-foreground mb-2 text-lg">
-                  No income sources yet
-                </h3>
+                <h3 className="font-display font-bold text-foreground mb-2 text-lg">No income sources yet</h3>
                 <p className="text-muted-foreground mb-7 text-sm max-w-sm mx-auto leading-relaxed">
                   Start tracking your earnings by adding your first income source. You'll see trends and insights here.
                 </p>
-                <Button 
-                  onClick={() => setDialogOpen(true)}
-                  className="rounded-xl bg-gradient-income hover:opacity-90 shadow-md px-6"
-                >
+                <Button onClick={() => setDialogOpen(true)} className="rounded-xl bg-gradient-income hover:opacity-90 shadow-md px-6">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Income
                 </Button>
@@ -264,11 +280,7 @@ const Dashboard = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  <IncomeCard
-                    income={income}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                  />
+                  <IncomeCard income={income} onEdit={handleEdit} onDelete={handleDelete} />
                 </motion.div>
               ))}
             </div>
@@ -280,8 +292,21 @@ const Dashboard = () => {
           <SubscriptionCard />
           <IncomeChart stats={incomeStats} />
           
-          {/* Quick Stats */}
-          <div className="bg-card border border-border/50 rounded-2xl p-5 shadow-sm">
+          {/* Daily Tip */}
+          <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
+            <h3 className="font-display font-semibold text-foreground mb-3 text-sm flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-warning/10">
+                <Lightbulb className="w-3.5 h-3.5 text-warning" />
+              </div>
+              Daily Tip
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {dailyTip}
+            </p>
+          </div>
+
+          {/* Budget Overview */}
+          <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
             <h3 className="font-display font-semibold text-foreground mb-4 text-sm flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-primary" />
               Budget Overview
@@ -289,15 +314,11 @@ const Dashboard = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Total Income</span>
-                <span className="text-sm font-semibold text-income">
-                  +{formatAmount(incomeStats.totalMonthly)}
-                </span>
+                <span className="text-sm font-semibold text-income">+{formatAmount(incomeStats.totalMonthly)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Total Expenses</span>
-                <span className="text-sm font-semibold text-destructive">
-                  -{formatAmount(expenseStats.totalMonthly)}
-                </span>
+                <span className="text-sm font-semibold text-destructive">-{formatAmount(expenseStats.totalMonthly)}</span>
               </div>
               <div className="border-t border-border/50 pt-3">
                 <div className="flex items-center justify-between">
