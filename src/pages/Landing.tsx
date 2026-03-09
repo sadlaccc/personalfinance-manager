@@ -528,6 +528,9 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Savings Calculator Section */}
+      <SavingsCalculator />
+
       {/* CTA Section */}
       <section className="py-16 sm:py-20 lg:py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
