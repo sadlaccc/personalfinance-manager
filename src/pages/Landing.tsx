@@ -1,6 +1,8 @@
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PageTransition } from '@/components/PageTransition';
 import {
@@ -150,6 +152,129 @@ const footerLinks = {
     { label: 'Cookies', href: '/about' },
   ],
 };
+
+function SavingsCalculator() {
+  const [monthlyIncome, setMonthlyIncome] = useState('');
+  const [monthlyExpenses, setMonthlyExpenses] = useState('');
+  const [savingsGoal, setSavingsGoal] = useState('');
+
+  const results = useMemo(() => {
+    const income = parseFloat(monthlyIncome) || 0;
+    const expenses = parseFloat(monthlyExpenses) || 0;
+    const goal = parseFloat(savingsGoal) || 0;
+    const monthlySavings = income - expenses;
+    const savingsRate = income > 0 ? ((monthlySavings / income) * 100) : 0;
+    const monthsToGoal = monthlySavings > 0 && goal > 0 ? Math.ceil(goal / monthlySavings) : 0;
+    return { monthlySavings, savingsRate, monthsToGoal };
+  }, [monthlyIncome, monthlyExpenses, savingsGoal]);
+
+  const hasInput = monthlyIncome || monthlyExpenses;
+
+  return (
+    <section className="py-16 sm:py-20 lg:py-24 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-income/10 text-income text-xs font-medium mb-4 border border-income/20">
+            <Sparkles className="w-3 h-3" />
+            Try It Now
+          </div>
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
+            Savings Calculator
+          </h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base">
+            See how quickly you can reach your financial goals.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-2xl mx-auto"
+        >
+          <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-lg">
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Monthly Income</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 80,000"
+                  value={monthlyIncome}
+                  onChange={(e) => setMonthlyIncome(e.target.value)}
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Monthly Expenses</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 50,000"
+                  value={monthlyExpenses}
+                  onChange={(e) => setMonthlyExpenses(e.target.value)}
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Savings Goal</label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 500,000"
+                  value={savingsGoal}
+                  onChange={(e) => setSavingsGoal(e.target.value)}
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+
+            {hasInput && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="grid grid-cols-3 gap-4 pt-4 border-t border-border/50"
+              >
+                <div className="text-center">
+                  <p className={`text-xl sm:text-2xl font-bold font-display ${results.monthlySavings >= 0 ? 'text-income' : 'text-destructive'}`}>
+                    KSh {Math.abs(results.monthlySavings).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {results.monthlySavings >= 0 ? 'Monthly Savings' : 'Monthly Deficit'}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className={`text-xl sm:text-2xl font-bold font-display ${results.savingsRate >= 20 ? 'text-income' : results.savingsRate >= 0 ? 'text-warning' : 'text-destructive'}`}>
+                    {results.savingsRate.toFixed(0)}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Savings Rate</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xl sm:text-2xl font-bold font-display text-primary">
+                    {results.monthsToGoal > 0 ? `${results.monthsToGoal} mo` : '—'}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">To Reach Goal</p>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          <div className="text-center mt-6">
+            <Link to="/auth">
+              <Button size="lg" className="shadow-lg shadow-primary/25">
+                Start Tracking for Free
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 export default function Landing() {
   return (
@@ -525,6 +650,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Savings Calculator Section */}
+      <SavingsCalculator />
 
       {/* CTA Section */}
       <section className="py-16 sm:py-20 lg:py-24">

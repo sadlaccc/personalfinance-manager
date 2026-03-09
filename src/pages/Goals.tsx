@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Target, Plus, Loader2, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Target, Plus, Loader2, TrendingUp, CheckCircle2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { BudgetGoalCard } from '@/components/BudgetGoalCard';
 import { AddBudgetGoalDialog } from '@/components/AddBudgetGoalDialog';
 import { AddFundsDialog } from '@/components/AddFundsDialog';
 import { useBudgetGoals, BudgetGoal } from '@/hooks/useBudgetGoals';
+import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 
 const containerVariants = {
@@ -24,6 +25,7 @@ const itemVariants = {
 
 const Goals = () => {
   const { goals, stats, isLoading, addGoal, updateGoal, deleteGoal, addToGoal } = useBudgetGoals();
+  const { formatAmount } = useProfile();
   const { toast } = useToast();
   
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -76,7 +78,7 @@ const Goals = () => {
   const handleAddFundsSubmit = async (goalId: string, amount: number) => {
     try {
       await addToGoal(goalId, amount);
-      toast({ title: `$${amount.toLocaleString()} added to goal` });
+      toast({ title: `${formatAmount(amount)} added to goal` });
     } catch (error) {
       toast({ 
         variant: 'destructive',
@@ -104,16 +106,18 @@ const Goals = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-8"
+      className="space-y-6"
     >
       {/* Header */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground">
             Savings Goals
           </h1>
-          <p className="text-muted-foreground">
-            Track your progress towards financial goals
+          <p className="text-sm text-muted-foreground">
+            {goals.length > 0
+              ? `${stats.completedGoals} of ${stats.goalCount} goals completed`
+              : 'Set targets and track your savings progress'}
           </p>
         </div>
         <Button 
@@ -127,41 +131,41 @@ const Goals = () => {
 
       {/* Stats Cards */}
       {goals.length > 0 && (
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card border border-border rounded-2xl p-5">
-            <div className="flex items-center gap-3 mb-3">
+        <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5">
+            <div className="flex items-center gap-2.5 mb-2">
               <div className="p-2 bg-primary/10 rounded-xl">
-                <Target className="w-5 h-5 text-primary" />
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
-              <span className="text-sm text-muted-foreground">Total Goals</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Total Goals</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">{stats.goalCount}</p>
+            <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.goalCount}</p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-5">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5">
+            <div className="flex items-center gap-2.5 mb-2">
               <div className="p-2 bg-income/10 rounded-xl">
-                <TrendingUp className="w-5 h-5 text-income" />
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-income" />
               </div>
-              <span className="text-sm text-muted-foreground">Total Saved</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Total Saved</span>
             </div>
-            <p className="text-2xl font-bold text-income">
-              ${stats.totalSaved.toLocaleString()}
+            <p className="text-xl sm:text-2xl font-bold text-income">
+              {formatAmount(stats.totalSaved)}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              of ${stats.totalTarget.toLocaleString()} target
+            <p className="text-xs text-muted-foreground mt-0.5">
+              of {formatAmount(stats.totalTarget)} target
             </p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-5">
-            <div className="flex items-center gap-3 mb-3">
+          <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5">
+            <div className="flex items-center gap-2.5 mb-2">
               <div className="p-2 bg-category-freelance/10 rounded-xl">
-                <CheckCircle2 className="w-5 h-5 text-category-freelance" />
+                <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-category-freelance" />
               </div>
-              <span className="text-sm text-muted-foreground">Completed</span>
+              <span className="text-xs sm:text-sm text-muted-foreground">Completed</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">{stats.completedGoals}</p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.completedGoals}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
               of {stats.goalCount} goals
             </p>
           </div>
@@ -170,17 +174,20 @@ const Goals = () => {
 
       {/* Overall Progress */}
       {goals.length > 0 && (
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
+        <motion.div variants={itemVariants} className="bg-card border border-border/50 rounded-2xl p-5 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-semibold text-foreground">Overall Progress</h2>
-            <span className="text-2xl font-bold text-primary">
+            <span className="text-xl sm:text-2xl font-bold text-primary">
               {stats.overallProgress.toFixed(0)}%
             </span>
           </div>
-          <Progress value={stats.overallProgress} className="h-4" />
-          <div className="flex justify-between text-sm text-muted-foreground mt-2">
-            <span>${stats.totalSaved.toLocaleString()} saved</span>
-            <span>${(stats.totalTarget - stats.totalSaved).toLocaleString()} remaining</span>
+          <Progress 
+            value={stats.overallProgress} 
+            className="h-3 sm:h-4"
+          />
+          <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mt-2">
+            <span>{formatAmount(stats.totalSaved)} saved</span>
+            <span>{formatAmount(stats.totalTarget - stats.totalSaved)} remaining</span>
           </div>
         </motion.div>
       )}
@@ -189,24 +196,30 @@ const Goals = () => {
       {goals.length === 0 ? (
         <motion.div 
           variants={itemVariants}
-          className="bg-card border border-border rounded-2xl p-8 sm:p-12 text-center"
+          className="relative overflow-hidden bg-card border border-border/50 rounded-2xl p-8 sm:p-14 text-center"
         >
-          <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Target className="w-8 h-8 text-income" />
+          <div className="absolute inset-0 bg-gradient-to-br from-income/5 via-transparent to-primary/5" />
+          <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-income/5 blur-2xl" />
+          <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-primary/5 blur-2xl" />
+          
+          <div className="relative z-10">
+            <div className="bg-gradient-to-br from-income/20 to-income/5 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
+              <Target className="w-8 h-8 text-income" />
+            </div>
+            <h3 className="font-display font-bold text-foreground mb-2 text-lg">
+              No savings goals yet
+            </h3>
+            <p className="text-muted-foreground mb-7 text-sm max-w-sm mx-auto leading-relaxed">
+              Set financial goals to track your progress and stay motivated. Whether it's an emergency fund, vacation, or new car — start here.
+            </p>
+            <Button 
+              onClick={() => setDialogOpen(true)}
+              className="rounded-xl bg-gradient-income hover:opacity-90 shadow-md px-6"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Create Your First Goal
+            </Button>
           </div>
-          <h3 className="font-semibold text-foreground mb-2">
-            No savings goals yet
-          </h3>
-          <p className="text-muted-foreground mb-6 text-sm max-w-xs mx-auto">
-            Set financial goals to track your progress and stay motivated on your savings journey
-          </p>
-          <Button 
-            onClick={() => setDialogOpen(true)}
-            className="rounded-xl bg-gradient-income hover:opacity-90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Your First Goal
-          </Button>
         </motion.div>
       ) : (
         <motion.div 
