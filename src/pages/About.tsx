@@ -84,8 +84,8 @@ export default function About() {
                   categories don't match how Kenyans actually spend.
                 </p>
                 <p>
-                  FedhaFlow started as a side project to solve a personal problem — tracking 
-                  income from multiple sources (salary, freelance, side hustles) alongside 
+                  FedhaFlow started as a side project to solve a personal problem: tracking 
+                  income from multiple sources (salary, freelance, side hustles) alongside
                   everyday expenses in a way that actually made sense.
                 </p>
                 <p>
