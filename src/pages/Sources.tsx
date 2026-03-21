@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
 import { IncomeCategory, categoryLabels } from '@/types/income';
-import { Plus, Search, Filter, Loader2, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Plus, Search, Filter, Loader2, ChevronLeft, ChevronRight, Calendar, ArrowRight } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
