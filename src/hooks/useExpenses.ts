@@ -15,6 +15,8 @@ interface UseExpensesOptions {
 export function useExpenses(options?: UseExpensesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
   
   // Default to current month/year if not specified
   const now = new Date();
