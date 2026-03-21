@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { 
   TrendingUp, 
@@ -33,7 +34,7 @@ const values = [
   {
     icon: Heart,
     title: 'Built for Kenya',
-    description: 'Designed for Kenyan workflows — M-Pesa, KSh, and local spending patterns.',
+    description: 'Designed for Kenyan workflows, including M-Pesa, KSh, and local spending patterns.',
   },
 ];
 
@@ -41,35 +42,7 @@ export default function About() {
   return (
     <PageTransition>
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="font-display font-bold text-lg">FedhaFlow</span>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link>
-              <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
-            </nav>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <ThemeToggle />
-              <Link to="/auth">
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">Sign In</Button>
-              </Link>
-              <Link to="/auth">
-                <Button size="sm">Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar />
 
       {/* Hero */}
       <section className="py-16 sm:py-24">
@@ -111,8 +84,8 @@ export default function About() {
                   categories don't match how Kenyans actually spend.
                 </p>
                 <p>
-                  FedhaFlow started as a side project to solve a personal problem — tracking 
-                  income from multiple sources (salary, freelance, side hustles) alongside 
+                  FedhaFlow started as a side project to solve a personal problem: tracking 
+                  income from multiple sources (salary, freelance, side hustles) alongside
                   everyday expenses in a way that actually made sense.
                 </p>
                 <p>
@@ -185,28 +158,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-6">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-3 h-3 text-primary-foreground" />
-              </div>
-              <span className="font-display font-semibold text-sm">FedhaFlow</span>
-            </div>
-            <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/landing" className="hover:text-foreground transition-colors">Home</Link>
-              <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
-              <Link to="/contact" className="hover:text-foreground transition-colors">Contact</Link>
-              <Link to="/blog" className="hover:text-foreground transition-colors">Blog</Link>
-            </nav>
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} FedhaFlow
-            </p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
     </PageTransition>
   );

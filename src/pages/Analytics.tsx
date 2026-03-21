@@ -453,7 +453,7 @@ const Analytics = () => {
         <motion.div variants={itemVariants}>
           <h3 className="font-display font-semibold text-lg text-foreground mb-4 flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
-            Budget Tracking — {format(selectedMonth, 'MMMM yyyy')}
+            Budget Tracking: {format(selectedMonth, 'MMMM yyyy')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {budgets.map((budget) => (

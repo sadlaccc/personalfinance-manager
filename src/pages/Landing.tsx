@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { 
   Wallet, 
   CircleDollarSign, 
   LineChart, 
   Goal, 
-  Shield, 
   ArrowRight,
   CheckCircle2,
   Send,
@@ -20,7 +20,6 @@ import {
   PieChart,
   Lock,
   Users,
-  Smartphone,
   TrendingUp
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.png';
@@ -44,7 +43,7 @@ const features = [
   {
     icon: LineChart,
     title: 'Analytics',
-    description: 'Charts that show where your money goes — by week, month, or custom date range.',
+    description: 'Charts that show where your money goes, by week, month, or custom date range.',
   },
   {
     icon: PieChart,
@@ -182,40 +181,7 @@ export default function Landing() {
   return (
     <PageTransition>
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <span className="font-display font-bold text-lg tracking-tight">FedhaFlow</span>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
-              <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link>
-              <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</Link>
-              <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link>
-            </nav>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <ThemeToggle />
-              <Link to="/auth">
-                <Button variant="outline" size="sm" className="hidden sm:inline-flex">Sign In</Button>
-              </Link>
-              <Link to="/auth">
-                <Button size="sm">
-                  Get Started
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar />
 
       {/* Hero */}
       <section className="py-16 sm:py-24 lg:py-32">
@@ -231,7 +197,7 @@ export default function Landing() {
                 <span className="text-primary">Hit your goals.</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A personal finance dashboard for tracking income, expenses, budgets, and savings — built for how Kenyans actually manage money.
+                A personal finance dashboard for tracking income, expenses, budgets, and savings. Built for how Kenyans actually manage money.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
                 <Link to="/auth">
@@ -281,7 +247,7 @@ export default function Landing() {
               What you can do with FedhaFlow
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-              Simple tools that cover the full picture — from daily spending to long-term goals.
+              Simple tools that cover the full picture, from daily spending to long-term goals.
             </p>
           </div>
 
@@ -370,82 +336,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-10 grid grid-cols-2 sm:grid-cols-4 gap-8">
-            <div className="col-span-2 sm:col-span-1">
-              <Link to="/" className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Wallet className="w-3.5 h-3.5 text-primary-foreground" />
-                </div>
-                <span className="font-display font-bold">FedhaFlow</span>
-              </Link>
-              <p className="text-sm text-muted-foreground mb-4">
-                Personal finance tools for Kenyans.
-              </p>
-              <div className="flex items-center gap-2">
-                <a href="#" className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                  <Send className="w-3.5 h-3.5" />
-                </a>
-                <a href="#" className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                  <Linkedin className="w-3.5 h-3.5" />
-                </a>
-                <a href="#" className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                  <Github className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-sm mb-3">Product</h4>
-              <ul className="space-y-2">
-                {footerLinks.product.map((link) => (
-                  <li key={link.label}>
-                    <a href={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-sm mb-3">Company</h4>
-              <ul className="space-y-2">
-                {footerLinks.company.map((link) => (
-                  <li key={link.label}>
-                    <Link to={link.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{link.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-sm mb-3">Stay Updated</h4>
-              <p className="text-sm text-muted-foreground mb-3">Get tips and updates.</p>
-              <div className="flex gap-2">
-                <input 
-                  type="email" 
-                  placeholder="Email"
-                  className="flex-1 px-3 py-2 text-sm rounded-lg bg-muted border border-border focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
-                <Button size="sm" className="shrink-0">
-                  <Mail className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} FedhaFlow. Made in Nairobi.
-            </p>
-            <div className="flex items-center gap-4">
-              <Link to="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
-              <Link to="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
     </PageTransition>
   );

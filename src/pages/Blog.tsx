@@ -2,7 +2,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -69,44 +70,7 @@ export default function Blog() {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-14">
-              <Link to="/landing" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
-                  <Wallet className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <span className="font-display font-bold text-lg tracking-tight hidden sm:inline">FedhaFlow</span>
-              </Link>
-              
-              <nav className="hidden md:flex items-center gap-6">
-                <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Pricing
-                </Link>
-                <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  About
-                </Link>
-                <Link to="/blog" className="text-sm text-foreground font-medium">
-                  Blog
-                </Link>
-                <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
-              </nav>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                <ThemeToggle />
-                <Link to="/auth">
-                  <Button size="sm">
-                    Get Started
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
+        <PublicNavbar />
 
         {/* Hero */}
         <section className="py-10 sm:py-16 bg-gradient-to-b from-muted/50 to-background">
@@ -310,12 +274,7 @@ export default function Blog() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-8 border-t border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} FedhaFlow. All rights reserved.</p>
-          </div>
-        </footer>
+        <PublicFooter />
       </div>
     </PageTransition>
   );

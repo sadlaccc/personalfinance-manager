@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -185,44 +186,7 @@ export default function BlogPost() {
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-14">
-              <Link to="/landing" className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/25">
-                  <Wallet className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <span className="font-display font-bold text-lg tracking-tight hidden sm:inline">FedhaFlow</span>
-              </Link>
-              
-              <nav className="hidden md:flex items-center gap-6">
-                <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Pricing
-                </Link>
-                <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  About
-                </Link>
-                <Link to="/blog" className="text-sm text-foreground font-medium">
-                  Blog
-                </Link>
-                <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
-                </Link>
-              </nav>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                <ThemeToggle />
-                <Link to="/auth">
-                  <Button size="sm">
-                    Get Started
-                    <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
+        <PublicNavbar />
 
         {/* Back Button */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -329,12 +293,7 @@ export default function BlogPost() {
           </article>
         )}
 
-        {/* Footer */}
-        <footer className="py-6 border-t border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} FedhaFlow. All rights reserved.</p>
-          </div>
-        </footer>
+        <PublicFooter />
       </div>
     </PageTransition>
   );

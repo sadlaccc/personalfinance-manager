@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -88,36 +89,7 @@ export default function Contact() {
   return (
     <PageTransition>
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-income flex items-center justify-center shadow-md">
-                <TrendingUp className="w-4 h-4 text-income-foreground" />
-              </div>
-              <span className="font-display font-bold text-lg">FedhaFlow</span>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Home
-              </Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                About
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <Link to="/auth">
-                <Button size="sm">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar />
 
       {/* Hero - Compact */}
       <section className="relative py-8 sm:py-12 overflow-hidden">
@@ -287,27 +259,7 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Footer - Compact */}
-      <footer className="border-t border-border py-6 mt-auto">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-md bg-gradient-income flex items-center justify-center">
-                <TrendingUp className="w-2.5 h-2.5 text-income-foreground" />
-              </div>
-              <span className="font-display font-semibold text-sm">FedhaFlow</span>
-            </div>
-            <nav className="flex items-center gap-4 text-xs text-muted-foreground">
-              <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link to="/about" className="hover:text-foreground transition-colors">About</Link>
-              <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
-            </nav>
-            <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
-            </p>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
     </PageTransition>
   );
