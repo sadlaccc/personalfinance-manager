@@ -171,6 +171,26 @@ const Sources = () => {
         </Button>
       </div>
 
+      {/* Upgrade Banner */}
+      {!canAddIncome && (
+        <div className="flex items-center justify-between gap-4 p-4 rounded-xl bg-warning/10 border border-warning/20">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              You've used all {incomeLimit} income source{incomeLimit !== 1 ? 's' : ''} on the {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan.
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Upgrade to {currentPlan === 'starter' ? 'Plus (up to 5)' : 'Pro (unlimited)'} to add more.
+            </p>
+          </div>
+          <Link to="/pricing">
+            <Button size="sm" className="rounded-xl shrink-0 gap-1.5">
+              Upgrade
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
