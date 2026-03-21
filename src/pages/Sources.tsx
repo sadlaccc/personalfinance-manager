@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIncomeSources, IncomeSource } from '@/hooks/useIncomeSources';
 import { IncomeCategory, categoryLabels } from '@/types/income';
-import { Plus, Search, Filter, Loader2, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { Plus, Search, Filter, Loader2, ChevronLeft, ChevronRight, Calendar, ArrowRight } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { format, addMonths, subMonths } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -35,6 +37,7 @@ const Sources = () => {
   const selectedYear = selectedDate.getFullYear();
 
   const { incomeSources, canAddIncome, incomeLimit, totalSourceCount, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { currentPlan } = useSubscription();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
@@ -167,6 +170,26 @@ const Sources = () => {
           {canAddIncome ? 'Add Income' : 'Limit Reached'}
         </Button>
       </div>
+
+      {/* Upgrade Banner */}
+      {!canAddIncome && (
+        <div className="flex items-center justify-between gap-4 p-4 rounded-xl bg-warning/10 border border-warning/20">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              You've used all {incomeLimit} income source{incomeLimit !== 1 ? 's' : ''} on the {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan.
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Upgrade to {currentPlan === 'starter' ? 'Plus (up to 5)' : 'Pro (unlimited)'} to add more.
+            </p>
+          </div>
+          <Link to="/pricing">
+            <Button size="sm" className="rounded-xl shrink-0 gap-1.5">
+              Upgrade
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
