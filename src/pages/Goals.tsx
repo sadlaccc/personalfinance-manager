@@ -24,7 +24,7 @@ const itemVariants = {
 };
 
 const Goals = () => {
-  const { goals, stats, isLoading, addGoal, updateGoal, deleteGoal, addToGoal } = useBudgetGoals();
+  const { goals, stats, isLoading, canAddGoal, goalLimit, addGoal, updateGoal, deleteGoal, addToGoal } = useBudgetGoals();
   const { formatAmount } = useProfile();
   const { toast } = useToast();
   
