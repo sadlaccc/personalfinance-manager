@@ -43,7 +43,7 @@ const features = [
   {
     icon: LineChart,
     title: 'Analytics',
-    description: 'Charts that show where your money goes — by week, month, or custom date range.',
+    description: 'Charts that show where your money goes, by week, month, or custom date range.',
   },
   {
     icon: PieChart,
