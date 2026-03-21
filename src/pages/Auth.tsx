@@ -130,11 +130,17 @@ const Auth = () => {
       if (updateError) {
         console.error('Profile update error:', updateError);
       }
+
+      // Sign out so user must explicitly sign in
+      await supabase.auth.signOut();
       
       setIsSubmitting(false);
+      setEmail(email);
+      setPassword('');
+      setActiveTab('signin');
       toast({
         title: 'Account created!',
-        description: 'Karibu FedhaFlow. You are now signed in.',
+        description: 'Please sign in with your new credentials.',
       });
     }
   };
