@@ -37,6 +37,7 @@ const Sources = () => {
   const selectedYear = selectedDate.getFullYear();
 
   const { incomeSources, canAddIncome, incomeLimit, totalSourceCount, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { currentPlan } = useSubscription();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
