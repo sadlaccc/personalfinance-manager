@@ -214,7 +214,7 @@ const Goals = () => {
               No savings goals yet
             </h3>
             <p className="text-muted-foreground mb-7 text-sm max-w-sm mx-auto leading-relaxed">
-              Set financial goals to track your progress and stay motivated. Whether it's an emergency fund, vacation, or new car — start here.
+              Set financial goals to track your progress and stay motivated. Whether it's an emergency fund, vacation, or new car, start here.
             </p>
             <Button 
               onClick={() => setDialogOpen(true)}
