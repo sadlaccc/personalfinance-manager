@@ -34,7 +34,7 @@ const values = [
   {
     icon: Heart,
     title: 'Built for Kenya',
-    description: 'Designed for Kenyan workflows — M-Pesa, KSh, and local spending patterns.',
+    description: 'Designed for Kenyan workflows, including M-Pesa, KSh, and local spending patterns.',
   },
 ];
 
