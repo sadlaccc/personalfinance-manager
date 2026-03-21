@@ -45,9 +45,22 @@ export function useExpenses(options?: UseExpensesOptions) {
     enabled: !!user,
   });
 
+  // Count unique categories used by this user (for category limit enforcement)
+  const usedCategories = useMemo(() => {
+    const cats = new Set(expenses.map(e => e.category));
+    return cats;
+  }, [expenses]);
+
   const addMutation = useMutation({
     mutationFn: async (expense: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
       if (!user) throw new Error('User not authenticated');
+      
+      // Check category limit if this is a new category
+      if (!usedCategories.has(expense.category) && usedCategories.size >= limits.expenseCategories) {
+        throw new Error(
+          `Your ${currentPlan} plan allows only ${limits.expenseCategories} expense categories. Upgrade your plan to use more categories.`
+        );
+      }
       
       const { data, error } = await supabase
         .from('expenses')

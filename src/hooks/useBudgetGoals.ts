@@ -131,6 +131,8 @@ export function useBudgetGoals() {
     goals,
     stats,
     isLoading,
+    canAddGoal,
+    goalLimit,
     addGoal,
     updateGoal,
     deleteGoal,
