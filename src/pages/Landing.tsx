@@ -247,7 +247,7 @@ export default function Landing() {
               What you can do with FedhaFlow
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-              Simple tools that cover the full picture — from daily spending to long-term goals.
+              Simple tools that cover the full picture, from daily spending to long-term goals.
             </p>
           </div>
 
