@@ -53,7 +53,7 @@ const quickActions = [
 
 const financialTips = [
   "Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings.",
-  "Review your subscriptions monthly — cancel what you don't use.",
+  "Review your subscriptions monthly and cancel what you don't use.",
   "Set up a 3-month emergency fund as your first savings goal.",
   "Track every expense for 30 days to find hidden spending patterns.",
   "Automate your savings — pay yourself first each month.",
