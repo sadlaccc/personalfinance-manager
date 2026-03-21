@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
 import { Expense, ExpenseCategory, ExpenseStats } from '@/types/expense';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { useSubscription } from '@/hooks/useSubscription';
+import { getPlanLimits } from '@/lib/planLimits';
 
 interface UseExpensesOptions {
   month?: number; // 0-11
