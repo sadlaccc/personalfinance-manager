@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { format, addMonths, subMonths } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const containerVariants = {
   hidden: { opacity: 0 },
