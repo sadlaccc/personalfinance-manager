@@ -174,6 +174,9 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     isLoading,
     selectedMonth,
     selectedYear,
+    canAddIncome,
+    incomeLimit,
+    totalSourceCount,
     addIncomeSource: addMutation.mutateAsync,
     updateIncomeSource: (id: string, updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>>) => 
       updateMutation.mutateAsync({ id, updates }),
