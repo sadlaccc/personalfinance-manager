@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor, Loader2, Globe } from 'lucide-react';
+import { User, Bell, Palette, Shield, HelpCircle, Sun, Moon, Monitor, Loader2, Globe, Crown, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/components/ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
+import { useSubscription, PLAN_LABELS } from '@/hooks/useSubscription';
+import { getPlanLimits, formatLimit } from '@/lib/planLimits';
 import { EditProfileDialog } from '@/components/EditProfileDialog';
 import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 const CURRENCIES = [
   { code: 'KES', name: 'Kenya Shilling (KSh)', symbol: 'KSh' },
@@ -29,12 +33,12 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.08 }
   }
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 }
 };
 
@@ -42,6 +46,8 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const { profile, isLoading, updateProfile, isUpdating } = useProfile();
+  const { currentPlan, isActive, daysRemaining } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currency, setCurrency] = useState('KES');
   const [isUpdatingCurrency, setIsUpdatingCurrency] = useState(false);
@@ -54,46 +60,35 @@ const Settings = () => {
 
   const getInitials = (name: string | null | undefined, email: string | undefined) => {
     if (name) {
-      return name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+      return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
     }
-    if (email) {
-      return email[0].toUpperCase();
-    }
+    if (email) return email[0].toUpperCase();
     return 'U';
   };
 
   const handleSaveProfile = (data: { name: string; phone?: string }) => {
     updateProfile({ full_name: data.name, phone: data.phone }, {
-      onSuccess: () => {
-        setEditDialogOpen(false);
-      },
+      onSuccess: () => setEditDialogOpen(false),
     });
   };
 
   const handleCurrencyChange = async (newCurrency: string) => {
     if (!user?.id) return;
-    
     setIsUpdatingCurrency(true);
     setCurrency(newCurrency);
-    
     const { error } = await supabase
       .from('profiles')
       .update({ currency: newCurrency })
       .eq('user_id', user.id);
-    
     setIsUpdatingCurrency(false);
-    
     if (error) {
       toast.error('Failed to update currency');
     } else {
-      toast.success('Currency updated successfully');
+      toast.success('Currency updated');
     }
   };
+
+  const planLabel = PLAN_LABELS[currentPlan] || 'Starter';
 
   return (
     <>
@@ -101,17 +96,17 @@ const Settings = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-2xl space-y-6"
+        className="max-w-2xl space-y-5"
       >
-        {/* Profile Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
+        {/* Profile */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
             <div className="p-2 bg-primary/10 rounded-xl">
               <User className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h3 className="font-display font-semibold text-foreground">Profile</h3>
-              <p className="text-sm text-muted-foreground">Manage your account settings</p>
+              <p className="text-sm text-muted-foreground">Your account details</p>
             </div>
           </div>
           
@@ -121,210 +116,226 @@ const Settings = () => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-hero flex items-center justify-center text-primary-foreground font-bold text-xl">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold text-lg">
                 {getInitials(profile?.full_name, user?.email)}
               </div>
-              <div className="flex-1">
-                <p className="font-medium text-foreground">
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-foreground truncate">
                   {profile?.full_name || 'No name set'}
                 </p>
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
               </div>
               <Button 
                 variant="outline" 
-                className="rounded-xl"
+                size="sm"
+                className="rounded-xl shrink-0"
                 onClick={() => setEditDialogOpen(true)}
               >
-                Edit Profile
+                Edit
               </Button>
             </div>
           )}
         </motion.div>
 
-        {/* Currency Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
+        {/* Plan & Usage */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-ticket/10 rounded-xl">
+              <Crown className="w-5 h-5 text-ticket" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-display font-semibold text-foreground">Plan & Usage</h3>
+              <p className="text-sm text-muted-foreground">
+                {planLabel} plan {isActive ? '(active)' : ''}
+                {daysRemaining > 0 && ` · ${daysRemaining} days left`}
+              </p>
+            </div>
+            <Link to="/pricing">
+              <Button variant="outline" size="sm" className="rounded-xl gap-1.5">
+                Upgrade
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Income sources</span>
+              <span className="font-medium text-foreground">{formatLimit(limits.incomeSources)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Expense categories</span>
+              <span className="font-medium text-foreground">{formatLimit(limits.expenseCategories)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Savings goals</span>
+              <span className="font-medium text-foreground">{limits.savingsGoals === 0 ? 'Not included' : formatLimit(limits.savingsGoals)}</span>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Analytics</span>
+              <span className={`font-medium ${limits.analytics ? 'text-income' : 'text-muted-foreground'}`}>
+                {limits.analytics ? 'Included' : 'Not included'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">CSV export</span>
+              <span className={`font-medium ${limits.exportCsv ? 'text-income' : 'text-muted-foreground'}`}>
+                {limits.exportCsv ? 'Included' : 'Not included'}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">PDF reports</span>
+              <span className={`font-medium ${limits.exportPdf ? 'text-income' : 'text-muted-foreground'}`}>
+                {limits.exportPdf ? 'Included' : 'Not included'}
+              </span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Currency */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
             <div className="p-2 bg-income/10 rounded-xl">
               <Globe className="w-5 h-5 text-income" />
             </div>
             <div>
               <h3 className="font-display font-semibold text-foreground">Currency</h3>
-              <p className="text-sm text-muted-foreground">Set your preferred currency</p>
+              <p className="text-sm text-muted-foreground">All amounts displayed in this currency</p>
             </div>
           </div>
           
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="currency-select" className="flex flex-col gap-1">
-                <span>Display Currency</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  All amounts will be displayed in this currency
-                </span>
-              </Label>
-              <div className="w-48">
-                <Select 
-                  value={currency} 
-                  onValueChange={handleCurrencyChange}
-                  disabled={isUpdatingCurrency}
-                >
-                  <SelectTrigger className="rounded-xl">
-                    <SelectValue placeholder="Select currency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CURRENCIES.map((curr) => (
-                      <SelectItem key={curr.code} value={curr.code}>
-                        {curr.symbol} - {curr.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="currency-select">Display Currency</Label>
+            <div className="w-48">
+              <Select 
+                value={currency} 
+                onValueChange={handleCurrencyChange}
+                disabled={isUpdatingCurrency}
+              >
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Select currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CURRENCIES.map((curr) => (
+                    <SelectItem key={curr.code} value={curr.code}>
+                      {curr.symbol} {curr.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </motion.div>
 
-        {/* Notifications Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-category-rental/10 rounded-xl">
-              <Bell className="w-5 h-5 text-category-rental" />
+        {/* Notifications */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-warning/10 rounded-xl">
+              <Bell className="w-5 h-5 text-warning" />
             </div>
             <div>
               <h3 className="font-display font-semibold text-foreground">Notifications</h3>
-              <p className="text-sm text-muted-foreground">Configure your alerts</p>
+              <p className="text-sm text-muted-foreground">Configure alerts</p>
             </div>
           </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label htmlFor="income-alerts" className="flex flex-col gap-1">
-                <span>Income Alerts</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  Get notified when income is received
-                </span>
-              </Label>
+              <Label htmlFor="income-alerts">Income alerts</Label>
               <Switch id="income-alerts" defaultChecked />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
-              <Label htmlFor="monthly-summary" className="flex flex-col gap-1">
-                <span>Monthly Summary</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  Receive a monthly income report
-                </span>
-              </Label>
+              <Label htmlFor="monthly-summary">Monthly summary</Label>
               <Switch id="monthly-summary" defaultChecked />
             </div>
           </div>
         </motion.div>
 
-        {/* Appearance Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-category-freelance/10 rounded-xl">
-              <Palette className="w-5 h-5 text-category-freelance" />
+        {/* Appearance */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-accent/10 rounded-xl">
+              <Palette className="w-5 h-5 text-accent" />
             </div>
             <div>
               <h3 className="font-display font-semibold text-foreground">Appearance</h3>
-              <p className="text-sm text-muted-foreground">Customize your experience</p>
+              <p className="text-sm text-muted-foreground">Theme preference</p>
             </div>
           </div>
           
-          <div className="space-y-4">
-            <div>
-              <Label className="flex flex-col gap-1 mb-3">
-                <span>Theme</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  Choose your preferred color scheme
-                </span>
-              </Label>
-              <div className="flex gap-2">
-                <Button
-                  variant={theme === "light" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setTheme("light")}
-                  className="rounded-xl flex items-center gap-2"
-                >
-                  <Sun className="w-4 h-4" />
-                  Light
-                </Button>
-                <Button
-                  variant={theme === "dark" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setTheme("dark")}
-                  className="rounded-xl flex items-center gap-2"
-                >
-                  <Moon className="w-4 h-4" />
-                  Dark
-                </Button>
-                <Button
-                  variant={theme === "system" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setTheme("system")}
-                  className="rounded-xl flex items-center gap-2"
-                >
-                  <Monitor className="w-4 h-4" />
-                  System
-                </Button>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <Label htmlFor="compact-view" className="flex flex-col gap-1">
-                <span>Compact View</span>
-                <span className="text-sm font-normal text-muted-foreground">
-                  Show more content in less space
-                </span>
-              </Label>
-              <Switch id="compact-view" />
-            </div>
+          <div className="flex gap-2">
+            <Button
+              variant={theme === "light" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("light")}
+              className="rounded-xl gap-2"
+            >
+              <Sun className="w-4 h-4" />
+              Light
+            </Button>
+            <Button
+              variant={theme === "dark" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("dark")}
+              className="rounded-xl gap-2"
+            >
+              <Moon className="w-4 h-4" />
+              Dark
+            </Button>
+            <Button
+              variant={theme === "system" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setTheme("system")}
+              className="rounded-xl gap-2"
+            >
+              <Monitor className="w-4 h-4" />
+              System
+            </Button>
           </div>
         </motion.div>
 
-        {/* Security Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-income/10 rounded-xl">
-              <Shield className="w-5 h-5 text-income" />
+        {/* Security */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Shield className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h3 className="font-display font-semibold text-foreground">Security</h3>
-              <p className="text-sm text-muted-foreground">Protect your account</p>
+              <p className="text-sm text-muted-foreground">Account protection</p>
             </div>
           </div>
           
-          <div className="space-y-3">
-            <ResetPasswordDialog
-              trigger={
-                <Button variant="outline" className="rounded-xl w-full sm:w-auto">
-                  Reset Password
-                </Button>
-              }
-            />
-          </div>
+          <ResetPasswordDialog
+            trigger={
+              <Button variant="outline" size="sm" className="rounded-xl">
+                Reset Password
+              </Button>
+            }
+          />
         </motion.div>
 
-        {/* Help Section */}
-        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-secondary rounded-xl">
+        {/* Help */}
+        <motion.div variants={itemVariants} className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-muted rounded-xl">
               <HelpCircle className="w-5 h-5 text-muted-foreground" />
             </div>
             <div>
-              <h3 className="font-display font-semibold text-foreground">Help & Support</h3>
+              <h3 className="font-display font-semibold text-foreground">Help</h3>
               <p className="text-sm text-muted-foreground">Get assistance</p>
             </div>
           </div>
           
-          <div className="flex gap-3">
-            <Button variant="outline" className="rounded-xl">
-              Documentation
-            </Button>
-            <Button variant="outline" className="rounded-xl">
-              Contact Support
-            </Button>
+          <div className="flex gap-2">
+            <Link to="/blog">
+              <Button variant="outline" size="sm" className="rounded-xl">Guides</Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="outline" size="sm" className="rounded-xl">Contact Support</Button>
+            </Link>
           </div>
         </motion.div>
       </motion.div>
