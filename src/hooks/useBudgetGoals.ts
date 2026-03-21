@@ -67,8 +67,21 @@ export function useBudgetGoals() {
     };
   }, [goals]);
 
+  const canAddGoal = limits.savingsGoals === 0 ? false : goals.length < limits.savingsGoals;
+  const goalLimit = limits.savingsGoals;
+
   const addGoal = async (goalData: Omit<BudgetGoal, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     if (!user) throw new Error('Not authenticated');
+
+    if (limits.savingsGoals === 0) {
+      throw new Error('Savings goals are not available on the Starter plan. Upgrade to Plus or higher to set goals.');
+    }
+
+    if (!canAddGoal) {
+      throw new Error(
+        `Your ${currentPlan} plan allows only ${goalLimit} savings goal${goalLimit !== 1 ? 's' : ''}. Upgrade your plan to add more.`
+      );
+    }
 
     const { data, error } = await supabase
       .from('budget_goals')
