@@ -118,14 +118,18 @@ const Goals = () => {
             {goals.length > 0
               ? `${stats.completedGoals} of ${stats.goalCount} goals completed`
               : 'Set targets and track your savings progress'}
+            {goalLimit !== Infinity && goalLimit > 0 && (
+              <span className="ml-1">· {goals.length}/{goalLimit} goals used</span>
+            )}
           </p>
         </div>
         <Button 
           onClick={() => setDialogOpen(true)}
+          disabled={!canAddGoal}
           className="rounded-xl bg-gradient-income hover:opacity-90 gap-2"
         >
           <Plus className="w-4 h-4" />
-          New Goal
+          {canAddGoal ? 'New Goal' : (goalLimit === 0 ? 'Upgrade to Add Goals' : 'Limit Reached')}
         </Button>
       </motion.div>
 
