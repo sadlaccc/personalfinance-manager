@@ -5,6 +5,8 @@ import { useMemo } from 'react';
 import { IncomeCategory } from '@/types/income';
 import { Frequency } from '@/types/expense';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { useSubscription } from '@/hooks/useSubscription';
+import { getPlanLimits } from '@/lib/planLimits';
 
 export interface IncomeSource {
   id: string;
