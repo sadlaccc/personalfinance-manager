@@ -4,7 +4,8 @@ import { CheckCircle2, X, Sparkles, Flame, ArrowRight, HelpCircle, TrendingUp, C
 import pricingHero from '@/assets/pricing-hero.png';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import {
   Accordion,
