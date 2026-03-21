@@ -104,7 +104,7 @@ const businessPlans = [
 ];
 
 const features = [
-  { name: 'Income sources', starter: '5', plus: '15', pro: 'Unlimited', premium: 'Unlimited' },
+  { name: 'Income sources', starter: '1', plus: '5', pro: 'Unlimited', premium: 'Unlimited' },
   { name: 'Expense tracking', starter: 'Basic', plus: 'Advanced', pro: 'Advanced', premium: 'Advanced' },
   { name: 'Expense categories', starter: '5', plus: '15', pro: 'Unlimited', premium: 'Unlimited' },
   { name: 'Monthly reports', starter: true, plus: true, pro: true, premium: true },
