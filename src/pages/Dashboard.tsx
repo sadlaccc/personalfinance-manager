@@ -244,10 +244,11 @@ const Dashboard = () => {
               <Button 
                 size="sm"
                 onClick={() => setDialogOpen(true)}
+                disabled={!canAddIncome}
                 className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-1.5 text-xs shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Add
+                {canAddIncome ? 'Add' : 'Limit'}
               </Button>
             </div>
           </div>
