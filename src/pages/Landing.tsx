@@ -197,7 +197,7 @@ export default function Landing() {
                 <span className="text-primary">Hit your goals.</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A personal finance dashboard for tracking income, expenses, budgets, and savings — built for how Kenyans actually manage money.
+                A personal finance dashboard for tracking income, expenses, budgets, and savings. Built for how Kenyans actually manage money.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
                 <Link to="/auth">
