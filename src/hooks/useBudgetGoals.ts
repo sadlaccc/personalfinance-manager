@@ -25,6 +25,8 @@ export interface BudgetGoalStats {
 
 export function useBudgetGoals() {
   const { user } = useAuth();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
   const [goals, setGoals] = useState<BudgetGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
