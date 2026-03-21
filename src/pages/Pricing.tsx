@@ -511,22 +511,7 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Footer - Compact */}
-        <footer className="py-6 border-t border-border">
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-gradient-income flex items-center justify-center">
-                  <TrendingUp className="w-3 h-3 text-income-foreground" />
-                </div>
-                <span className="font-display font-bold text-sm">FedhaFlow</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                © {new Date().getFullYear()} FedhaFlow. Made in Nairobi 🇰🇪
-              </p>
-            </div>
-          </div>
-        </footer>
+        <PublicFooter />
       </div>
     </PageTransition>
   );

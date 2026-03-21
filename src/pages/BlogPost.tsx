@@ -293,12 +293,7 @@ export default function BlogPost() {
           </article>
         )}
 
-        {/* Footer */}
-        <footer className="py-6 border-t border-border">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} FedhaFlow. All rights reserved.</p>
-          </div>
-        </footer>
+        <PublicFooter />
       </div>
     </PageTransition>
   );
