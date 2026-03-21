@@ -89,36 +89,7 @@ export default function Contact() {
   return (
     <PageTransition>
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-gradient-income flex items-center justify-center shadow-md">
-                <TrendingUp className="w-4 h-4 text-income-foreground" />
-              </div>
-              <span className="font-display font-bold text-lg">FedhaFlow</span>
-            </Link>
-            
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Home
-              </Link>
-              <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                About
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              <ThemeToggle />
-              <Link to="/auth">
-                <Button size="sm">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicNavbar />
 
       {/* Hero - Compact */}
       <section className="relative py-8 sm:py-12 overflow-hidden">
