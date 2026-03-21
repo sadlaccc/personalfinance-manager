@@ -36,6 +36,22 @@ interface UseIncomeSourcesOptions {
 export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
+
+  // Query total income source count (across all months) for limit enforcement
+  const { data: totalSourceCount = 0 } = useQuery({
+    queryKey: ['income-sources-count', user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+      const { count, error } = await supabase
+        .from('income_sources')
+        .select('*', { count: 'exact', head: true });
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user,
+  });
   
   // Default to current month/year if not specified
   const now = new Date();
