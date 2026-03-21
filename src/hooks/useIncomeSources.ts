@@ -5,6 +5,8 @@ import { useMemo } from 'react';
 import { IncomeCategory } from '@/types/income';
 import { Frequency } from '@/types/expense';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { useSubscription } from '@/hooks/useSubscription';
+import { getPlanLimits } from '@/lib/planLimits';
 
 export interface IncomeSource {
   id: string;
@@ -34,6 +36,22 @@ interface UseIncomeSourcesOptions {
 export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
+
+  // Query total income source count (across all months) for limit enforcement
+  const { data: totalSourceCount = 0 } = useQuery({
+    queryKey: ['income-sources-count', user?.id],
+    queryFn: async () => {
+      if (!user) return 0;
+      const { count, error } = await supabase
+        .from('income_sources')
+        .select('*', { count: 'exact', head: true });
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user,
+  });
   
   // Default to current month/year if not specified
   const now = new Date();
@@ -62,9 +80,18 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     enabled: !!user,
   });
 
+  const canAddIncome = totalSourceCount < limits.incomeSources;
+  const incomeLimit = limits.incomeSources;
+
   const addMutation = useMutation({
     mutationFn: async (source: Omit<IncomeSource, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
       if (!user) throw new Error('User not authenticated');
+      
+      if (!canAddIncome) {
+        throw new Error(
+          `Your ${currentPlan} plan allows only ${incomeLimit === Infinity ? 'unlimited' : incomeLimit} income source${incomeLimit !== 1 ? 's' : ''}. Upgrade your plan to add more.`
+        );
+      }
       
       const { data, error } = await supabase
         .from('income_sources')
@@ -80,6 +107,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
 
@@ -146,6 +174,9 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     isLoading,
     selectedMonth,
     selectedYear,
+    canAddIncome,
+    incomeLimit,
+    totalSourceCount,
     addIncomeSource: addMutation.mutateAsync,
     updateIncomeSource: (id: string, updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>>) => 
       updateMutation.mutateAsync({ id, updates }),

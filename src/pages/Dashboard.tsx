@@ -64,7 +64,7 @@ const Dashboard = () => {
   const selectedMonth = selectedDate.getMonth();
   const selectedYear = selectedDate.getFullYear();
 
-  const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { incomeSources, stats: incomeStats, canAddIncome, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
   const { expenses, stats: expenseStats, isLoading: expenseLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
   const { formatAmount, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
@@ -244,10 +244,11 @@ const Dashboard = () => {
               <Button 
                 size="sm"
                 onClick={() => setDialogOpen(true)}
+                disabled={!canAddIncome}
                 className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-1.5 text-xs shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Add
+                {canAddIncome ? 'Add' : 'Limit'}
               </Button>
             </div>
           </div>

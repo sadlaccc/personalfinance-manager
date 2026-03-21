@@ -34,7 +34,7 @@ const Sources = () => {
   const selectedMonth = selectedDate.getMonth();
   const selectedYear = selectedDate.getFullYear();
 
-  const { incomeSources, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { incomeSources, canAddIncome, incomeLimit, totalSourceCount, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<IncomeSource | null>(null);
@@ -153,14 +153,18 @@ const Sources = () => {
           </h2>
           <p className="text-sm text-muted-foreground">
             {incomeSources.length} source{incomeSources.length !== 1 ? 's' : ''} in {format(selectedDate, 'MMMM')}
+            {incomeLimit !== Infinity && (
+              <span className="ml-1">· {totalSourceCount}/{incomeLimit} total used</span>
+            )}
           </p>
         </div>
         <Button 
           onClick={() => setDialogOpen(true)}
+          disabled={!canAddIncome}
           className="rounded-xl bg-gradient-income hover:opacity-90 transition-opacity gap-2"
         >
           <Plus className="w-4 h-4" />
-          Add Income
+          {canAddIncome ? 'Add Income' : 'Limit Reached'}
         </Button>
       </div>
 

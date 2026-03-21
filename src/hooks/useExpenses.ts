@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useMemo } from 'react';
 import { Expense, ExpenseCategory, ExpenseStats } from '@/types/expense';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { useSubscription } from '@/hooks/useSubscription';
+import { getPlanLimits } from '@/lib/planLimits';
 
 interface UseExpensesOptions {
   month?: number; // 0-11
@@ -13,6 +15,8 @@ interface UseExpensesOptions {
 export function useExpenses(options?: UseExpensesOptions) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
   
   // Default to current month/year if not specified
   const now = new Date();
@@ -41,9 +45,22 @@ export function useExpenses(options?: UseExpensesOptions) {
     enabled: !!user,
   });
 
+  // Count unique categories used by this user (for category limit enforcement)
+  const usedCategories = useMemo(() => {
+    const cats = new Set(expenses.map(e => e.category));
+    return cats;
+  }, [expenses]);
+
   const addMutation = useMutation({
     mutationFn: async (expense: Omit<Expense, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
       if (!user) throw new Error('User not authenticated');
+      
+      // Check category limit if this is a new category
+      if (!usedCategories.has(expense.category) && usedCategories.size >= limits.expenseCategories) {
+        throw new Error(
+          `Your ${currentPlan} plan allows only ${limits.expenseCategories} expense categories. Upgrade your plan to use more categories.`
+        );
+      }
       
       const { data, error } = await supabase
         .from('expenses')

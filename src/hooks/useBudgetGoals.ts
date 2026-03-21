@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
+import { getPlanLimits } from '@/lib/planLimits';
 
 export interface BudgetGoal {
   id: string;
@@ -23,6 +25,8 @@ export interface BudgetGoalStats {
 
 export function useBudgetGoals() {
   const { user } = useAuth();
+  const { currentPlan } = useSubscription();
+  const limits = getPlanLimits(currentPlan);
   const [goals, setGoals] = useState<BudgetGoal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,8 +67,21 @@ export function useBudgetGoals() {
     };
   }, [goals]);
 
+  const canAddGoal = limits.savingsGoals === 0 ? false : goals.length < limits.savingsGoals;
+  const goalLimit = limits.savingsGoals;
+
   const addGoal = async (goalData: Omit<BudgetGoal, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     if (!user) throw new Error('Not authenticated');
+
+    if (limits.savingsGoals === 0) {
+      throw new Error('Savings goals are not available on the Starter plan. Upgrade to Plus or higher to set goals.');
+    }
+
+    if (!canAddGoal) {
+      throw new Error(
+        `Your ${currentPlan} plan allows only ${goalLimit} savings goal${goalLimit !== 1 ? 's' : ''}. Upgrade your plan to add more.`
+      );
+    }
 
     const { data, error } = await supabase
       .from('budget_goals')
@@ -114,6 +131,8 @@ export function useBudgetGoals() {
     goals,
     stats,
     isLoading,
+    canAddGoal,
+    goalLimit,
     addGoal,
     updateGoal,
     deleteGoal,
