@@ -64,7 +64,7 @@ const Dashboard = () => {
   const selectedMonth = selectedDate.getMonth();
   const selectedYear = selectedDate.getFullYear();
 
-  const { incomeSources, stats: incomeStats, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
+  const { incomeSources, stats: incomeStats, canAddIncome, addIncomeSource, updateIncomeSource, deleteIncomeSource, isLoading: incomeLoading } = useIncomeSources({ month: selectedMonth, year: selectedYear });
   const { expenses, stats: expenseStats, isLoading: expenseLoading } = useExpenses({ month: selectedMonth, year: selectedYear });
   const { formatAmount, isLoading: profileLoading } = useProfile();
   const { toast } = useToast();
