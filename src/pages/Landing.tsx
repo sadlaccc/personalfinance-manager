@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
 import { 
   Wallet, 
   CircleDollarSign, 
   LineChart, 
   Goal, 
-  Shield, 
   ArrowRight,
   CheckCircle2,
   Send,
@@ -20,7 +20,6 @@ import {
   PieChart,
   Lock,
   Users,
-  Smartphone,
   TrendingUp
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.png';
