@@ -80,9 +80,18 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     enabled: !!user,
   });
 
+  const canAddIncome = totalSourceCount < limits.incomeSources;
+  const incomeLimit = limits.incomeSources;
+
   const addMutation = useMutation({
     mutationFn: async (source: Omit<IncomeSource, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
       if (!user) throw new Error('User not authenticated');
+      
+      if (!canAddIncome) {
+        throw new Error(
+          `Your ${currentPlan} plan allows only ${incomeLimit === Infinity ? 'unlimited' : incomeLimit} income source${incomeLimit !== 1 ? 's' : ''}. Upgrade your plan to add more.`
+        );
+      }
       
       const { data, error } = await supabase
         .from('income_sources')
@@ -98,6 +107,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
 
