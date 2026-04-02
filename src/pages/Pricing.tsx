@@ -142,6 +142,22 @@ const features = [
   { name: 'Priority support', starter: false, plus: false, pro: true, premium: true },
 ];
 
+const businessFeatures = [
+  { name: 'Max team members', team: '5', business: '20', enterprise: 'Unlimited' },
+  { name: 'Shared team dashboard', team: true, business: true, enterprise: true },
+  { name: 'Team expense analytics', team: true, business: true, enterprise: true },
+  { name: 'Role-based access control', team: true, business: true, enterprise: true },
+  { name: 'Company profile settings', team: true, business: true, enterprise: true },
+  { name: 'Advanced team reports', team: false, business: true, enterprise: true },
+  { name: 'API access', team: false, business: true, enterprise: true },
+  { name: 'Dedicated support', team: false, business: true, enterprise: true },
+  { name: 'Custom integrations', team: false, business: false, enterprise: true },
+  { name: 'SSO & advanced security', team: false, business: false, enterprise: true },
+  { name: 'SLA guarantee', team: false, business: false, enterprise: true },
+  { name: 'Dedicated account manager', team: false, business: false, enterprise: true },
+  { name: 'All personal features', team: 'Pro', business: 'Premium', enterprise: 'Premium' },
+];
+
 const faqs = [
   {
     question: 'Is there a free trial?',
