@@ -148,7 +148,7 @@
              Invite Team Member
            </DialogTitle>
            <DialogDescription>
-             Add members to your team ({activeMembers.length + 1}/{maxTeamSize === 999 ? '∞' : maxTeamSize} seats used)
+             Add members to your team ({activeMembers.length + 1}/{maxTeamSize === Infinity ? '∞' : maxTeamSize} seats used)
            </DialogDescription>
          </DialogHeader>
  
