@@ -71,36 +71,57 @@ const businessPlans = [
     name: 'Team',
     price: 2499,
     users: 5,
-    description: 'Perfect for small teams',
+    description: 'Small teams collaborating on finances',
     icon: Users,
     cta: 'Start Team Trial',
     popular: false,
     gradient: 'from-sky-500 to-blue-600',
-    features: ['Up to 5 users', 'Shared dashboard', 'Team analytics', 'Priority support'],
+    features: [
+      'Up to 5 team members',
+      'Shared team dashboard',
+      'Team expense analytics',
+      'Role-based access control',
+      'Company profile settings',
+      'All personal Pro features included',
+    ],
   },
   {
     id: 'business',
     name: 'Business',
     price: 7999,
     users: 20,
-    description: 'Growing organizations',
+    description: 'Growing organizations & departments',
     icon: Building2,
     cta: 'Start Business Trial',
     popular: true,
     gradient: 'from-violet-500 to-purple-600',
-    features: ['Up to 20 users', 'Advanced reports', 'Role management', 'API access', 'Dedicated support'],
+    features: [
+      'Up to 20 team members',
+      'Advanced team reports & insights',
+      'Full role & permission management',
+      'API access for integrations',
+      'Dedicated account support',
+      'All personal Premium features included',
+    ],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     price: null,
     users: 'Unlimited',
-    description: 'Custom solutions for large orgs',
+    description: 'Custom solutions for large organizations',
     icon: Rocket,
     cta: 'Contact Sales',
     popular: false,
     gradient: 'from-amber-500 to-orange-600',
-    features: ['Unlimited users', 'Custom integrations', 'SSO & Security', 'SLA guarantee', 'Dedicated manager'],
+    features: [
+      'Unlimited team members',
+      'Custom integrations & workflows',
+      'SSO & advanced security',
+      'SLA guarantee & uptime',
+      'Dedicated account manager',
+      'Everything in Business included',
+    ],
   },
 ];
 
@@ -119,6 +140,22 @@ const features = [
   { name: 'Budget forecasting AI', starter: false, plus: false, pro: false, premium: true },
   { name: 'Custom widgets', starter: false, plus: false, pro: false, premium: true },
   { name: 'Priority support', starter: false, plus: false, pro: true, premium: true },
+];
+
+const businessFeatures = [
+  { name: 'Max team members', team: '5', business: '20', enterprise: 'Unlimited' },
+  { name: 'Shared team dashboard', team: true, business: true, enterprise: true },
+  { name: 'Team expense analytics', team: true, business: true, enterprise: true },
+  { name: 'Role-based access control', team: true, business: true, enterprise: true },
+  { name: 'Company profile settings', team: true, business: true, enterprise: true },
+  { name: 'Advanced team reports', team: false, business: true, enterprise: true },
+  { name: 'API access', team: false, business: true, enterprise: true },
+  { name: 'Dedicated support', team: false, business: true, enterprise: true },
+  { name: 'Custom integrations', team: false, business: false, enterprise: true },
+  { name: 'SSO & advanced security', team: false, business: false, enterprise: true },
+  { name: 'SLA guarantee', team: false, business: false, enterprise: true },
+  { name: 'Dedicated account manager', team: false, business: false, enterprise: true },
+  { name: 'All personal features', team: 'Pro', business: 'Premium', enterprise: 'Premium' },
 ];
 
 const faqs = [
@@ -434,7 +471,67 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* FAQ - Compact */}
+        {/* Business Feature Comparison */}
+        <section className="py-10 sm:py-12 bg-muted/20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-6"
+            >
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Compare Business Features</h2>
+              <p className="text-muted-foreground text-sm">What each business tier offers your organization</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-3xl mx-auto overflow-x-auto"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50">
+                    <TableHead className="w-[200px] text-xs">Feature</TableHead>
+                    {businessPlans.map((plan) => (
+                      <TableHead key={plan.id} className="text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <plan.icon className={`w-4 h-4 ${plan.popular ? 'text-primary' : 'text-muted-foreground'}`} />
+                          <span className="text-xs font-medium">{plan.name}</span>
+                        </div>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {businessFeatures.map((feature) => (
+                    <TableRow key={feature.name} className="border-border/30">
+                      <TableCell className="font-medium text-xs py-2">{feature.name}</TableCell>
+                      {(['team', 'business', 'enterprise'] as const).map((plan) => {
+                        const value = feature[plan];
+                        return (
+                          <TableCell key={plan} className="text-center py-2">
+                            {value === true ? (
+                              <CheckCircle2 className="w-4 h-4 text-success mx-auto" />
+                            ) : value === false ? (
+                              <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
+                            ) : (
+                              <span className="text-xs">{value}</span>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </motion.div>
+          </div>
+        </section>
+
+
         <section className="py-10 sm:py-12 bg-muted/20">
           <div className="container mx-auto px-4 sm:px-6">
             <motion.div
