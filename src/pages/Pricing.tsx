@@ -471,7 +471,67 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* FAQ - Compact */}
+        {/* Business Feature Comparison */}
+        <section className="py-10 sm:py-12 bg-muted/20">
+          <div className="container mx-auto px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="text-center mb-6"
+            >
+              <h2 className="font-display text-xl sm:text-2xl font-bold mb-1">Compare Business Features</h2>
+              <p className="text-muted-foreground text-sm">What each business tier offers your organization</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="max-w-3xl mx-auto overflow-x-auto"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50">
+                    <TableHead className="w-[200px] text-xs">Feature</TableHead>
+                    {businessPlans.map((plan) => (
+                      <TableHead key={plan.id} className="text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <plan.icon className={`w-4 h-4 ${plan.popular ? 'text-primary' : 'text-muted-foreground'}`} />
+                          <span className="text-xs font-medium">{plan.name}</span>
+                        </div>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {businessFeatures.map((feature) => (
+                    <TableRow key={feature.name} className="border-border/30">
+                      <TableCell className="font-medium text-xs py-2">{feature.name}</TableCell>
+                      {(['team', 'business', 'enterprise'] as const).map((plan) => {
+                        const value = feature[plan];
+                        return (
+                          <TableCell key={plan} className="text-center py-2">
+                            {value === true ? (
+                              <CheckCircle2 className="w-4 h-4 text-success mx-auto" />
+                            ) : value === false ? (
+                              <X className="w-4 h-4 text-muted-foreground/30 mx-auto" />
+                            ) : (
+                              <span className="text-xs">{value}</span>
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </motion.div>
+          </div>
+        </section>
+
+
         <section className="py-10 sm:py-12 bg-muted/20">
           <div className="container mx-auto px-4 sm:px-6">
             <motion.div
