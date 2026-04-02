@@ -89,11 +89,10 @@
        );
        if (existing) throw new Error('This email has already been invited');
  
-       // Check team capacity
-       const activeMembers = teamMembers.filter((m) => m.status !== 'revoked').length + 1; // +1 for owner
-       if (activeMembers >= maxTeamSize) {
-         throw new Error(`Team limit reached (${maxTeamSize} members)`);
-       }
+        const activeMembers = teamMembers.filter((m) => m.status !== 'revoked').length + 1;
+        if (activeMembers >= maxTeamSize && maxTeamSize !== Infinity) {
+          throw new Error(`Team limit reached (${maxTeamSize} members). Upgrade your plan to add more.`);
+        }
  
        const { error } = await supabase.from('team_members').insert({
          team_owner_id: user.id,
@@ -135,8 +134,9 @@
      },
    });
  
-   const activeMembers = teamMembers.filter((m) => m.status !== 'revoked');
-   const pendingMembers = teamMembers.filter((m) => m.status === 'pending');
+    const activeMembers = teamMembers.filter((m) => m.status !== 'revoked');
+    const pendingMembers = teamMembers.filter((m) => m.status === 'pending');
+    const isAtCapacity = maxTeamSize !== Infinity && (activeMembers.length + 1) >= maxTeamSize;
  
    return (
      <Dialog open={open} onOpenChange={setOpen}>
@@ -148,45 +148,54 @@
              Invite Team Member
            </DialogTitle>
            <DialogDescription>
-             Add members to your team ({activeMembers.length + 1}/{maxTeamSize === 999 ? '∞' : maxTeamSize} seats used)
+             Add members to your team ({activeMembers.length + 1}/{maxTeamSize === Infinity ? '∞' : maxTeamSize} seats used)
            </DialogDescription>
          </DialogHeader>
  
-         <div className="space-y-4">
-           {/* Invite Form */}
-           <div className="space-y-3">
-             <div className="space-y-2">
-               <Label htmlFor="email">Email Address</Label>
-               <Input
-                 id="email"
-                 type="email"
-                 placeholder="colleague@company.com"
-                 value={email}
-                 onChange={(e) => setEmail(e.target.value)}
-               />
-             </div>
-             <div className="space-y-2">
-               <Label htmlFor="role">Role</Label>
-               <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member' | 'viewer')}>
-                 <SelectTrigger>
-                   <SelectValue />
-                 </SelectTrigger>
-                 <SelectContent>
-                   <SelectItem value="admin">Admin - Full access</SelectItem>
-                   <SelectItem value="member">Member - Can edit</SelectItem>
-                   <SelectItem value="viewer">Viewer - Read only</SelectItem>
-                 </SelectContent>
-               </Select>
-             </div>
-             <Button
-               className="w-full"
-               onClick={() => inviteMember.mutate()}
-               disabled={inviteMember.isPending || !email.trim()}
-             >
-               <Mail className="w-4 h-4 mr-2" />
-               {inviteMember.isPending ? 'Sending...' : 'Send Invitation'}
-             </Button>
-           </div>
+          <div className="space-y-4">
+            {isAtCapacity && (
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-sm">
+                <p className="font-medium text-destructive">Team limit reached</p>
+                <p className="text-muted-foreground text-xs mt-1">
+                  Your plan allows up to {maxTeamSize} members. Upgrade to add more team members.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="colleague@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isAtCapacity}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">Role</Label>
+                <Select value={role} onValueChange={(v) => setRole(v as 'admin' | 'member' | 'viewer')} disabled={isAtCapacity}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin - Full access</SelectItem>
+                    <SelectItem value="member">Member - Can edit</SelectItem>
+                    <SelectItem value="viewer">Viewer - Read only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                className="w-full"
+                onClick={() => inviteMember.mutate()}
+                disabled={inviteMember.isPending || !email.trim() || isAtCapacity}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                {isAtCapacity ? 'Upgrade to Invite More' : inviteMember.isPending ? 'Sending...' : 'Send Invitation'}
+              </Button>
+            </div>
  
            {/* Pending Invitations */}
            {pendingMembers.length > 0 && (

@@ -2,6 +2,7 @@
  import { supabase } from '@/integrations/supabase/client';
  import { useAuth } from '@/contexts/AuthContext';
  import { useSubscription, PLAN_LABELS } from '@/hooks/useSubscription';
+ import { getPlanLimits } from '@/lib/planLimits';
  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
  import { Badge } from '@/components/ui/badge';
  import { Button } from '@/components/ui/button';
@@ -85,8 +86,9 @@
      return <Navigate to="/dashboard" replace />;
    }
  
-   const maxTeamSize = subscription?.plan_type === 'business' ? 5 : subscription?.plan_type === 'enterprise' ? 999 : 2;
-   const currentTeamSize = teamMembersCount + 1; // +1 for owner
+    const planLimits = getPlanLimits(subscription?.plan_type || 'starter');
+    const maxTeamSize = planLimits.maxUsers;
+    const currentTeamSize = teamMembersCount + 1;
  
    const handleExportReport = () => {
      const reportData = [
