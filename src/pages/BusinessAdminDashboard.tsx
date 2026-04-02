@@ -2,6 +2,7 @@
  import { supabase } from '@/integrations/supabase/client';
  import { useAuth } from '@/contexts/AuthContext';
  import { useSubscription, PLAN_LABELS } from '@/hooks/useSubscription';
+ import { getPlanLimits } from '@/lib/planLimits';
  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
  import { Badge } from '@/components/ui/badge';
  import { Button } from '@/components/ui/button';
