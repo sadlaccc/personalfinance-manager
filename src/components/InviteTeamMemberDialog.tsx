@@ -134,8 +134,9 @@
      },
    });
  
-   const activeMembers = teamMembers.filter((m) => m.status !== 'revoked');
-   const pendingMembers = teamMembers.filter((m) => m.status === 'pending');
+    const activeMembers = teamMembers.filter((m) => m.status !== 'revoked');
+    const pendingMembers = teamMembers.filter((m) => m.status === 'pending');
+    const isAtCapacity = maxTeamSize !== Infinity && (activeMembers.length + 1) >= maxTeamSize;
  
    return (
      <Dialog open={open} onOpenChange={setOpen}>
