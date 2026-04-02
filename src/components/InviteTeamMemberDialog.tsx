@@ -89,11 +89,10 @@
        );
        if (existing) throw new Error('This email has already been invited');
  
-       // Check team capacity
-       const activeMembers = teamMembers.filter((m) => m.status !== 'revoked').length + 1; // +1 for owner
-       if (activeMembers >= maxTeamSize) {
-         throw new Error(`Team limit reached (${maxTeamSize} members)`);
-       }
+        const activeMembers = teamMembers.filter((m) => m.status !== 'revoked').length + 1;
+        if (activeMembers >= maxTeamSize && maxTeamSize !== Infinity) {
+          throw new Error(`Team limit reached (${maxTeamSize} members). Upgrade your plan to add more.`);
+        }
  
        const { error } = await supabase.from('team_members').insert({
          team_owner_id: user.id,
