@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Loader2, Phone, Sparkles, Zap, TrendingUp, Crown } from 'lucide-react';
+import { Check, Loader2, Phone, Sparkles, Zap, TrendingUp, Crown, Users, Building2, Rocket } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useSubscription, PLAN_PRICES, PLAN_LABELS } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
 
@@ -19,54 +20,75 @@ interface UpgradeDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const plans = [
+const personalPlans = [
   {
     id: 'starter',
     name: 'Starter',
     icon: Zap,
-    features: ['Up to 5 income sources', 'Basic expense tracking', 'Monthly reports'],
+    features: ['1 income source', 'Basic expense tracking (5 categories)', 'Monthly reports'],
   },
   {
     id: 'plus',
     name: 'Plus',
     icon: TrendingUp,
-    features: ['Up to 15 income sources', 'Weekly reports', 'Basic savings goals'],
+    features: ['Up to 5 income sources', '15 expense categories', 'Weekly reports', '3 savings goals', 'CSV export'],
   },
   {
     id: 'pro',
     name: 'Pro',
     icon: Sparkles,
     popular: true,
-    features: ['Unlimited entries', 'Advanced analytics', 'Export reports'],
+    features: ['Unlimited income sources', 'Unlimited categories', 'Advanced analytics', 'PDF & CSV export', 'Unlimited savings goals'],
   },
   {
     id: 'premium',
     name: 'Premium',
     icon: Crown,
-    features: ['Everything in Pro', 'AI forecasting', 'Priority support'],
+    features: ['Everything in Pro', 'Excel export', 'AI budget forecasting', 'Custom widgets', 'Priority support'],
   },
 ];
 
+const businessPlans = [
+  {
+    id: 'team',
+    name: 'Team',
+    icon: Users,
+    features: ['Up to 5 users', 'Shared team dashboard', 'Team analytics', 'Role management', 'Company settings'],
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    icon: Building2,
+    popular: true,
+    features: ['Up to 20 users', 'Advanced team reports', 'Full role management', 'API access', 'Dedicated support'],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    icon: Rocket,
+    features: ['Unlimited users', 'Custom integrations', 'SSO & advanced security', 'SLA guarantee', 'Dedicated account manager'],
+  },
+];
+
+type PlanId = 'starter' | 'plus' | 'pro' | 'premium' | 'team' | 'business';
+
 export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
   const { currentPlan, initiateMpesaPayment } = useSubscription();
-  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'plus' | 'pro' | 'premium'>('pro');
+  const [selectedPlan, setSelectedPlan] = useState<PlanId>('pro');
   const [phone, setPhone] = useState('');
   const [step, setStep] = useState<'select' | 'payment'>('select');
+  const [tab, setTab] = useState<'personal' | 'business'>('personal');
 
   const handlePlanSelect = (planId: string) => {
-    setSelectedPlan(planId as 'starter' | 'plus' | 'pro' | 'premium');
+    if (planId === 'enterprise') return;
+    setSelectedPlan(planId as PlanId);
   };
 
   const handleContinue = () => {
     if (selectedPlan === 'starter' || selectedPlan === currentPlan) {
       initiateMpesaPayment.mutate(
         { phone: '', planType: selectedPlan },
-        {
-          onSuccess: () => {
-            onOpenChange(false);
-            setStep('select');
-          },
-        }
+        { onSuccess: () => { onOpenChange(false); setStep('select'); } }
       );
     } else {
       setStep('payment');
@@ -75,31 +97,91 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
 
   const handlePayment = () => {
     if (!phone.trim()) return;
-    
     initiateMpesaPayment.mutate(
       { phone, planType: selectedPlan },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-          setStep('select');
-          setPhone('');
-        },
-      }
+      { onSuccess: () => { onOpenChange(false); setStep('select'); setPhone(''); } }
     );
   };
 
   const price = PLAN_PRICES[selectedPlan];
 
+  const renderPlanList = (plans: typeof personalPlans) => (
+    <div className="grid gap-3">
+      {plans.map((plan) => {
+        const Icon = plan.icon;
+        const planPrice = PLAN_PRICES[plan.id];
+        const isSelected = selectedPlan === plan.id;
+        const isCurrent = currentPlan === plan.id;
+        const isEnterprise = plan.id === 'enterprise';
+
+        return (
+          <button
+            key={plan.id}
+            onClick={() => isEnterprise ? window.location.href = '/contact' : handlePlanSelect(plan.id)}
+            disabled={isCurrent}
+            className={cn(
+              'relative p-4 rounded-xl border-2 text-left transition-all',
+              isSelected && !isEnterprise
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:border-primary/50',
+              isCurrent && 'opacity-50 cursor-not-allowed'
+            )}
+          >
+            {plan.popular && !isCurrent && (
+              <span className="absolute -top-2.5 left-4 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
+                Popular
+              </span>
+            )}
+            {isCurrent && (
+              <span className="absolute -top-2.5 left-4 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                Current
+              </span>
+            )}
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  'p-2 rounded-lg',
+                  isSelected && !isEnterprise ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                )}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">{plan.name}</h4>
+                  <p className="text-sm text-muted-foreground">
+                    {isEnterprise ? 'Custom pricing' : planPrice === 0 ? 'Free' : `KSh ${planPrice?.toLocaleString()}/month`}
+                  </p>
+                </div>
+              </div>
+              {isSelected && !isEnterprise && (
+                <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-3 h-3 text-primary-foreground" />
+                </div>
+              )}
+            </div>
+            <ul className="mt-3 space-y-1">
+              {plan.features.map((feature) => (
+                <li key={feature} className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Check className="w-3 h-3 text-primary" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {step === 'select' ? 'Choose Your Plan' : 'Complete Payment'}
           </DialogTitle>
           <DialogDescription>
-            {step === 'select' 
-              ? 'Select a plan that fits your needs'
+            {step === 'select'
+              ? 'Select a personal or business plan'
               : 'Enter your M-Pesa phone number to complete payment'
             }
           </DialogDescription>
@@ -114,76 +196,31 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
               exit={{ opacity: 0, x: 20 }}
               className="space-y-4"
             >
-              <div className="grid gap-3">
-                {plans.map((plan) => {
-                  const Icon = plan.icon;
-                  const planPrice = PLAN_PRICES[plan.id as keyof typeof PLAN_PRICES];
-                  const isSelected = selectedPlan === plan.id;
-                  const isCurrent = currentPlan === plan.id;
+              <Tabs value={tab} onValueChange={(v) => setTab(v as 'personal' | 'business')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="personal" className="gap-1.5">
+                    <Zap className="w-3.5 h-3.5" />
+                    Personal
+                  </TabsTrigger>
+                  <TabsTrigger value="business" className="gap-1.5">
+                    <Building2 className="w-3.5 h-3.5" />
+                    Business
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="personal" className="mt-3">
+                  {renderPlanList(personalPlans)}
+                </TabsContent>
+                <TabsContent value="business" className="mt-3">
+                  {renderPlanList(businessPlans)}
+                </TabsContent>
+              </Tabs>
 
-                  return (
-                    <button
-                      key={plan.id}
-                      onClick={() => handlePlanSelect(plan.id)}
-                      disabled={isCurrent}
-                      className={cn(
-                        'relative p-4 rounded-xl border-2 text-left transition-all',
-                        isSelected
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50',
-                        isCurrent && 'opacity-50 cursor-not-allowed'
-                      )}
-                    >
-                      {plan.popular && !isCurrent && (
-                        <span className="absolute -top-2.5 left-4 text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
-                          Popular
-                        </span>
-                      )}
-                      {isCurrent && (
-                        <span className="absolute -top-2.5 left-4 text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                          Current
-                        </span>
-                      )}
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={cn(
-                            'p-2 rounded-lg',
-                            isSelected ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                          )}>
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold">{plan.name}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {planPrice === 0 ? 'Free' : `KSh ${planPrice}/month`}
-                            </p>
-                          </div>
-                        </div>
-                        {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="w-3 h-3 text-primary-foreground" />
-                          </div>
-                        )}
-                      </div>
-                      <ul className="mt-3 space-y-1">
-                        {plan.features.map((feature) => (
-                          <li key={feature} className="text-xs text-muted-foreground flex items-center gap-2">
-                            <Check className="w-3 h-3 text-primary" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <Button 
-                onClick={handleContinue} 
+              <Button
+                onClick={handleContinue}
                 className="w-full"
-                disabled={selectedPlan === currentPlan}
+                disabled={selectedPlan === currentPlan || selectedPlan === ('enterprise' as PlanId)}
               >
-                {selectedPlan === 'starter' ? 'Activate Free Plan' : `Continue • KSh ${price}/mo`}
+                {selectedPlan === 'starter' ? 'Activate Free Plan' : `Continue • KSh ${price?.toLocaleString()}/mo`}
               </Button>
             </motion.div>
           ) : (
@@ -201,7 +238,7 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                 </div>
                 <div className="flex justify-between text-sm font-bold pt-2 border-t">
                   <span>Total</span>
-                  <span>KSh {price}/month</span>
+                  <span>KSh {price?.toLocaleString()}/month</span>
                 </div>
               </div>
 
@@ -227,8 +264,8 @@ export function UpgradeDialog({ open, onOpenChange }: UpgradeDialogProps) {
                 <Button variant="outline" onClick={() => setStep('select')} className="flex-1">
                   Back
                 </Button>
-                <Button 
-                  onClick={handlePayment} 
+                <Button
+                  onClick={handlePayment}
                   disabled={!phone.trim() || initiateMpesaPayment.isPending}
                   className="flex-1"
                 >
