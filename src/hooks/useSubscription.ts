@@ -33,8 +33,8 @@ export const PLAN_LABELS: Record<string, string> = {
   plus: 'Plus',
   pro: 'Pro',
   premium: 'Premium',
-  team: 'Team (5 users)',
-  business: 'Business (20 users)',
+  team: 'Team (1 user)',
+  business: 'Business (3 users)',
   enterprise: 'Enterprise',
 };
 
