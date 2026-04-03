@@ -129,7 +129,7 @@ export const PLAN_LIMITS: Record<string, PlanLimits> = {
     exportCsv: true,
     exportPdf: true,
     exportExcel: true,
-    maxUsers: 20,
+    maxUsers: 3,
     teamDashboard: true,
     teamAnalytics: true,
     roleManagement: true,
