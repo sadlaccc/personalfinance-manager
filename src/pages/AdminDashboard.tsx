@@ -533,12 +533,29 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell className="hidden lg:table-cell">
                               {subscription ? (
-                                <Badge 
-                                  variant="secondary" 
-                                  className={`${getPlanBadgeColor(subscription.plan_type)} text-xs`}
-                                >
-                                  {PLAN_LABELS[subscription.plan_type] || subscription.plan_type}
-                                </Badge>
+                                <div className="flex items-center gap-1.5">
+                                  <Badge 
+                                    variant="secondary" 
+                                    className={`${getPlanBadgeColor(subscription.plan_type)} text-xs`}
+                                  >
+                                    {PLAN_LABELS[subscription.plan_type] || subscription.plan_type}
+                                  </Badge>
+                                  {subscription.status === 'trial' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-amber-400 text-amber-600">
+                                      Trial
+                                    </Badge>
+                                  )}
+                                  {subscription.status === 'cancelled' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-destructive text-destructive">
+                                      Cancelled
+                                    </Badge>
+                                  )}
+                                  {subscription.status === 'expired' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-muted-foreground text-muted-foreground">
+                                      Expired
+                                    </Badge>
+                                  )}
+                                </div>
                               ) : (
                                 <Badge variant="outline" className="text-xs">No Plan</Badge>
                               )}
