@@ -10,6 +10,7 @@ export interface AdminSubscription {
   current_period_end: string;
   billing_cycle: string;
   mpesa_phone: string | null;
+  trial_ends_at: string | null;
 }
 
 export function useAdminSubscriptions() {

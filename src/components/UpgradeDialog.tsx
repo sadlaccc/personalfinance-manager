@@ -53,20 +53,20 @@ const businessPlans = [
     id: 'team',
     name: 'Team',
     icon: Users,
-    features: ['Up to 5 users', 'Shared team dashboard', 'Team analytics', 'Role management', 'Company settings'],
+    features: ['1 user included', 'Shared team dashboard', 'Team analytics', 'Role management', 'Company settings'],
   },
   {
     id: 'business',
     name: 'Business',
     icon: Building2,
     popular: true,
-    features: ['Up to 20 users', 'Advanced team reports', 'Full role management', 'API access', 'Dedicated support'],
+    features: ['Up to 3 users', 'Advanced team reports', 'Full role management', 'API access', 'Dedicated support'],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     icon: Rocket,
-    features: ['Unlimited users', 'Custom integrations', 'SSO & advanced security', 'SLA guarantee', 'Dedicated account manager'],
+    features: ['Up to 5 users', 'Custom integrations', 'SSO & advanced security', 'SLA guarantee', 'Dedicated account manager'],
   },
 ];
 

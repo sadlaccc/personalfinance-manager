@@ -141,6 +141,7 @@ export default function AdminDashboard() {
 
   // Subscription stats
   const activeSubscriptions = subscriptions?.filter(s => s.status === 'active').length || 0;
+  const trialUsers = subscriptions?.filter(s => s.status === 'trial').length || 0;
   const paidUsers = subscriptions?.filter(s => s.status === 'active' && s.plan_type !== 'starter').length || 0;
 
   const handleEmailClick = (user: AdminUser) => {
@@ -395,15 +396,15 @@ export default function AdminDashboard() {
           <Card className="col-span-1">
             <CardHeader className="p-3 md:p-4 pb-1 md:pb-2">
               <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                <CreditCard className="h-3.5 w-3.5 text-emerald-500" />
-                Paid Users
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                On Trial
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 md:p-4 pt-0 md:pt-0">
               {subsLoading ? (
                 <Skeleton className="h-7 w-12" />
               ) : (
-                <div className="text-lg md:text-2xl font-bold text-emerald-600">{paidUsers}</div>
+                <div className="text-lg md:text-2xl font-bold text-amber-600">{trialUsers}</div>
               )}
             </CardContent>
           </Card>
@@ -532,12 +533,29 @@ export default function AdminDashboard() {
                             </TableCell>
                             <TableCell className="hidden lg:table-cell">
                               {subscription ? (
-                                <Badge 
-                                  variant="secondary" 
-                                  className={`${getPlanBadgeColor(subscription.plan_type)} text-xs`}
-                                >
-                                  {PLAN_LABELS[subscription.plan_type] || subscription.plan_type}
-                                </Badge>
+                                <div className="flex items-center gap-1.5">
+                                  <Badge 
+                                    variant="secondary" 
+                                    className={`${getPlanBadgeColor(subscription.plan_type)} text-xs`}
+                                  >
+                                    {PLAN_LABELS[subscription.plan_type] || subscription.plan_type}
+                                  </Badge>
+                                  {subscription.status === 'trial' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-amber-400 text-amber-600">
+                                      Trial
+                                    </Badge>
+                                  )}
+                                  {subscription.status === 'cancelled' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-destructive text-destructive">
+                                      Cancelled
+                                    </Badge>
+                                  )}
+                                  {subscription.status === 'expired' && (
+                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-muted-foreground text-muted-foreground">
+                                      Expired
+                                    </Badge>
+                                  )}
+                                </div>
                               ) : (
                                 <Badge variant="outline" className="text-xs">No Plan</Badge>
                               )}
