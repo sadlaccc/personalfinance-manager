@@ -141,6 +141,7 @@ export default function AdminDashboard() {
 
   // Subscription stats
   const activeSubscriptions = subscriptions?.filter(s => s.status === 'active').length || 0;
+  const trialUsers = subscriptions?.filter(s => s.status === 'trial').length || 0;
   const paidUsers = subscriptions?.filter(s => s.status === 'active' && s.plan_type !== 'starter').length || 0;
 
   const handleEmailClick = (user: AdminUser) => {
