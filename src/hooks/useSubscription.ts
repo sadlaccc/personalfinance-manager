@@ -107,7 +107,11 @@ export function useSubscription() {
   });
 
   const currentPlan = subscription?.plan_type || 'starter';
-  const isActive = subscription?.status === 'active';
+  const isTrial = subscription?.status === 'trial';
+  const isActive = subscription?.status === 'active' || isTrial;
+  const trialDaysRemaining = subscription?.trial_ends_at
+    ? Math.max(0, Math.ceil((new Date(subscription.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0;
   const daysRemaining = subscription?.current_period_end
     ? Math.max(0, Math.ceil((new Date(subscription.current_period_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
