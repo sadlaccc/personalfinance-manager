@@ -57,10 +57,17 @@ export function SubscriptionCard() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Your Plan</CardTitle>
-              <Badge variant="secondary" className={planColor}>
-                <PlanIcon className="w-3 h-3 mr-1" />
-                {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {isTrial && (
+                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-xs">
+                    Trial
+                  </Badge>
+                )}
+                <Badge variant="secondary" className={planColor}>
+                  <PlanIcon className="w-3 h-3 mr-1" />
+                  {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
