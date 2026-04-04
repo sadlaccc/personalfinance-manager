@@ -396,15 +396,15 @@ export default function AdminDashboard() {
           <Card className="col-span-1">
             <CardHeader className="p-3 md:p-4 pb-1 md:pb-2">
               <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                <CreditCard className="h-3.5 w-3.5 text-emerald-500" />
-                Paid Users
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
+                On Trial
               </CardTitle>
             </CardHeader>
             <CardContent className="p-3 md:p-4 pt-0 md:pt-0">
               {subsLoading ? (
                 <Skeleton className="h-7 w-12" />
               ) : (
-                <div className="text-lg md:text-2xl font-bold text-emerald-600">{paidUsers}</div>
+                <div className="text-lg md:text-2xl font-bold text-amber-600">{trialUsers}</div>
               )}
             </CardContent>
           </Card>
