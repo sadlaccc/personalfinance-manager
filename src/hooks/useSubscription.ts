@@ -121,7 +121,9 @@ export function useSubscription() {
     isLoading,
     currentPlan,
     isActive,
+    isTrial,
     daysRemaining,
+    trialDaysRemaining,
     initiateMpesaPayment,
   };
 }
