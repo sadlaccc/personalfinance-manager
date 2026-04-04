@@ -23,7 +23,7 @@ const planColors: Record<string, string> = {
 };
 
 export function SubscriptionCard() {
-  const { subscription, isLoading, currentPlan, isActive, daysRemaining } = useSubscription();
+  const { subscription, isLoading, currentPlan, isActive, isTrial, daysRemaining, trialDaysRemaining } = useSubscription();
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   if (isLoading) {
