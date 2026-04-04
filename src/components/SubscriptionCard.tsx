@@ -23,7 +23,7 @@ const planColors: Record<string, string> = {
 };
 
 export function SubscriptionCard() {
-  const { subscription, isLoading, currentPlan, isActive, daysRemaining } = useSubscription();
+  const { subscription, isLoading, currentPlan, isActive, isTrial, daysRemaining, trialDaysRemaining } = useSubscription();
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   if (isLoading) {
@@ -57,25 +57,43 @@ export function SubscriptionCard() {
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">Your Plan</CardTitle>
-              <Badge variant="secondary" className={planColor}>
-                <PlanIcon className="w-3 h-3 mr-1" />
-                {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {isTrial && (
+                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-xs">
+                    Trial
+                  </Badge>
+                )}
+                <Badge variant="secondary" className={planColor}>
+                  <PlanIcon className="w-3 h-3 mr-1" />
+                  {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {subscription && isActive ? (
               <>
+                {isTrial && (
+                  <div className="p-3 rounded-lg bg-warning/10 border border-warning/20">
+                    <p className="text-sm font-medium text-warning">Free Trial</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {trialDaysRemaining > 0
+                        ? `${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''} remaining. Subscribe to keep your Pro features.`
+                        : 'Your trial has ended. Subscribe to continue using Pro features.'}
+                    </p>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg bg-muted/50 space-y-1">
                     <span className="text-xs text-muted-foreground">Billing</span>
-                    <p className="font-medium text-sm">Monthly</p>
+                    <p className="font-medium text-sm">{isTrial ? 'Free Trial' : 'Monthly'}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-muted/50 space-y-1">
-                    <span className="text-xs text-muted-foreground">Next Payment</span>
+                    <span className="text-xs text-muted-foreground">{isTrial ? 'Trial Ends' : 'Next Payment'}</span>
                     <p className="font-medium text-sm flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {new Date(subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {new Date(isTrial ? subscription.trial_ends_at! : subscription.current_period_end).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </p>
                   </div>
                 </div>
@@ -89,10 +107,10 @@ export function SubscriptionCard() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Period progress</span>
-                    <span className="font-medium text-primary">{daysRemaining} days left</span>
+                    <span className="text-muted-foreground">{isTrial ? 'Trial progress' : 'Period progress'}</span>
+                    <span className="font-medium text-primary">{isTrial ? trialDaysRemaining : daysRemaining} days left</span>
                   </div>
-                  <Progress value={periodProgress} className="h-2" />
+                  <Progress value={isTrial ? Math.min(100, ((14 - trialDaysRemaining) / 14) * 100) : periodProgress} className="h-2" />
                 </div>
 
                 {currentPlan !== 'premium' && (
