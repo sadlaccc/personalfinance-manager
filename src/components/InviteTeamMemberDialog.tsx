@@ -94,14 +94,34 @@
           throw new Error(`Team limit reached (${maxTeamSize} members). Upgrade your plan to add more.`);
         }
  
-       const { error } = await supabase.from('team_members').insert({
-         team_owner_id: user.id,
-         member_email: email.toLowerCase().trim(),
-         role,
-         status: 'pending',
-       });
- 
-       if (error) throw error;
+      const { error } = await supabase.from('team_members').insert({
+          team_owner_id: user.id,
+          member_email: email.toLowerCase().trim(),
+          role,
+          status: 'pending',
+        });
+
+        if (error) throw error;
+
+        // Send invitation email
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('user_id', user.id)
+            .single();
+
+          await supabase.functions.invoke('send-invite-email', {
+            body: {
+              recipientEmail: email.toLowerCase().trim(),
+              role,
+              inviterName: profile?.full_name || user.email,
+            },
+          });
+        } catch (emailError) {
+          console.error('Failed to send invite email:', emailError);
+          // Don't throw - the team member was added, just email failed
+        }
      },
      onSuccess: () => {
        toast.success('Invitation sent successfully!');
