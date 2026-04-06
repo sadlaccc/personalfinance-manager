@@ -131,6 +131,11 @@ const Auth = () => {
         console.error('Profile update error:', updateError);
       }
 
+      // Send welcome email (fire and forget)
+      supabase.functions.invoke('send-welcome-email', {
+        body: { email, fullName },
+      }).catch(err => console.error('Welcome email error:', err));
+
       // Sign out so user must explicitly sign in
       await supabase.auth.signOut();
       
@@ -140,7 +145,7 @@ const Auth = () => {
       setActiveTab('signin');
       toast({
         title: 'Account created!',
-        description: 'Please sign in with your new credentials.',
+        description: 'Please check your email and sign in with your new credentials.',
       });
     }
   };
@@ -357,7 +362,7 @@ const Auth = () => {
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Manage your finances the smart way 🇰🇪
+          Manage your finances the smart way
         </p>
       </motion.div>
     </div>
