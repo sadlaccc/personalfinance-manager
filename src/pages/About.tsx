@@ -33,8 +33,8 @@ const values = [
   },
   {
     icon: Heart,
-    title: 'Built for Kenya',
-    description: 'Designed for Kenyan workflows, including M-Pesa, KSh, and local spending patterns.',
+    title: 'Built for Everyone',
+    description: 'Multi-currency support, flexible integrations, and workflows that adapt to how you manage money.',
   },
 ];
 
@@ -63,7 +63,7 @@ export default function About() {
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
               We're building a personal finance tool that actually makes sense 
-              for people in Kenya. Simple, private, and focused on what matters.
+              for people everywhere. Simple, private, and focused on what matters.
             </p>
           </motion.div>
         </div>
@@ -79,9 +79,9 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Most finance apps are built for markets that don't look like ours. 
-                  They don't understand M-Pesa, they price in dollars, and their budgeting 
-                  categories don't match how Kenyans actually spend.
+                  Most finance apps feel overly complex or are built for a narrow audience. 
+                  They miss the reality of how people manage money — juggling multiple 
+                  income streams, varying currencies, and different spending patterns.
                 </p>
                 <p>
                   FedhaFlow started as a side project to solve a personal problem: tracking 
@@ -91,7 +91,7 @@ export default function About() {
                 <p>
                   It grew from there. We added budgets, savings goals, analytics, and 
                   team features. The goal hasn't changed: make personal finance management 
-                  accessible and useful for everyday Kenyans.
+                  accessible and useful for everyone, everywhere.
                 </p>
               </div>
             </div>
