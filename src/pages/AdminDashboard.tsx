@@ -8,6 +8,7 @@ import {
   ThumbsUp, Settings2
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
