@@ -102,30 +102,30 @@ function SavingsCalculator() {
           <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8">
             <div className="grid sm:grid-cols-3 gap-4 mb-6">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground">Monthly Income (KSh)</label>
+                <label className="text-sm font-medium text-foreground">Monthly Income</label>
                 <Input
                   type="number"
-                  placeholder="e.g. 80,000"
+                  placeholder="e.g. 5,000"
                   value={monthlyIncome}
                   onChange={(e) => setMonthlyIncome(e.target.value)}
                   className="rounded-xl"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground">Monthly Expenses (KSh)</label>
+                <label className="text-sm font-medium text-foreground">Monthly Expenses</label>
                 <Input
                   type="number"
-                  placeholder="e.g. 50,000"
+                  placeholder="e.g. 3,000"
                   value={monthlyExpenses}
                   onChange={(e) => setMonthlyExpenses(e.target.value)}
                   className="rounded-xl"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-foreground">Savings Goal (KSh)</label>
+                <label className="text-sm font-medium text-foreground">Savings Goal</label>
                 <Input
                   type="number"
-                  placeholder="e.g. 500,000"
+                  placeholder="e.g. 50,000"
                   value={savingsGoal}
                   onChange={(e) => setSavingsGoal(e.target.value)}
                   className="rounded-xl"
@@ -141,7 +141,7 @@ function SavingsCalculator() {
               >
                 <div className="text-center">
                   <p className={`text-xl sm:text-2xl font-bold font-display ${results.monthlySavings >= 0 ? 'text-income' : 'text-destructive'}`}>
-                    KSh {Math.abs(results.monthlySavings).toLocaleString()}
+                    {Math.abs(results.monthlySavings).toLocaleString()}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {results.monthlySavings >= 0 ? 'Monthly Savings' : 'Monthly Deficit'}
@@ -197,7 +197,7 @@ export default function Landing() {
                 <span className="text-primary">Hit your goals.</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A personal finance dashboard for tracking income, expenses, budgets, and savings. Built for how Kenyans actually manage money.
+                A personal finance dashboard for tracking income, expenses, budgets, and savings — wherever you are in the world.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
                 <Link to="/auth">
@@ -212,7 +212,7 @@ export default function Landing() {
               </div>
               
               <div className="space-y-2">
-                {['No credit card required', 'M-Pesa integration', 'Works on any device'].map((item) => (
+                {['No credit card required', 'Multi-currency support', 'Works on any device'].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CheckCircle2 className="w-4 h-4 text-income shrink-0" />
                     {item}
