@@ -8,6 +8,7 @@ import {
   ThumbsUp, Settings2
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import { Layout } from '@/components/Layout';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useAdminUsers, AdminUser } from '@/hooks/useAdminUsers';
@@ -484,13 +485,24 @@ export default function AdminDashboard() {
               <AlertTriangle className="h-5 w-5 text-destructive" /> Delete User
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete <strong>{selectedUser?.full_name || 'this user'}</strong>? This action cannot be undone.
+              Are you sure you want to delete <strong>{selectedUser?.full_name || 'this user'}</strong>? This will permanently remove their account and all associated data. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={() => {
-              toast({ title: 'Not implemented', description: 'User deletion requires backend implementation.', variant: 'destructive' });
+            <AlertDialogAction className="bg-destructive hover:bg-destructive/90" onClick={async () => {
+              if (!selectedUser) return;
+              try {
+                const { error } = await supabase.functions.invoke('delete-user', {
+                  body: { userId: selectedUser.user_id },
+                });
+                if (error) throw error;
+                toast({ title: 'User deleted', description: `${selectedUser.full_name || 'User'} has been removed.` });
+                refetch();
+                refetchSubs();
+              } catch (err: any) {
+                toast({ title: 'Deletion failed', description: err.message || 'Could not delete user', variant: 'destructive' });
+              }
               setDeleteDialogOpen(false);
             }}>
               Delete User
