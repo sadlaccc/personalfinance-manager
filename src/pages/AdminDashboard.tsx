@@ -459,7 +459,7 @@ export default function AdminDashboard() {
         <>
           <SendEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} userEmail={selectedUser.email || ''} userName={selectedUser.full_name} />
           <RoleManagementDialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} />
-          <UserFinancialsDialog open={financialsDialogOpen} onOpenChange={setFinancialsDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} />
+          
           <AdminSubscriptionDialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} currentSubscription={subscriptionMap.get(selectedUser.user_id)} />
         </>
       )}
