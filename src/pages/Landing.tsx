@@ -345,6 +345,55 @@ export default function Landing() {
       {/* Savings Calculator */}
       <SavingsCalculator />
 
+      {/* Testimonials */}
+      <section className="py-16 sm:py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 lg:mb-14">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1 mb-4 text-xs">
+              <Globe className="w-3.5 h-3.5 text-primary" />
+              <span className="text-muted-foreground">Loved worldwide</span>
+            </div>
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
+              What people are saying
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              { quote: "Finally a finance app that doesn't assume I live in one country. Multi-currency just works.", name: 'Amelia R.', role: 'Freelance designer · Lisbon' },
+              { quote: "The budgets and analytics gave me the clearest picture of my spending I've ever had.", name: 'David K.', role: 'Software engineer · Toronto' },
+              { quote: 'Setting goals and watching progress every week keeps me motivated to save.', name: 'Priya S.', role: 'Marketing lead · Bengaluru' },
+            ].map((t, i) => (
+              <motion.div
+                key={t.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
+                className="relative p-6 rounded-2xl bg-card border border-border/50 hover:border-primary/30 transition-colors"
+              >
+                <Quote className="absolute top-4 right-4 w-5 h-5 text-primary/20" />
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(5)].map((_, j) => (
+                    <Star key={j} className="w-3.5 h-3.5 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-sm leading-relaxed mb-5 text-foreground/90">"{t.quote}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-semibold">
+                    {t.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
