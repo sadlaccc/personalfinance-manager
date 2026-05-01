@@ -16,7 +16,6 @@ import { useAdminSubscriptions } from '@/hooks/useAdminSubscriptions';
 import { SendEmailDialog } from '@/components/SendEmailDialog';
 import { BulkEmailDialog } from '@/components/BulkEmailDialog';
 import { UserAnalyticsCharts } from '@/components/UserAnalyticsCharts';
-import { UserFinancialsDialog } from '@/components/UserFinancialsDialog';
 import { RoleManagementDialog } from '@/components/RoleManagementDialog';
 import { AdminSubscriptionDialog } from '@/components/AdminSubscriptionDialog';
 import { AdminBlogManager } from '@/components/AdminBlogManager';
@@ -63,7 +62,6 @@ export default function AdminDashboard() {
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [bulkEmailDialogOpen, setBulkEmailDialogOpen] = useState(false);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
-  const [financialsDialogOpen, setFinancialsDialogOpen] = useState(false);
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
@@ -379,14 +377,6 @@ export default function AdminDashboard() {
                                         </TooltipTrigger>
                                         <TooltipContent>Manage subscription</TooltipContent>
                                       </Tooltip>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setFinancialsDialogOpen(true); }} className="h-8 w-8">
-                                            <BarChart3 className="h-4 w-4" />
-                                          </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>View financials</TooltipContent>
-                                      </Tooltip>
                                     </div>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
@@ -399,9 +389,6 @@ export default function AdminDashboard() {
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="lg:hidden">
                                           <Crown className="mr-2 h-4 w-4" /> Manage Subscription
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => { setSelectedUser(user); setFinancialsDialogOpen(true); }} className="lg:hidden">
-                                          <BarChart3 className="mr-2 h-4 w-4" /> View Financials
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => { setSelectedUser(user); setRoleDialogOpen(true); }}>
                                           <UserCog className="mr-2 h-4 w-4" /> Manage Roles
@@ -472,7 +459,7 @@ export default function AdminDashboard() {
         <>
           <SendEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} userEmail={selectedUser.email || ''} userName={selectedUser.full_name} />
           <RoleManagementDialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} />
-          <UserFinancialsDialog open={financialsDialogOpen} onOpenChange={setFinancialsDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} />
+          
           <AdminSubscriptionDialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} currentSubscription={subscriptionMap.get(selectedUser.user_id)} />
         </>
       )}
