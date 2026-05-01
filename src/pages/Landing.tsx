@@ -6,21 +6,21 @@ import { Input } from '@/components/ui/input';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
-import { 
-  Wallet, 
-  CircleDollarSign, 
-  LineChart, 
-  Goal, 
+import {
+  Wallet,
+  CircleDollarSign,
+  LineChart,
+  Goal,
   ArrowRight,
   CheckCircle2,
-  Send,
-  Linkedin,
-  Github,
-  Mail,
   PieChart,
   Lock,
   Users,
-  TrendingUp
+  TrendingUp,
+  Sparkles,
+  Globe,
+  Star,
+  Quote,
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.png';
 
@@ -184,7 +184,13 @@ export default function Landing() {
       <PublicNavbar />
 
       {/* Hero */}
-      <section className="py-16 sm:py-24 lg:py-32">
+      <section className="relative overflow-hidden py-16 sm:py-24 lg:py-32">
+        {/* Background gradient blobs */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-[28rem] h-[28rem] rounded-full bg-primary/20 blur-3xl opacity-60" />
+          <div className="absolute top-40 -right-32 w-[28rem] h-[28rem] rounded-full bg-accent/20 blur-3xl opacity-50" />
+        </div>
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <motion.div
@@ -192,16 +198,23 @@ export default function Landing() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-3 py-1.5 mb-5 text-xs sm:text-sm">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-muted-foreground">New: Multi-currency budgets &amp; team plans</span>
+              </div>
+
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.05]">
                 Track your money.{' '}
-                <span className="text-primary">Hit your goals.</span>
+                <span className="bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent">
+                  Hit your goals.
+                </span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
-                A personal finance dashboard for tracking income, expenses, budgets, and savings — wherever you are in the world.
+                A modern personal finance dashboard for tracking income, expenses, budgets and savings — built for people anywhere in the world.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-3 mb-8">
                 <Link to="/auth">
-                  <Button size="lg" className="h-12 px-8">
+                  <Button size="lg" className="h-12 px-8 shadow-lg shadow-primary/20">
                     Create Free Account
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -210,7 +223,7 @@ export default function Landing() {
                   <Button variant="outline" size="lg" className="h-12 px-8">View Plans</Button>
                 </Link>
               </div>
-              
+
               <div className="space-y-2">
                 {['No credit card required', 'Multi-currency support', 'Works on any device'].map((item) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -225,17 +238,40 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.15 }}
+              className="relative"
             >
-              <div className="rounded-2xl overflow-hidden border border-border/50 shadow-xl">
-                <img 
-                  src={heroDashboard} 
-                  alt="FedhaFlow dashboard showing income and expense tracking" 
+              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl -z-10" />
+              <div className="rounded-2xl overflow-hidden border border-border/50 shadow-2xl">
+                <img
+                  src={heroDashboard}
+                  alt="FedhaFlow dashboard showing income and expense tracking"
                   className="w-full h-auto"
                   loading="eager"
                 />
               </div>
             </motion.div>
           </div>
+
+          {/* Stats strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mt-16 lg:mt-24 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-border/50 bg-border/50"
+          >
+            {[
+              { value: '10k+', label: 'Active users' },
+              { value: '40+', label: 'Currencies' },
+              { value: '99.9%', label: 'Uptime' },
+              { value: '4.9★', label: 'User rating' },
+            ].map((stat) => (
+              <div key={stat.label} className="bg-card p-5 text-center">
+                <p className="font-display text-2xl sm:text-3xl font-bold text-primary">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
