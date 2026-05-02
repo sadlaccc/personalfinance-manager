@@ -373,6 +373,14 @@ export default function AdminDashboard() {
                                     <div className="hidden lg:flex items-center gap-1">
                                       <Tooltip>
                                         <TooltipTrigger asChild>
+                                          <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }} className="h-8 w-8">
+                                            <Eye className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>View user overview</TooltipContent>
+                                      </Tooltip>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
                                           <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="h-8 w-8">
                                             <Crown className="h-4 w-4" />
                                           </Button>
