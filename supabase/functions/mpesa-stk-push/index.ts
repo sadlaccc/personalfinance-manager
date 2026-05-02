@@ -150,11 +150,9 @@ Deno.serve(async (req) => {
     console.log('STK Push response:', JSON.stringify(stkResult));
 
     if (stkResult.ResponseCode !== '0') {
+      console.error('STK Push failed:', stkResult.errorMessage || stkResult.ResponseDescription);
       return new Response(
-        JSON.stringify({ 
-          error: 'Failed to initiate payment',
-          details: stkResult.errorMessage || stkResult.ResponseDescription 
-        }),
+        JSON.stringify({ error: 'Payment initiation failed. Please try again.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
