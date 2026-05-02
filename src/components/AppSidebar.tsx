@@ -10,8 +10,9 @@ import {
   Target,
   LogOut,
   X,
-   Shield,
-   Building2
+  Shield,
+  Building2,
+  User as UserIcon,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
@@ -32,7 +33,9 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUserRole } from '@/hooks/useUserRole';
- import { useSubscription } from '@/hooks/useSubscription';
+import { useSubscription } from '@/hooks/useSubscription';
+import { useAdminMode } from '@/contexts/AdminModeContext';
+import { useNavigate } from 'react-router-dom';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -52,18 +55,29 @@ export function AppSidebar() {
   const { signOut, user } = useAuth();
   const isMobile = useIsMobile();
   const { isAdmin } = useUserRole();
-   const { subscription } = useSubscription();
+  const { subscription } = useSubscription();
+  const { mode, setMode } = useAdminMode();
+  const navigate = useNavigate();
   const isCollapsed = state === 'collapsed';
- 
-   // Check if user has business-tier plan
-   const isBusinessPlan = subscription?.plan_type === 'business' || 
-                          subscription?.plan_type === 'enterprise' || 
-                          subscription?.plan_type === 'team';
+
+  // Check if user has business-tier plan
+  const isBusinessPlan = subscription?.plan_type === 'business' || 
+                         subscription?.plan_type === 'enterprise' || 
+                         subscription?.plan_type === 'team';
+
+  const showPersonalNav = !isAdmin || mode === 'personal';
+  const showAdminNav = isAdmin && mode === 'admin';
 
   const handleNavClick = () => {
     if (isMobile) {
       setOpenMobile(false);
     }
+  };
+
+  const handleModeChange = (next: 'admin' | 'personal') => {
+    setMode(next);
+    handleNavClick();
+    navigate(next === 'admin' ? '/admin' : '/dashboard');
   };
 
   return (
