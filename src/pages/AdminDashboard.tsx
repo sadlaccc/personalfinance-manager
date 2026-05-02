@@ -397,6 +397,9 @@ export default function AdminDashboard() {
                                       <DropdownMenuContent align="end" className="w-48">
                                         <DropdownMenuLabel className="text-xs">User Actions</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }} className="lg:hidden">
+                                          <Eye className="mr-2 h-4 w-4" /> View Overview
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="lg:hidden">
                                           <Crown className="mr-2 h-4 w-4" /> Manage Subscription
                                         </DropdownMenuItem>
