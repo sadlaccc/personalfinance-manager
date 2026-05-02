@@ -16,24 +16,80 @@ interface ContactRequest {
   message: string;
 }
 
+// Simple in-memory rate limiter (per instance): max 5 submissions per IP per 10 minutes
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const ipHits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const arr = (ipHits.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
+  if (arr.length >= RATE_LIMIT_MAX) {
+    ipHits.set(ip, arr);
+    return true;
+  }
+  arr.push(now);
+  ipHits.set(ip, arr);
+  return false;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+
+    if (isRateLimited(ip)) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please try again later." }),
+        { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
     const { name, email, subject, message }: ContactRequest = await req.json();
 
-    console.log("Received contact form submission:", { name, email, subject });
+    console.log("Received contact form submission:", { ip, email, subject });
 
     if (!name || !email || !subject || !message) {
-      throw new Error("Missing required fields");
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Length caps to prevent abuse
+    if (
+      typeof name !== "string" || name.length > 100 ||
+      typeof email !== "string" || email.length > 255 ||
+      typeof subject !== "string" || subject.length > 200 ||
+      typeof message !== "string" || message.length > 5000
+    ) {
+      return new Response(
+        JSON.stringify({ error: "Input exceeds allowed length" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      throw new Error("Invalid email format");
+      return new Response(
+        JSON.stringify({ error: "Invalid email format" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
     }
+
+    // Basic HTML escaping for embedding into email body
+    const esc = (s: string) =>
+      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const safeName = esc(name);
+    const safeEmail = esc(email);
+    const safeSubject = esc(subject);
+    const safeMessage = esc(message).replace(/\n/g, "<br>");
 
     // Store message in database for admin viewing
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
