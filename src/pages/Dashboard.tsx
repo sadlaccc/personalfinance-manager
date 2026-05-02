@@ -295,7 +295,7 @@ const Dashboard = () => {
 
   // Split widgets into main (full-width) and sidebar groups
   const mainWidgets = ['stats', 'quick-actions', 'financial-summary', 'recent-income'];
-  const sidebarWidgets = ['subscription', 'income-chart', 'daily-tip', 'budget-overview'];
+  const sidebarWidgets = ['subscription', 'income-chart', 'budget-overview', 'daily-tip'];
 
   const orderedMainWidgets = widgetOrder.filter(w => mainWidgets.includes(w));
   const orderedSidebarWidgets = widgetOrder.filter(w => sidebarWidgets.includes(w));
@@ -305,32 +305,32 @@ const Dashboard = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-5 max-w-[1400px] mx-auto"
+      className="space-y-4 max-w-[1400px] mx-auto"
     >
-      {/* Month Selector & Greeting */}
+      {/* Greeting + Month Selector */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <GreetingWidget />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="ghost"
             size="sm"
             onClick={resetLayout}
-            className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+            className="text-xs text-muted-foreground hover:text-foreground gap-1.5 h-9"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset Layout
+            <span className="hidden sm:inline">Reset Layout</span>
           </Button>
-          <div className="flex items-center gap-1.5 bg-card border border-border/60 rounded-xl p-1 shadow-sm">
+          <div className="flex items-center gap-1 bg-card border border-border/60 rounded-xl p-1 shadow-sm">
             <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-muted" onClick={handlePrevMonth}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <button
               onClick={handleCurrentMonth}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[140px] justify-center"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted transition-colors min-w-[130px] justify-center"
             >
               <Calendar className="h-3.5 w-3.5 text-primary" />
               <span className="text-sm font-semibold text-foreground">
-                {format(selectedDate, 'MMMM yyyy')}
+                {format(selectedDate, 'MMM yyyy')}
               </span>
             </button>
             <Button
@@ -346,10 +346,10 @@ const Dashboard = () => {
       </motion.div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        {/* Full-width widgets */}
-        <SortableContext items={orderedMainWidgets} strategy={verticalListSortingStrategy}>
-          <div className="space-y-5">
-            {orderedMainWidgets.map(widgetId => (
+        {/* Stats and Quick Actions always at top, full width */}
+        <SortableContext items={orderedMainWidgets.filter(w => w === 'stats' || w === 'quick-actions')} strategy={verticalListSortingStrategy}>
+          <div className="space-y-4">
+            {orderedMainWidgets.filter(w => w === 'stats' || w === 'quick-actions').map(widgetId => (
               <DraggableWidget key={widgetId} id={widgetId}>
                 <motion.div variants={itemVariants}>
                   {widgets[widgetId]}
@@ -359,13 +359,26 @@ const Dashboard = () => {
           </div>
         </SortableContext>
 
-        {/* Sidebar layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
-          <div className="lg:col-span-2">
-            {/* Recent income is already in main widgets above, this area is flexible */}
+        {/* Two-column grid: main content + sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+          <div className="lg:col-span-2 space-y-4 min-w-0">
+            <SortableContext
+              items={orderedMainWidgets.filter(w => w !== 'stats' && w !== 'quick-actions')}
+              strategy={verticalListSortingStrategy}
+            >
+              {orderedMainWidgets
+                .filter(w => w !== 'stats' && w !== 'quick-actions')
+                .map(widgetId => (
+                  <DraggableWidget key={widgetId} id={widgetId}>
+                    <motion.div variants={itemVariants}>
+                      {widgets[widgetId]}
+                    </motion.div>
+                  </DraggableWidget>
+                ))}
+            </SortableContext>
           </div>
           <SortableContext items={orderedSidebarWidgets} strategy={verticalListSortingStrategy}>
-            <div className="space-y-4">
+            <div className="space-y-4 min-w-0">
               {orderedSidebarWidgets.map(widgetId => (
                 <DraggableWidget key={widgetId} id={widgetId}>
                   <motion.div variants={itemVariants}>

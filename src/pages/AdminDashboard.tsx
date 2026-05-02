@@ -5,7 +5,7 @@ import {
   Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3, 
   Download, UserX, RefreshCw, CreditCard, MoreHorizontal, Activity, TrendingUp,
   AlertTriangle, Crown, FileSpreadsheet, FileText, MessageSquare, Newspaper,
-  ThumbsUp, Settings2
+  ThumbsUp, Settings2, Eye
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +21,7 @@ import { AdminSubscriptionDialog } from '@/components/AdminSubscriptionDialog';
 import { AdminBlogManager } from '@/components/AdminBlogManager';
 import { AdminContactMessages } from '@/components/AdminContactMessages';
 import { AdminFeedback } from '@/components/AdminFeedback';
+import { UserOverviewDialog } from '@/components/UserOverviewDialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,6 +65,7 @@ export default function AdminDashboard() {
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   const subscriptionMap = useMemo(() => {
@@ -371,6 +373,14 @@ export default function AdminDashboard() {
                                     <div className="hidden lg:flex items-center gap-1">
                                       <Tooltip>
                                         <TooltipTrigger asChild>
+                                          <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }} className="h-8 w-8">
+                                            <Eye className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>View user overview</TooltipContent>
+                                      </Tooltip>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
                                           <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="h-8 w-8">
                                             <Crown className="h-4 w-4" />
                                           </Button>
@@ -387,6 +397,9 @@ export default function AdminDashboard() {
                                       <DropdownMenuContent align="end" className="w-48">
                                         <DropdownMenuLabel className="text-xs">User Actions</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }} className="lg:hidden">
+                                          <Eye className="mr-2 h-4 w-4" /> View Overview
+                                        </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="lg:hidden">
                                           <Crown className="mr-2 h-4 w-4" /> Manage Subscription
                                         </DropdownMenuItem>
@@ -459,8 +472,15 @@ export default function AdminDashboard() {
         <>
           <SendEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} userEmail={selectedUser.email || ''} userName={selectedUser.full_name} />
           <RoleManagementDialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} />
-          
           <AdminSubscriptionDialog open={subscriptionDialogOpen} onOpenChange={setSubscriptionDialogOpen} userId={selectedUser.user_id} userName={selectedUser.full_name} currentSubscription={subscriptionMap.get(selectedUser.user_id)} />
+          <UserOverviewDialog
+            open={overviewDialogOpen}
+            onOpenChange={setOverviewDialogOpen}
+            userId={selectedUser.user_id}
+            userName={selectedUser.full_name}
+            userEmail={selectedUser.email}
+            avatarUrl={selectedUser.avatar_url}
+          />
         </>
       )}
       {users && <BulkEmailDialog open={bulkEmailDialogOpen} onOpenChange={setBulkEmailDialogOpen} users={users} />}
