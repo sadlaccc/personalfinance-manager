@@ -173,7 +173,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <h1 style="color: white; margin: 0; font-size: 24px;">Thanks for reaching out!</h1>
               </div>
               <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">
-                <p>Hi ${name},</p>
+                <p>Hi ${safeName},</p>
                 <p>We've received your message and will get back to you within 24 hours.</p>
                 <p>Best regards,<br>The FedhaFlow Team</p>
               </div>
