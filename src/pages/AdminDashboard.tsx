@@ -5,7 +5,7 @@ import {
   Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3, 
   Download, UserX, RefreshCw, CreditCard, MoreHorizontal, Activity, TrendingUp,
   AlertTriangle, Crown, FileSpreadsheet, FileText, MessageSquare, Newspaper,
-  ThumbsUp, Settings2
+  ThumbsUp, Settings2, Eye
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +21,7 @@ import { AdminSubscriptionDialog } from '@/components/AdminSubscriptionDialog';
 import { AdminBlogManager } from '@/components/AdminBlogManager';
 import { AdminContactMessages } from '@/components/AdminContactMessages';
 import { AdminFeedback } from '@/components/AdminFeedback';
+import { UserOverviewDialog } from '@/components/UserOverviewDialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,6 +65,7 @@ export default function AdminDashboard() {
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   const subscriptionMap = useMemo(() => {
