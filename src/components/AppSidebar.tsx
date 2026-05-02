@@ -114,43 +114,106 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2">
-        <SidebarGroup>
-          <SidebarGroupLabel className={cn(
-            "text-xs font-medium text-muted-foreground uppercase tracking-wider",
-            isCollapsed && "sr-only"
-          )}>
-            Menu
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === '/dashboard'}
-                      onClick={handleNavClick}
-                      className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary"
-                      activeClassName="bg-gradient-income text-income-foreground shadow-md hover:bg-gradient-income hover:text-income-foreground"
-                    >
-                      <item.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                      {!isCollapsed && <span className="font-medium text-sm sm:text-base">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Admin Section - Only visible for admins */}
+        {/* Admin Mode Toggle - visible only for admins */}
         {isAdmin && (
           <SidebarGroup>
             <SidebarGroupLabel className={cn(
               "text-xs font-medium text-muted-foreground uppercase tracking-wider",
               isCollapsed && "sr-only"
             )}>
-              Admin
+              Mode
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              {isCollapsed ? (
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      tooltip={mode === 'admin' ? 'Switch to Personal' : 'Switch to Admin'}
+                      onClick={() => handleModeChange(mode === 'admin' ? 'personal' : 'admin')}
+                      className="justify-center"
+                    >
+                      {mode === 'admin' ? (
+                        <Shield className="w-5 h-5 text-amber-500" />
+                      ) : (
+                        <UserIcon className="w-5 h-5 text-primary" />
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              ) : (
+                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-secondary/60 border border-border/50">
+                  <button
+                    type="button"
+                    onClick={() => handleModeChange('admin')}
+                    className={cn(
+                      "flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all",
+                      mode === 'admin'
+                        ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    Admin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleModeChange('personal')}
+                    className={cn(
+                      "flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all",
+                      mode === 'personal'
+                        ? "bg-gradient-income text-income-foreground shadow"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    <UserIcon className="w-3.5 h-3.5" />
+                    Personal
+                  </button>
+                </div>
+              )}
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Personal navigation - hidden when admin is in admin mode */}
+        {showPersonalNav && (
+          <SidebarGroup>
+            <SidebarGroupLabel className={cn(
+              "text-xs font-medium text-muted-foreground uppercase tracking-wider",
+              isCollapsed && "sr-only"
+            )}>
+              Menu
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mainNavItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <NavLink 
+                        to={item.url} 
+                        end={item.url === '/dashboard'}
+                        onClick={handleNavClick}
+                        className="flex items-center gap-2 sm:gap-3 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary"
+                        activeClassName="bg-gradient-income text-income-foreground shadow-md hover:bg-gradient-income hover:text-income-foreground"
+                      >
+                        <item.icon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                        {!isCollapsed && <span className="font-medium text-sm sm:text-base">{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {/* Admin Section - visible only when admin is in admin mode */}
+        {showAdminNav && (
+          <SidebarGroup>
+            <SidebarGroupLabel className={cn(
+              "text-xs font-medium text-muted-foreground uppercase tracking-wider",
+              isCollapsed && "sr-only"
+            )}>
+              Admin Tools
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -171,7 +234,7 @@ export function AppSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
- 
+
          {/* Business Admin Section - Only visible for business plan subscribers */}
          {isBusinessPlan && !isAdmin && (
            <SidebarGroup>
