@@ -84,12 +84,33 @@ Deno.serve(async (req) => {
 
     console.log(`Processing M-Pesa payment for user ${userId}, plan: ${planType}, amount: ${amount}`);
 
-    // Format phone number (remove leading 0, add 254)
-    let formattedPhone = phone.replace(/\s/g, '');
+    // Format and validate phone number
+    if (typeof phone !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid phone number' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    let formattedPhone = phone.replace(/[\s\-()]/g, '');
+    if (formattedPhone.startsWith('+')) {
+      formattedPhone = formattedPhone.slice(1);
+    }
     if (formattedPhone.startsWith('0')) {
       formattedPhone = '254' + formattedPhone.slice(1);
-    } else if (formattedPhone.startsWith('+')) {
-      formattedPhone = formattedPhone.slice(1);
+    }
+    // Must be Kenyan mobile: 254 followed by 7 or 1, then 8 digits
+    if (!/^254[17]\d{8}$/.test(formattedPhone)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid phone number format. Use a valid Kenyan mobile number.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    // Validate amount
+    if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0 || amount > 1000000) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid amount' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const accessToken = await getMpesaAccessToken();
@@ -129,11 +150,9 @@ Deno.serve(async (req) => {
     console.log('STK Push response:', JSON.stringify(stkResult));
 
     if (stkResult.ResponseCode !== '0') {
+      console.error('STK Push failed:', stkResult.errorMessage || stkResult.ResponseDescription);
       return new Response(
-        JSON.stringify({ 
-          error: 'Failed to initiate payment',
-          details: stkResult.errorMessage || stkResult.ResponseDescription 
-        }),
+        JSON.stringify({ error: 'Payment initiation failed. Please try again.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -165,9 +184,8 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('STK Push error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: 'Internal server error', details: errorMessage }),
+      JSON.stringify({ error: 'Service temporarily unavailable. Please try again later.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
