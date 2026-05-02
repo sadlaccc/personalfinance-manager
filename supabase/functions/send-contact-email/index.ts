@@ -126,16 +126,16 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">
                 <div style="margin-bottom: 16px;">
                   <strong style="color: #6b7280;">From:</strong>
-                  <p style="margin: 4px 0 0 0;">${name} &lt;${email}&gt;</p>
+                  <p style="margin: 4px 0 0 0;">${safeName} &lt;${safeEmail}&gt;</p>
                 </div>
                 <div style="margin-bottom: 16px;">
                   <strong style="color: #6b7280;">Subject:</strong>
-                  <p style="margin: 4px 0 0 0;">${subject}</p>
+                  <p style="margin: 4px 0 0 0;">${safeSubject}</p>
                 </div>
                 <div style="margin-bottom: 16px;">
                   <strong style="color: #6b7280;">Message:</strong>
                   <div style="margin-top: 8px; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
-                    ${message.replace(/\n/g, '<br>')}
+                    ${safeMessage}
                   </div>
                 </div>
                 <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;">
