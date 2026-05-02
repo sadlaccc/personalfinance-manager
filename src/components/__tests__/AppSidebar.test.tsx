@@ -24,6 +24,10 @@ vi.mock('@/hooks/use-mobile', () => ({
   useIsMobile: () => false,
 }));
 
+vi.mock('@/contexts/AdminModeContext', () => ({
+  useAdminMode: () => ({ mode: 'admin', setMode: vi.fn(), toggleMode: vi.fn(), isAdmin: true }),
+}));
+
 function renderSidebar() {
   const qc = new QueryClient();
   return render(
