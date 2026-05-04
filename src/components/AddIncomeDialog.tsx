@@ -31,6 +31,7 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState<Date>(new Date());
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
 
   useEffect(() => {
     if (editingIncome) {
