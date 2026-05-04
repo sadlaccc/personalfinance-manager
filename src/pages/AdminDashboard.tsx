@@ -369,20 +369,34 @@ export default function AdminDashboard() {
                                   <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
                                 </TableCell>
                                 <TableCell className="text-right py-2">
-                                  <div className="flex items-center justify-end gap-1">
+                                  <div className="flex items-center justify-end gap-1" role="group" aria-label={`Actions for ${user.full_name || 'user'}`}>
                                     <div className="hidden lg:flex items-center gap-1">
                                       <Tooltip>
                                         <TooltipTrigger asChild>
-                                          <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }} className="h-8 w-8">
-                                            <Eye className="h-4 w-4" />
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => { setSelectedUser(user); setOverviewDialogOpen(true); }}
+                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedUser(user); setOverviewDialogOpen(true); } }}
+                                            className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                            aria-label={`View overview for ${user.full_name || 'user'}`}
+                                          >
+                                            <Eye className="h-4 w-4" aria-hidden="true" />
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>View user overview</TooltipContent>
                                       </Tooltip>
                                       <Tooltip>
                                         <TooltipTrigger asChild>
-                                          <Button variant="ghost" size="icon" onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }} className="h-8 w-8">
-                                            <Crown className="h-4 w-4" />
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => { setSelectedUser(user); setSubscriptionDialogOpen(true); }}
+                                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedUser(user); setSubscriptionDialogOpen(true); } }}
+                                            className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                            aria-label={`Manage subscription for ${user.full_name || 'user'}`}
+                                          >
+                                            <Crown className="h-4 w-4" aria-hidden="true" />
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>Manage subscription</TooltipContent>
@@ -390,9 +404,19 @@ export default function AdminDashboard() {
                                     </div>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                          <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                              aria-label={`More actions for ${user.full_name || 'user'}`}
+                                            >
+                                              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                                            </Button>
+                                          </TooltipTrigger>
+                                          <TooltipContent>More actions</TooltipContent>
+                                        </Tooltip>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" className="w-48">
                                         <DropdownMenuLabel className="text-xs">User Actions</DropdownMenuLabel>

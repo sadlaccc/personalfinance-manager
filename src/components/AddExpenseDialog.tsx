@@ -28,6 +28,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [date, setDate] = useState<Date>(new Date());
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -117,7 +118,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
           
           <div className="space-y-2">
             <Label>Date</Label>
-            <Popover>
+            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -138,6 +139,10 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
                   initialFocus
                   className="pointer-events-auto"
                 />
+                <div className="flex justify-end gap-2 border-t p-2">
+                  <Button size="sm" variant="ghost" type="button" onClick={() => setDatePopoverOpen(false)}>Cancel</Button>
+                  <Button size="sm" type="button" onClick={() => setDatePopoverOpen(false)}>OK</Button>
+                </div>
               </PopoverContent>
             </Popover>
           </div>
