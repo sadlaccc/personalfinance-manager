@@ -5,7 +5,7 @@ import {
   Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3, 
   Download, UserX, RefreshCw, CreditCard, MoreHorizontal, Activity, TrendingUp,
   AlertTriangle, Crown, FileSpreadsheet, FileText, MessageSquare, Newspaper,
-  ThumbsUp, Settings2, Eye, KeyRound
+  ThumbsUp, Settings2, Eye, KeyRound, Loader2
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -66,6 +66,7 @@ export default function AdminDashboard() {
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
+  const [resettingUserId, setResettingUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   const subscriptionMap = useMemo(() => {
@@ -151,6 +152,22 @@ export default function AdminDashboard() {
     a.click();
     URL.revokeObjectURL(url);
     toast({ title: 'Export complete', description: `Exported ${subscriptions.length} subscriptions` });
+  };
+
+  const handleResetPassword = async (user: AdminUser) => {
+    if (!user.email || resettingUserId) return;
+    setResettingUserId(user.user_id);
+    try {
+      const { error } = await supabase.functions.invoke('admin-reset-user-password', {
+        body: { email: user.email, redirectTo: `${window.location.origin}/reset-password` },
+      });
+      if (error) throw error;
+      toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
+    } catch (err: any) {
+      toast({ title: 'Reset failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
+    } finally {
+      setResettingUserId(null);
+    }
   };
 
   const getInitials = (name: string | null) => {
@@ -401,6 +418,25 @@ export default function AdminDashboard() {
                                         </TooltipTrigger>
                                         <TooltipContent>Manage subscription</TooltipContent>
                                       </Tooltip>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            disabled={!user.email || resettingUserId === user.user_id}
+                                            onClick={() => handleResetPassword(user)}
+                                            className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                            aria-label={`Reset password for ${user.full_name || 'user'}`}
+                                          >
+                                            {resettingUserId === user.user_id ? (
+                                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                            ) : (
+                                              <KeyRound className="h-4 w-4" aria-hidden="true" />
+                                            )}
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{user.email ? 'Send password reset email' : 'No email on file'}</TooltipContent>
+                                      </Tooltip>
                                     </div>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
@@ -434,24 +470,21 @@ export default function AdminDashboard() {
                                           <Mail className="mr-2 h-4 w-4" /> Send Email
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                          disabled={!user.email}
-                                          onClick={async () => {
-                                            if (!user.email) return;
-                                            try {
-                                              const { error } = await supabase.functions.invoke('admin-reset-user-password', {
-                                                body: {
-                                                  email: user.email,
-                                                  redirectTo: `${window.location.origin}/reset-password`,
-                                                },
-                                              });
-                                              if (error) throw error;
-                                              toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
-                                            } catch (err: any) {
-                                              toast({ title: 'Failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
-                                            }
+                                          disabled={!user.email || resettingUserId === user.user_id}
+                                          onSelect={(e) => {
+                                            e.preventDefault();
+                                            handleResetPassword(user);
                                           }}
                                         >
-                                          <KeyRound className="mr-2 h-4 w-4" /> Reset Password
+                                          {resettingUserId === user.user_id ? (
+                                            <>
+                                              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending reset email...
+                                            </>
+                                          ) : (
+                                            <>
+                                              <KeyRound className="mr-2 h-4 w-4" /> Reset Password
+                                            </>
+                                          )}
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => {
