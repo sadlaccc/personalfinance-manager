@@ -154,6 +154,22 @@ export default function AdminDashboard() {
     toast({ title: 'Export complete', description: `Exported ${subscriptions.length} subscriptions` });
   };
 
+  const handleResetPassword = async (user: AdminUser) => {
+    if (!user.email || resettingUserId) return;
+    setResettingUserId(user.user_id);
+    try {
+      const { error } = await supabase.functions.invoke('admin-reset-user-password', {
+        body: { email: user.email, redirectTo: `${window.location.origin}/reset-password` },
+      });
+      if (error) throw error;
+      toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
+    } catch (err: any) {
+      toast({ title: 'Reset failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
+    } finally {
+      setResettingUserId(null);
+    }
+  };
+
   const getInitials = (name: string | null) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
