@@ -138,6 +138,11 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
                   initialFocus
                   className="pointer-events-auto"
                 />
+                <div className="flex justify-end border-t p-2">
+                  <PopoverClose asChild>
+                    <Button size="sm" type="button">OK</Button>
+                  </PopoverClose>
+                </div>
               </PopoverContent>
             </Popover>
           </div>
