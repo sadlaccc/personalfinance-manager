@@ -5,7 +5,7 @@ import {
   Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3, 
   Download, UserX, RefreshCw, CreditCard, MoreHorizontal, Activity, TrendingUp,
   AlertTriangle, Crown, FileSpreadsheet, FileText, MessageSquare, Newspaper,
-  ThumbsUp, Settings2, Eye
+  ThumbsUp, Settings2, Eye, KeyRound
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -432,6 +432,26 @@ export default function AdminDashboard() {
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => { setSelectedUser(user); setEmailDialogOpen(true); }} disabled={!user.email}>
                                           <Mail className="mr-2 h-4 w-4" /> Send Email
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                          disabled={!user.email}
+                                          onClick={async () => {
+                                            if (!user.email) return;
+                                            try {
+                                              const { error } = await supabase.functions.invoke('admin-reset-user-password', {
+                                                body: {
+                                                  email: user.email,
+                                                  redirectTo: `${window.location.origin}/reset-password`,
+                                                },
+                                              });
+                                              if (error) throw error;
+                                              toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
+                                            } catch (err: any) {
+                                              toast({ title: 'Failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
+                                            }
+                                          }}
+                                        >
+                                          <KeyRound className="mr-2 h-4 w-4" /> Reset Password
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => {
