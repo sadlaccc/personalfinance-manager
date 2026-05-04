@@ -470,24 +470,21 @@ export default function AdminDashboard() {
                                           <Mail className="mr-2 h-4 w-4" /> Send Email
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                          disabled={!user.email}
-                                          onClick={async () => {
-                                            if (!user.email) return;
-                                            try {
-                                              const { error } = await supabase.functions.invoke('admin-reset-user-password', {
-                                                body: {
-                                                  email: user.email,
-                                                  redirectTo: `${window.location.origin}/reset-password`,
-                                                },
-                                              });
-                                              if (error) throw error;
-                                              toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
-                                            } catch (err: any) {
-                                              toast({ title: 'Failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
-                                            }
+                                          disabled={!user.email || resettingUserId === user.user_id}
+                                          onSelect={(e) => {
+                                            e.preventDefault();
+                                            handleResetPassword(user);
                                           }}
                                         >
-                                          <KeyRound className="mr-2 h-4 w-4" /> Reset Password
+                                          {resettingUserId === user.user_id ? (
+                                            <>
+                                              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending reset email...
+                                            </>
+                                          ) : (
+                                            <>
+                                              <KeyRound className="mr-2 h-4 w-4" /> Reset Password
+                                            </>
+                                          )}
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem onClick={() => {
