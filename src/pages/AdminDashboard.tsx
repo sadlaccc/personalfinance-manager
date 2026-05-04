@@ -66,6 +66,7 @@ export default function AdminDashboard() {
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
+  const [resettingUserId, setResettingUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
   const subscriptionMap = useMemo(() => {
