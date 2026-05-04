@@ -121,7 +121,7 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
             
             <div className="space-y-2">
               <Label>Date</Label>
-              <Popover>
+              <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -142,6 +142,10 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
                     initialFocus
                     className="p-3 pointer-events-auto"
                   />
+                  <div className="flex justify-end gap-2 border-t p-2">
+                    <Button size="sm" variant="ghost" type="button" onClick={() => setDatePopoverOpen(false)}>Cancel</Button>
+                    <Button size="sm" type="button" onClick={() => setDatePopoverOpen(false)}>OK</Button>
+                  </div>
                 </PopoverContent>
               </Popover>
             </div>
