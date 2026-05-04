@@ -28,6 +28,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [date, setDate] = useState<Date>(new Date());
+  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
   const [description, setDescription] = useState('');
 
   useEffect(() => {
