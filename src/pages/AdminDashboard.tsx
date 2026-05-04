@@ -418,6 +418,25 @@ export default function AdminDashboard() {
                                         </TooltipTrigger>
                                         <TooltipContent>Manage subscription</TooltipContent>
                                       </Tooltip>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            disabled={!user.email || resettingUserId === user.user_id}
+                                            onClick={() => handleResetPassword(user)}
+                                            className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                                            aria-label={`Reset password for ${user.full_name || 'user'}`}
+                                          >
+                                            {resettingUserId === user.user_id ? (
+                                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                            ) : (
+                                              <KeyRound className="h-4 w-4" aria-hidden="true" />
+                                            )}
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{user.email ? 'Send password reset email' : 'No email on file'}</TooltipContent>
+                                      </Tooltip>
                                     </div>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
