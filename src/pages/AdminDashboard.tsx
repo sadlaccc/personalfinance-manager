@@ -67,6 +67,8 @@ export default function AdminDashboard() {
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [userPendingReset, setUserPendingReset] = useState<AdminUser | null>(null);
   const [resettingUserId, setResettingUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
