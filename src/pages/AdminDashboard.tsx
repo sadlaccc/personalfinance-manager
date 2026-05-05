@@ -163,6 +163,7 @@ export default function AdminDashboard() {
       });
       if (error) throw error;
       toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
+      refetch();
     } catch (err: any) {
       toast({ title: 'Reset failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
     } finally {
