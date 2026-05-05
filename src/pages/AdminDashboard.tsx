@@ -522,7 +522,7 @@ export default function AdminDashboard() {
                                           disabled={!user.email || resettingUserId === user.user_id}
                                           onSelect={(e) => {
                                             e.preventDefault();
-                                            handleResetPassword(user);
+                                            requestResetPassword(user);
                                           }}
                                         >
                                           {resettingUserId === user.user_id ? (
