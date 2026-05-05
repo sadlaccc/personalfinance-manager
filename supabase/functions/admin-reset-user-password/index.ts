@@ -68,9 +68,18 @@ Deno.serve(async (req) => {
       });
     }
 
+    const resetAt = new Date().toISOString();
+    const { error: updateError } = await adminSupabase
+      .from('profiles')
+      .update({ last_password_reset_at: resetAt })
+      .eq('email', email);
+    if (updateError) {
+      console.error('Failed to update last_password_reset_at:', updateError);
+    }
+
     console.log(`Password reset email sent to ${email} by admin ${caller.id}`);
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, last_password_reset_at: resetAt }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
