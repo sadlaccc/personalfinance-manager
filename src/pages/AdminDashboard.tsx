@@ -387,6 +387,11 @@ export default function AdminDashboard() {
                                 <TableCell className="hidden lg:table-cell">
                                   <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
                                 </TableCell>
+                                <TableCell className="hidden xl:table-cell text-xs text-muted-foreground">
+                                  {user.last_password_reset_at
+                                    ? format(new Date(user.last_password_reset_at), 'MMM d, yyyy HH:mm')
+                                    : '—'}
+                                </TableCell>
                                 <TableCell className="text-right py-2">
                                   <div className="flex items-center justify-end gap-1" role="group" aria-label={`Actions for ${user.full_name || 'user'}`}>
                                     <div className="hidden lg:flex items-center gap-1">
