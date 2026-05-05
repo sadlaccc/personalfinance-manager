@@ -442,7 +442,13 @@ export default function AdminDashboard() {
                                             )}
                                           </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>{user.email ? 'Send password reset email' : 'No email on file'}</TooltipContent>
+                                        <TooltipContent>
+                                          {user.email
+                                            ? user.last_password_reset_at
+                                              ? `Last reset: ${format(new Date(user.last_password_reset_at), 'MMM d, yyyy HH:mm')}`
+                                              : 'Send password reset email'
+                                            : 'No email on file'}
+                                        </TooltipContent>
                                       </Tooltip>
                                     </div>
                                     <DropdownMenu>
