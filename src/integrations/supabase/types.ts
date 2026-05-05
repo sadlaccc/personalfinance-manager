@@ -339,6 +339,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          last_password_reset_at: string | null
           last_sign_in_at: string | null
           phone: string | null
           updated_at: string
@@ -351,6 +352,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          last_password_reset_at?: string | null
           last_sign_in_at?: string | null
           phone?: string | null
           updated_at?: string
@@ -363,6 +365,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          last_password_reset_at?: string | null
           last_sign_in_at?: string | null
           phone?: string | null
           updated_at?: string

@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS last_password_reset_at TIMESTAMP WITH TIME ZONE;
