@@ -467,7 +467,7 @@ export default function AdminDashboard() {
                                             variant="ghost"
                                             size="icon"
                                             disabled={!user.email || resettingUserId === user.user_id}
-                                            onClick={() => handleResetPassword(user)}
+                                            onClick={() => requestResetPassword(user)}
                                             className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                                             aria-label={`Reset password for ${user.full_name || 'user'}`}
                                           >
