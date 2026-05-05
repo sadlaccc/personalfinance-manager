@@ -157,14 +157,47 @@ export default function AdminDashboard() {
     toast({ title: 'Export complete', description: `Exported ${subscriptions.length} subscriptions` });
   };
 
+  const ALLOWED_RESET_HOSTS = ['localhost', '127.0.0.1', 'personalfinance-manager.lovable.app'];
+  const ALLOWED_RESET_HOST_SUFFIXES = ['.lovable.app', '.lovableproject.com'];
+
+  const buildResetRedirect = (): { url: string | null; error?: string } => {
+    if (typeof window === 'undefined') return { url: null, error: 'Browser context unavailable' };
+    try {
+      const origin = new URL(window.location.origin);
+      const isLocal = origin.hostname === 'localhost' || origin.hostname === '127.0.0.1';
+      const protoOk = origin.protocol === 'https:' || (isLocal && origin.protocol === 'http:');
+      const hostOk =
+        ALLOWED_RESET_HOSTS.includes(origin.hostname) ||
+        ALLOWED_RESET_HOST_SUFFIXES.some((s) => origin.hostname.endsWith(s));
+      if (!protoOk || !hostOk) {
+        return { url: null, error: `Unsupported environment for reset link (${origin.hostname})` };
+      }
+      return { url: `${origin.origin}/reset-password` };
+    } catch {
+      return { url: null, error: 'Could not determine current environment URL' };
+    }
+  };
+
+  const requestResetPassword = (user: AdminUser) => {
+    if (!user.email || resettingUserId) return;
+    setUserPendingReset(user);
+    setResetConfirmOpen(true);
+  };
+
   const handleResetPassword = async (user: AdminUser) => {
     if (!user.email || resettingUserId) return;
+    const { url: redirectTo, error: urlError } = buildResetRedirect();
+    if (!redirectTo) {
+      toast({ title: 'Invalid redirect URL', description: urlError, variant: 'destructive' });
+      return;
+    }
     setResettingUserId(user.user_id);
     try {
-      const { error } = await supabase.functions.invoke('admin-reset-user-password', {
-        body: { email: user.email, redirectTo: `${window.location.origin}/reset-password` },
+      const { data, error } = await supabase.functions.invoke('admin-reset-user-password', {
+        body: { email: user.email, redirectTo },
       });
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
       toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
       refetch();
     } catch (err: any) {
