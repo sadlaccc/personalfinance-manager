@@ -290,7 +290,7 @@ export default function AdminDashboard() {
         <motion.div variants={itemVariants}>
           <Tabs defaultValue="users" className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:inline-flex">
+              <TabsList className="w-full sm:w-auto grid grid-cols-6 sm:inline-flex">
                 <TabsTrigger value="users" className="gap-1.5 text-xs sm:text-sm">
                   <Users className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Users</span>
