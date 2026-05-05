@@ -652,6 +652,35 @@ export default function AdminDashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={resetConfirmOpen} onOpenChange={setResetConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary" /> Send Password Reset Email
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              A password reset link will be emailed to{' '}
+              <strong>{userPendingReset?.email || 'this user'}</strong>
+              {userPendingReset?.full_name ? <> ({userPendingReset.full_name})</> : null}.
+              They will be able to set a new password from that link. Continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                const target = userPendingReset;
+                setResetConfirmOpen(false);
+                if (target) await handleResetPassword(target);
+                setUserPendingReset(null);
+              }}
+            >
+              Send Reset Email
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 }
