@@ -51,6 +51,42 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Validate redirect URL: must be https (or http+localhost), end with /reset-password,
+    // and host must be in the allowlist for known environments.
+    const ALLOWED_HOSTS = [
+      'localhost',
+      '127.0.0.1',
+      'personalfinance-manager.lovable.app',
+    ];
+    const ALLOWED_HOST_SUFFIXES = ['.lovable.app', '.lovableproject.com'];
+
+    if (!redirectTo) {
+      return new Response(JSON.stringify({ error: 'Missing redirect URL' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    let parsedRedirect: URL;
+    try {
+      parsedRedirect = new URL(redirectTo);
+    } catch {
+      return new Response(JSON.stringify({ error: 'Invalid redirect URL' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const isLocal = parsedRedirect.hostname === 'localhost' || parsedRedirect.hostname === '127.0.0.1';
+    const protoOk = parsedRedirect.protocol === 'https:' || (isLocal && parsedRedirect.protocol === 'http:');
+    const hostOk =
+      ALLOWED_HOSTS.includes(parsedRedirect.hostname) ||
+      ALLOWED_HOST_SUFFIXES.some((s) => parsedRedirect.hostname.endsWith(s));
+    const pathOk = parsedRedirect.pathname.endsWith('/reset-password');
+    if (!protoOk || !hostOk || !pathOk) {
+      return new Response(JSON.stringify({
+        error: `Invalid redirect URL for current environment: ${redirectTo}`,
+      }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const adminSupabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
@@ -69,13 +105,20 @@ Deno.serve(async (req) => {
     }
 
     const resetAt = new Date().toISOString();
-    const { error: updateError } = await adminSupabase
+    const { data: targetProfile } = await adminSupabase
       .from('profiles')
       .update({ last_password_reset_at: resetAt })
-      .eq('email', email);
-    if (updateError) {
-      console.error('Failed to update last_password_reset_at:', updateError);
-    }
+      .eq('email', email)
+      .select('user_id')
+      .maybeSingle();
+
+    await adminSupabase.from('admin_audit_log').insert({
+      admin_user_id: caller.id,
+      target_user_id: targetProfile?.user_id ?? null,
+      target_email: email,
+      action: 'password_reset',
+      details: { redirect_to: redirectTo },
+    });
 
     console.log(`Password reset email sent to ${email} by admin ${caller.id}`);
 
