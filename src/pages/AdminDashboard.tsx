@@ -593,6 +593,11 @@ export default function AdminDashboard() {
             <TabsContent value="feedback">
               <AdminFeedback />
             </TabsContent>
+
+            {/* Audit Tab */}
+            <TabsContent value="audit">
+              <AdminAuditLog />
+            </TabsContent>
           </Tabs>
         </motion.div>
       </motion.div>
