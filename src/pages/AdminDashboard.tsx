@@ -22,6 +22,7 @@ import { AdminBlogManager } from '@/components/AdminBlogManager';
 import { AdminContactMessages } from '@/components/AdminContactMessages';
 import { AdminFeedback } from '@/components/AdminFeedback';
 import { UserOverviewDialog } from '@/components/UserOverviewDialog';
+import { AdminAuditLog } from '@/components/AdminAuditLog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
