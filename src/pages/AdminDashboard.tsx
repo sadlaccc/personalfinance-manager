@@ -5,7 +5,7 @@ import {
   Users, Shield, ArrowLeft, Search, Mail, Clock, Send, UserCog, BarChart3, 
   Download, UserX, RefreshCw, CreditCard, MoreHorizontal, Activity, TrendingUp,
   AlertTriangle, Crown, FileSpreadsheet, FileText, MessageSquare, Newspaper,
-  ThumbsUp, Settings2, Eye, KeyRound, Loader2
+  ThumbsUp, Settings2, Eye, KeyRound, Loader2, History
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +22,7 @@ import { AdminBlogManager } from '@/components/AdminBlogManager';
 import { AdminContactMessages } from '@/components/AdminContactMessages';
 import { AdminFeedback } from '@/components/AdminFeedback';
 import { UserOverviewDialog } from '@/components/UserOverviewDialog';
+import { AdminAuditLog } from '@/components/AdminAuditLog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,6 +67,8 @@ export default function AdminDashboard() {
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [overviewDialogOpen, setOverviewDialogOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [userPendingReset, setUserPendingReset] = useState<AdminUser | null>(null);
   const [resettingUserId, setResettingUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
 
@@ -154,14 +157,47 @@ export default function AdminDashboard() {
     toast({ title: 'Export complete', description: `Exported ${subscriptions.length} subscriptions` });
   };
 
+  const ALLOWED_RESET_HOSTS = ['localhost', '127.0.0.1', 'personalfinance-manager.lovable.app'];
+  const ALLOWED_RESET_HOST_SUFFIXES = ['.lovable.app', '.lovableproject.com'];
+
+  const buildResetRedirect = (): { url: string | null; error?: string } => {
+    if (typeof window === 'undefined') return { url: null, error: 'Browser context unavailable' };
+    try {
+      const origin = new URL(window.location.origin);
+      const isLocal = origin.hostname === 'localhost' || origin.hostname === '127.0.0.1';
+      const protoOk = origin.protocol === 'https:' || (isLocal && origin.protocol === 'http:');
+      const hostOk =
+        ALLOWED_RESET_HOSTS.includes(origin.hostname) ||
+        ALLOWED_RESET_HOST_SUFFIXES.some((s) => origin.hostname.endsWith(s));
+      if (!protoOk || !hostOk) {
+        return { url: null, error: `Unsupported environment for reset link (${origin.hostname})` };
+      }
+      return { url: `${origin.origin}/reset-password` };
+    } catch {
+      return { url: null, error: 'Could not determine current environment URL' };
+    }
+  };
+
+  const requestResetPassword = (user: AdminUser) => {
+    if (!user.email || resettingUserId) return;
+    setUserPendingReset(user);
+    setResetConfirmOpen(true);
+  };
+
   const handleResetPassword = async (user: AdminUser) => {
     if (!user.email || resettingUserId) return;
+    const { url: redirectTo, error: urlError } = buildResetRedirect();
+    if (!redirectTo) {
+      toast({ title: 'Invalid redirect URL', description: urlError, variant: 'destructive' });
+      return;
+    }
     setResettingUserId(user.user_id);
     try {
-      const { error } = await supabase.functions.invoke('admin-reset-user-password', {
-        body: { email: user.email, redirectTo: `${window.location.origin}/reset-password` },
+      const { data, error } = await supabase.functions.invoke('admin-reset-user-password', {
+        body: { email: user.email, redirectTo },
       });
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
       toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
       refetch();
     } catch (err: any) {
@@ -254,7 +290,7 @@ export default function AdminDashboard() {
         <motion.div variants={itemVariants}>
           <Tabs defaultValue="users" className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:inline-flex">
+              <TabsList className="w-full sm:w-auto grid grid-cols-6 sm:inline-flex">
                 <TabsTrigger value="users" className="gap-1.5 text-xs sm:text-sm">
                   <Users className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Users</span>
@@ -274,6 +310,10 @@ export default function AdminDashboard() {
                 <TabsTrigger value="feedback" className="gap-1.5 text-xs sm:text-sm">
                   <ThumbsUp className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Feedback</span>
+                </TabsTrigger>
+                <TabsTrigger value="audit" className="gap-1.5 text-xs sm:text-sm">
+                  <History className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Audit</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -431,7 +471,7 @@ export default function AdminDashboard() {
                                             variant="ghost"
                                             size="icon"
                                             disabled={!user.email || resettingUserId === user.user_id}
-                                            onClick={() => handleResetPassword(user)}
+                                            onClick={() => requestResetPassword(user)}
                                             className="h-8 w-8 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                                             aria-label={`Reset password for ${user.full_name || 'user'}`}
                                           >
@@ -486,7 +526,7 @@ export default function AdminDashboard() {
                                           disabled={!user.email || resettingUserId === user.user_id}
                                           onSelect={(e) => {
                                             e.preventDefault();
-                                            handleResetPassword(user);
+                                            requestResetPassword(user);
                                           }}
                                         >
                                           {resettingUserId === user.user_id ? (
@@ -553,6 +593,11 @@ export default function AdminDashboard() {
             <TabsContent value="feedback">
               <AdminFeedback />
             </TabsContent>
+
+            {/* Audit Tab */}
+            <TabsContent value="audit">
+              <AdminAuditLog />
+            </TabsContent>
           </Tabs>
         </motion.div>
       </motion.div>
@@ -603,6 +648,35 @@ export default function AdminDashboard() {
               setDeleteDialogOpen(false);
             }}>
               Delete User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={resetConfirmOpen} onOpenChange={setResetConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <KeyRound className="h-5 w-5 text-primary" /> Send Password Reset Email
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              A password reset link will be emailed to{' '}
+              <strong>{userPendingReset?.email || 'this user'}</strong>
+              {userPendingReset?.full_name ? <> ({userPendingReset.full_name})</> : null}.
+              They will be able to set a new password from that link. Continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                const target = userPendingReset;
+                setResetConfirmOpen(false);
+                if (target) await handleResetPassword(target);
+                setUserPendingReset(null);
+              }}
+            >
+              Send Reset Email
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
