@@ -339,6 +339,7 @@ export default function AdminDashboard() {
                             <TableHead className="hidden lg:table-cell">Plan</TableHead>
                             <TableHead className="hidden sm:table-cell">Joined</TableHead>
                             <TableHead className="hidden lg:table-cell">Status</TableHead>
+                            <TableHead className="hidden xl:table-cell">Last Reset</TableHead>
                             <TableHead className="text-right w-[100px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
