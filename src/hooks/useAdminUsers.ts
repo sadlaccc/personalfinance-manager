@@ -10,6 +10,7 @@ export interface AdminUser {
   created_at: string;
   updated_at: string;
   last_sign_in_at: string | null;
+  last_password_reset_at: string | null;
 }
 
 export function useAdminUsers() {

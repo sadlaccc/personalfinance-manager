@@ -163,6 +163,7 @@ export default function AdminDashboard() {
       });
       if (error) throw error;
       toast({ title: 'Reset email sent', description: `Password reset link sent to ${user.email}` });
+      refetch();
     } catch (err: any) {
       toast({ title: 'Reset failed', description: err.message || 'Could not send reset email', variant: 'destructive' });
     } finally {
@@ -338,6 +339,7 @@ export default function AdminDashboard() {
                             <TableHead className="hidden lg:table-cell">Plan</TableHead>
                             <TableHead className="hidden sm:table-cell">Joined</TableHead>
                             <TableHead className="hidden lg:table-cell">Status</TableHead>
+                            <TableHead className="hidden xl:table-cell">Last Reset</TableHead>
                             <TableHead className="text-right w-[100px]">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -384,6 +386,11 @@ export default function AdminDashboard() {
                                 </TableCell>
                                 <TableCell className="hidden lg:table-cell">
                                   <Badge variant={status.variant} className="text-xs">{status.label}</Badge>
+                                </TableCell>
+                                <TableCell className="hidden xl:table-cell text-xs text-muted-foreground">
+                                  {user.last_password_reset_at
+                                    ? format(new Date(user.last_password_reset_at), 'MMM d, yyyy HH:mm')
+                                    : '—'}
                                 </TableCell>
                                 <TableCell className="text-right py-2">
                                   <div className="flex items-center justify-end gap-1" role="group" aria-label={`Actions for ${user.full_name || 'user'}`}>
@@ -435,7 +442,13 @@ export default function AdminDashboard() {
                                             )}
                                           </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent>{user.email ? 'Send password reset email' : 'No email on file'}</TooltipContent>
+                                        <TooltipContent>
+                                          {user.email
+                                            ? user.last_password_reset_at
+                                              ? `Last reset: ${format(new Date(user.last_password_reset_at), 'MMM d, yyyy HH:mm')}`
+                                              : 'Send password reset email'
+                                            : 'No email on file'}
+                                        </TooltipContent>
                                       </Tooltip>
                                     </div>
                                     <DropdownMenu>
