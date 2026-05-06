@@ -25,8 +25,8 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
-  const [date, setDate] = useState<Date>(new Date());
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [dateError, setDateError] = useState<string | null>(null);
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -55,6 +55,10 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
     e.preventDefault();
     
     if (!name.trim() || !amount) return;
+    if (!date) {
+      setDateError('Please select a date');
+      return;
+    }
     
     onSubmit({
       name: name.trim(),
@@ -66,6 +70,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
     });
     
     resetForm();
+    setDateError(null);
     onOpenChange(false);
   };
 
