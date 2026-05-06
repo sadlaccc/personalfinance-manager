@@ -5,14 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DatePickerField } from '@/components/ui/date-picker-field';
 import { IncomeSource } from '@/hooks/useIncomeSources';
 import { IncomeCategory, categoryLabels } from '@/types/income';
 import { Frequency } from '@/types/expense';
-import { Wallet, DollarSign, CalendarIcon } from 'lucide-react';
+import { Wallet, DollarSign } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
 
 interface AddIncomeDialogProps {
   open: boolean;
@@ -30,8 +28,8 @@ export function AddIncomeDialog({ open, onOpenChange, onSubmit, editingIncome }:
   const [category, setCategory] = useState<IncomeCategory>('salary');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState<Date>(new Date());
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [dateError, setDateError] = useState<string | null>(null);
 
   useEffect(() => {
     if (editingIncome) {
