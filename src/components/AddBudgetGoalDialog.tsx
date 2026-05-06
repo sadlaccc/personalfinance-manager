@@ -8,11 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { DatePickerField } from '@/components/ui/date-picker-field';
 import { format, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { BudgetGoal } from '@/hooks/useBudgetGoals';
 
 interface AddBudgetGoalDialogProps {
@@ -22,16 +19,16 @@ interface AddBudgetGoalDialogProps {
   editingGoal?: BudgetGoal | null;
 }
 
-export function AddBudgetGoalDialog({ 
-  open, 
-  onOpenChange, 
-  onSubmit, 
-  editingGoal 
+export function AddBudgetGoalDialog({
+  open,
+  onOpenChange,
+  onSubmit,
+  editingGoal,
 }: AddBudgetGoalDialogProps) {
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
   const [currentAmount, setCurrentAmount] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -39,12 +36,12 @@ export function AddBudgetGoalDialog({
       setName(editingGoal.name);
       setTargetAmount(editingGoal.target_amount.toString());
       setCurrentAmount(editingGoal.current_amount.toString());
-      setDeadline(editingGoal.deadline || '');
+      setDeadline(editingGoal.deadline ? parseISO(editingGoal.deadline) : undefined);
     } else {
       setName('');
       setTargetAmount('');
       setCurrentAmount('0');
-      setDeadline('');
+      setDeadline(undefined);
     }
   }, [editingGoal, open]);
 
@@ -57,7 +54,7 @@ export function AddBudgetGoalDialog({
         name,
         target_amount: parseFloat(targetAmount) || 0,
         current_amount: parseFloat(currentAmount) || 0,
-        deadline: deadline || null,
+        deadline: deadline ? format(deadline, 'yyyy-MM-dd') : null,
       });
       onOpenChange(false);
     } finally {
@@ -126,20 +123,25 @@ export function AddBudgetGoalDialog({
 
           <div className="space-y-2">
             <Label htmlFor="deadline">Target Date (Optional)</Label>
-            <DeadlinePicker value={deadline} onChange={setDeadline} />
+            <DatePickerField
+              id="deadline"
+              value={deadline}
+              onChange={setDeadline}
+              placeholder="Pick a date"
+            />
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => onOpenChange(false)}
               className="flex-1 rounded-xl"
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting || !name || !targetAmount}
               className="flex-1 rounded-xl bg-gradient-income hover:opacity-90"
             >
@@ -149,41 +151,5 @@ export function AddBudgetGoalDialog({
         </form>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function DeadlinePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const date = value ? parseISO(value) : undefined;
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="outline"
-          className={cn(
-            'w-full justify-start rounded-xl text-left font-normal',
-            !date && 'text-muted-foreground'
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, 'MMM d, yyyy') : <span>Pick a date</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={(d) => onChange(d ? format(d, 'yyyy-MM-dd') : '')}
-          initialFocus
-          className={cn('p-3 pointer-events-auto')}
-        />
-        <div className="flex justify-end gap-2 border-t p-2">
-          <Button size="sm" variant="ghost" type="button" onClick={() => { onChange(''); setOpen(false); }}>Clear</Button>
-          <Button size="sm" variant="ghost" type="button" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button size="sm" type="button" onClick={() => setOpen(false)}>OK</Button>
-        </div>
-      </PopoverContent>
-    </Popover>
   );
 }
