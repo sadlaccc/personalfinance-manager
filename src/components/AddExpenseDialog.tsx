@@ -5,12 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DatePickerField } from '@/components/ui/date-picker-field';
 import { Expense, ExpenseCategory, expenseCategoryLabels, Frequency, frequencyLabels } from '@/types/expense';
-import { ArrowDownCircle, DollarSign, CalendarIcon } from 'lucide-react';
+import { ArrowDownCircle, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 
 interface AddExpenseDialogProps {
   open: boolean;
@@ -27,8 +25,8 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<ExpenseCategory>('food');
   const [frequency, setFrequency] = useState<Frequency>('monthly');
-  const [date, setDate] = useState<Date>(new Date());
-  const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [dateError, setDateError] = useState<string | null>(null);
   const [description, setDescription] = useState('');
 
   useEffect(() => {
@@ -57,6 +55,10 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
     e.preventDefault();
     
     if (!name.trim() || !amount) return;
+    if (!date) {
+      setDateError('Please select a date');
+      return;
+    }
     
     onSubmit({
       name: name.trim(),
@@ -68,6 +70,7 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
     });
     
     resetForm();
+    setDateError(null);
     onOpenChange(false);
   };
 
@@ -118,33 +121,14 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
           
           <div className="space-y-2">
             <Label>Date</Label>
-            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal rounded-xl",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(d) => d && setDate(d)}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-                <div className="flex justify-end gap-2 border-t p-2">
-                  <Button size="sm" variant="ghost" type="button" onClick={() => setDatePopoverOpen(false)}>Cancel</Button>
-                  <Button size="sm" type="button" onClick={() => setDatePopoverOpen(false)}>OK</Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <DatePickerField
+              value={date}
+              onChange={setDate}
+              required
+              error={dateError}
+              onErrorChange={setDateError}
+              displayFormat="PPP"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
