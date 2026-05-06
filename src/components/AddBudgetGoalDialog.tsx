@@ -126,13 +126,7 @@ export function AddBudgetGoalDialog({
 
           <div className="space-y-2">
             <Label htmlFor="deadline">Target Date (Optional)</Label>
-            <Input
-              id="deadline"
-              type="date"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="rounded-xl"
-            />
+            <DeadlinePicker value={deadline} onChange={setDeadline} />
           </div>
 
           <div className="flex gap-3 pt-2">
