@@ -121,33 +121,14 @@ export function AddExpenseDialog({ open, onOpenChange, onSubmit, editingExpense 
           
           <div className="space-y-2">
             <Label>Date</Label>
-            <Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal rounded-xl",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(d) => d && setDate(d)}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-                <div className="flex justify-end gap-2 border-t p-2">
-                  <Button size="sm" variant="ghost" type="button" onClick={() => setDatePopoverOpen(false)}>Cancel</Button>
-                  <Button size="sm" type="button" onClick={() => setDatePopoverOpen(false)}>OK</Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <DatePickerField
+              value={date}
+              onChange={setDate}
+              required
+              error={dateError}
+              onErrorChange={setDateError}
+              displayFormat="PPP"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
