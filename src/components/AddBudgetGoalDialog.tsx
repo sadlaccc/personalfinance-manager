@@ -151,3 +151,39 @@ export function AddBudgetGoalDialog({
     </Dialog>
   );
 }
+
+function DeadlinePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const date = value ? parseISO(value) : undefined;
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className={cn(
+            'w-full justify-start rounded-xl text-left font-normal',
+            !date && 'text-muted-foreground'
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, 'MMM d, yyyy') : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={(d) => onChange(d ? format(d, 'yyyy-MM-dd') : '')}
+          initialFocus
+          className={cn('p-3 pointer-events-auto')}
+        />
+        <div className="flex justify-end gap-2 border-t p-2">
+          <Button size="sm" variant="ghost" type="button" onClick={() => { onChange(''); setOpen(false); }}>Clear</Button>
+          <Button size="sm" variant="ghost" type="button" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button size="sm" type="button" onClick={() => setOpen(false)}>OK</Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
