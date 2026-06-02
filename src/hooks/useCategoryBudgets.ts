@@ -25,6 +25,7 @@ export function useCategoryBudgets(month: number, year: number) {
       const { data, error } = await supabase
         .from('category_budgets')
         .select('*')
+        .eq('user_id', user.id)
         .eq('month', month)
         .eq('year', year);
 
