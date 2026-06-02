@@ -46,7 +46,8 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       if (!user) return 0;
       const { count, error } = await supabase
         .from('income_sources')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
       if (error) throw error;
       return count || 0;
     },
