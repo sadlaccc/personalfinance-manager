@@ -18,11 +18,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const previousUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        const nextUserId = session?.user?.id ?? null;
+        // If the active user changed (sign-in, sign-out, or account switch),
+        // wipe React Query cache so one user's data cannot leak into another's view.
+        if (previousUserIdRef.current !== null && previousUserIdRef.current !== nextUserId) {
+          queryClient.clear();
+        }
+        previousUserIdRef.current = nextUserId;
+
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -31,13 +41,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      previousUserIdRef.current = session?.user?.id ?? null;
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
