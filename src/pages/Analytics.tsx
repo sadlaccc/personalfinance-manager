@@ -91,11 +91,13 @@ const Analytics = () => {
           supabase
             .from('income_sources')
             .select('amount')
+            .eq('user_id', user.id)
             .gte('date', monthStart)
             .lte('date', monthEnd),
           supabase
             .from('expenses')
             .select('amount')
+            .eq('user_id', user.id)
             .gte('date', monthStart)
             .lte('date', monthEnd),
         ]);
