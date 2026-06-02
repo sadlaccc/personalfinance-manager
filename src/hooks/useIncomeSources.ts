@@ -71,6 +71,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       const { data, error } = await supabase
         .from('income_sources')
         .select('*')
+        .eq('user_id', user.id)
         .gte('date', format(monthStart, 'yyyy-MM-dd'))
         .lte('date', format(monthEnd, 'yyyy-MM-dd'))
         .order('date', { ascending: false });
