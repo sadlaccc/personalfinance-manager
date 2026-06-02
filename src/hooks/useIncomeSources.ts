@@ -46,7 +46,8 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       if (!user) return 0;
       const { count, error } = await supabase
         .from('income_sources')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
       if (error) throw error;
       return count || 0;
     },
@@ -70,6 +71,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       const { data, error } = await supabase
         .from('income_sources')
         .select('*')
+        .eq('user_id', user.id)
         .gte('date', format(monthStart, 'yyyy-MM-dd'))
         .lte('date', format(monthEnd, 'yyyy-MM-dd'))
         .order('date', { ascending: false });

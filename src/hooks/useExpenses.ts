@@ -35,6 +35,7 @@ export function useExpenses(options?: UseExpensesOptions) {
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
+        .eq('user_id', user.id)
         .gte('date', format(monthStart, 'yyyy-MM-dd'))
         .lte('date', format(monthEnd, 'yyyy-MM-dd'))
         .order('date', { ascending: false });
