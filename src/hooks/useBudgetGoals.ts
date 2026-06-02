@@ -98,10 +98,12 @@ export function useBudgetGoals() {
   };
 
   const updateGoal = async (id: string, updates: Partial<Omit<BudgetGoal, 'id' | 'user_id' | 'created_at' | 'updated_at'>>) => {
+    if (!user) throw new Error('Not authenticated');
     const { data, error } = await supabase
       .from('budget_goals')
       .update(updates)
       .eq('id', id)
+      .eq('user_id', user.id)
       .select()
       .single();
 
@@ -111,10 +113,12 @@ export function useBudgetGoals() {
   };
 
   const deleteGoal = async (id: string) => {
+    if (!user) throw new Error('Not authenticated');
     const { error } = await supabase
       .from('budget_goals')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('user_id', user.id);
 
     if (error) throw error;
     setGoals(prev => prev.filter(g => g.id !== id));
