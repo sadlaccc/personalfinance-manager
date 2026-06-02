@@ -115,10 +115,12 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>> }) => {
+      if (!user) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('income_sources')
         .update(updates)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
 
@@ -132,15 +134,18 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!user) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('income_sources')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
 
