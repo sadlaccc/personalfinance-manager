@@ -82,10 +82,12 @@ export function useExpenses(options?: UseExpensesOptions) {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<Omit<Expense, 'id' | 'user_id' | 'created_at'>> }) => {
+      if (!user) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('expenses')
         .update(updates)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
 
@@ -99,10 +101,12 @@ export function useExpenses(options?: UseExpensesOptions) {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!user) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('expenses')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
 
       if (error) throw error;
     },
