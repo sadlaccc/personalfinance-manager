@@ -214,18 +214,21 @@ export default function Pricing() {
           >
             <img 
               src={pricingHero} 
-              alt="Financial dashboard" 
-              className="w-full max-w-lg mx-auto h-32 sm:h-40 object-cover rounded-2xl mb-4 opacity-80"
+              alt="Personal finance app on a phone" 
+              className="w-full max-w-lg mx-auto h-32 sm:h-40 object-cover rounded-2xl mb-4 opacity-90"
+              loading="lazy"
+              width={1536}
+              height={768}
             />
             <Badge variant="secondary" className="mb-3 px-3 py-1 backdrop-blur-sm bg-secondary/80">
               <Sparkles className="w-3 h-3 mr-1" />
-              Simple Pricing
+              Pricing
             </Badge>
             <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 tracking-tight">
-              Choose Your Plan
+              Pick a plan that fits
             </h1>
             <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
-              14-day free trial • No credit card required
+              14 day free trial. No card needed.
             </p>
           </motion.div>
         </section>

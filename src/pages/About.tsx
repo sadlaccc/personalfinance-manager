@@ -4,37 +4,36 @@ import { Button } from '@/components/ui/button';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
-import { 
-  TrendingUp, 
-  Users2, 
-  Goal, 
+import {
+  Users2,
+  Goal,
   ShieldCheck,
   ArrowRight,
   ArrowLeft,
-  Wallet,
   Heart,
 } from 'lucide-react';
+import aboutStory from '@/assets/about-story.jpg';
 
 const values = [
   {
     icon: Users2,
-    title: 'User-Centric',
-    description: 'Every feature starts with real feedback. We build what people actually need.',
+    title: 'Built with people',
+    description: 'Features come from real feedback, not roadmap theatre.',
   },
   {
     icon: Goal,
-    title: 'Simplicity First',
-    description: 'No jargon, no clutter. Complex finances presented with clarity.',
+    title: 'Keep it simple',
+    description: 'Plain words. Clear numbers. No jargon to decode.',
   },
   {
     icon: ShieldCheck,
-    title: 'Privacy Matters',
-    description: 'Bank-level encryption. Row-level security. We never sell your data.',
+    title: 'Your data is yours',
+    description: 'Locked to your account. Export it any time. We never sell it.',
   },
   {
     icon: Heart,
-    title: 'Built for Everyone',
-    description: 'Multi-currency support, flexible integrations, and workflows that adapt to how you manage money.',
+    title: 'For all of us',
+    description: 'Many currencies. Many income shapes. Salary, freelance, hustle, all of it.',
   },
 ];
 
@@ -62,8 +61,8 @@ export default function About() {
               About FedhaFlow
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              We're building a personal finance tool that actually makes sense 
-              for people everywhere. Simple, private, and focused on what matters.
+              A small team in Nairobi building a finance app that gets out of the way.
+              Simple, private, useful on a regular Tuesday.
             </p>
           </motion.div>
         </div>
@@ -79,28 +78,31 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Most finance apps feel overly complex or are built for a narrow audience. 
-                  They miss the reality of how people manage money — juggling multiple 
-                  income streams, varying currencies, and different spending patterns.
+                  Most finance apps were built for one kind of life. One salary, one currency, one bank.
+                  Reality is messier. People juggle salaries, side gigs, family contributions, rent paid in cash.
                 </p>
                 <p>
-                  FedhaFlow started as a side project to solve a personal problem: tracking 
-                  income from multiple sources (salary, freelance, side hustles) alongside
-                  everyday expenses in a way that actually made sense.
+                  FedhaFlow started as a side project to track all of that in one place.
+                  No bank logins, no scary permissions. Just a clear picture of what came in,
+                  what went out, and what is left for the goals.
                 </p>
                 <p>
-                  It grew from there. We added budgets, savings goals, analytics, and 
-                  team features. The goal hasn't changed: make personal finance management 
-                  accessible and useful for everyone, everywhere.
+                  It grew into budgets, savings goals, analytics, and a team plan for small businesses.
+                  The point has not changed: make this stuff useful and easy to actually open every day.
                 </p>
               </div>
             </div>
-            
+
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl bg-muted/50 border border-border/50 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <TrendingUp className="w-10 h-10 text-primary-foreground" />
-                </div>
+              <div className="relative rounded-2xl overflow-hidden border border-border/50 shadow-xl shadow-primary/5 ring-1 ring-white/5">
+                <img
+                  src={aboutStory}
+                  alt="Notebook with handwritten budget and a phone showing a chart"
+                  className="w-full h-auto"
+                  width={1280}
+                  height={960}
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
@@ -139,20 +141,20 @@ export default function About() {
       <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4">
-            Want to try it out?
+            Want to try it?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            FedhaFlow is free to start. Create an account and see if it works for you.
+            Free to start. Take it for a spin and see if it fits.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link to="/auth">
               <Button size="lg">
-                Get Started Free
+                Get started
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
             <Link to="/contact">
-              <Button size="lg" variant="outline">Talk to Us</Button>
+              <Button size="lg" variant="outline">Say hello</Button>
             </Link>
           </div>
         </div>
