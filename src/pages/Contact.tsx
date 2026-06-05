@@ -111,13 +111,10 @@ export default function Contact() {
               Get in Touch
             </div>
             <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2">
-              Contact{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                Us
-              </span>
+              Get in touch
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Have questions or need support? We'd love to hear from you.
+              Questions, bugs, ideas. We read every message.
             </p>
           </motion.div>
         </div>

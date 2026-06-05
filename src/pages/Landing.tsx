@@ -22,38 +22,38 @@ import {
   Zap,
   ShieldCheck,
 } from 'lucide-react';
-import heroDashboard from '@/assets/hero-dashboard.png';
+import heroDashboard from '@/assets/hero-dashboard.jpg';
 
 const features = [
   {
     icon: Wallet,
-    title: 'Income Tracking',
-    description: 'Log salary, freelance, rental, and business income. Totals update in real time.',
+    title: 'Income tracking',
+    description: 'Salary, freelance, rental, business. All your income in one place.',
   },
   {
     icon: CircleDollarSign,
-    title: 'Expense Management',
-    description: 'Categorize spending, set per-category limits, get notified before you overshoot.',
+    title: 'Expenses',
+    description: 'Categorize spending and set limits. Know when a category is about to blow.',
   },
   {
     icon: Goal,
-    title: 'Savings Goals',
-    description: 'Set targets with deadlines, add funds as you go, watch progress fill up.',
+    title: 'Savings goals',
+    description: 'Pick a target, add funds when you can, watch the bar fill up.',
   },
   {
     icon: LineChart,
     title: 'Analytics',
-    description: 'Charts that show where your money goes, by week, month, or custom range.',
+    description: 'See where the money actually goes. Week, month, or custom range.',
   },
   {
     icon: PieChart,
-    title: 'Budget Planning',
-    description: 'Monthly budgets per category. Compare planned vs actual. Copy across months.',
+    title: 'Budgets',
+    description: 'A budget per category. Compare plan vs actual. Copy last month forward.',
   },
   {
     icon: Lock,
-    title: 'Secure by Default',
-    description: 'Row-level security on every table. Your data stays yours.',
+    title: 'Private by default',
+    description: 'Your data is locked to your account. Nothing shared, nothing sold.',
   },
 ];
 
@@ -103,10 +103,10 @@ function SavingsCalculator() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-3">
-            Quick Savings Calculator
+            Try the savings math
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto text-sm sm:text-base">
-            Plug in your numbers and see how long it'll take to hit your goal.
+            Drop in your numbers. See how long until you hit your goal.
           </p>
         </div>
 
@@ -195,36 +195,35 @@ export default function Landing() {
             >
               <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/70 backdrop-blur px-3 py-1.5 mb-5 text-xs sm:text-sm shadow-sm">
                 <span className="inline-block w-2 h-2 rounded-full bg-income animate-pulse" />
-                <span className="text-muted-foreground">New: Multi-currency budgets &amp; team plans</span>
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span className="text-muted-foreground">Now with team plans and multi-currency budgets</span>
               </div>
 
               <h1 className="font-display text-[2.5rem] sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 leading-[1.05]">
-                Track your money.{' '}
+                Know where your{' '}
                 <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Hit your goals.
+                  money goes.
                 </span>
               </h1>
               <p className="text-base sm:text-lg text-muted-foreground mb-7 max-w-lg leading-relaxed">
-                A modern personal finance dashboard for income, expenses, budgets and savings. Built for people anywhere in the world.
+                A simple place to log income, plan budgets, and watch savings grow. No spreadsheets. No banking logins.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-3 mb-7">
                 <Link to="/auth" className="w-full sm:w-auto">
                   <Button size="lg" className="h-12 px-7 w-full sm:w-auto shadow-lg shadow-primary/25">
-                    Create Free Account
+                    Start free
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/pricing" className="w-full sm:w-auto">
-                  <Button variant="outline" size="lg" className="h-12 px-7 w-full sm:w-auto">View Plans</Button>
+                  <Button variant="outline" size="lg" className="h-12 px-7 w-full sm:w-auto">See pricing</Button>
                 </Link>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
                 {[
-                  { icon: ShieldCheck, label: 'No credit card' },
-                  { icon: Globe, label: 'Multi-currency' },
-                  { icon: Zap, label: 'Any device' },
+                  { icon: ShieldCheck, label: 'No card needed' },
+                  { icon: Globe, label: 'Works in your currency' },
+                  { icon: Zap, label: 'Phone or laptop' },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-sm text-muted-foreground">
                     <item.icon className="w-4 h-4 text-income shrink-0" />
@@ -252,7 +251,7 @@ export default function Landing() {
             </motion.div>
           </div>
 
-          {/* Stats strip */}
+          {/* Honest highlights strip */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -261,13 +260,13 @@ export default function Landing() {
             className="mt-14 lg:mt-20 grid grid-cols-2 sm:grid-cols-4 gap-px rounded-2xl overflow-hidden border border-border/50 bg-border/50"
           >
             {[
-              { value: '40+', label: 'Currencies' },
-              { value: '99.9%', label: 'Uptime' },
-              { value: 'Unlimited', label: 'Records on Pro' },
-              { value: 'GDPR', label: 'Data privacy' },
+              { value: 'Free', label: 'To get started' },
+              { value: 'Your currency', label: 'KSh, USD, EUR and more' },
+              { value: 'Private', label: 'Locked to your account' },
+              { value: 'Yours', label: 'Export anytime' },
             ].map((stat) => (
               <div key={stat.label} className="bg-card/80 backdrop-blur p-5 text-center">
-                <p className="font-display text-xl sm:text-2xl font-bold text-primary">{stat.value}</p>
+                <p className="font-display text-base sm:text-lg font-bold text-primary">{stat.value}</p>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">{stat.label}</p>
               </div>
             ))}
@@ -281,10 +280,10 @@ export default function Landing() {
           <div className="text-center mb-10 lg:mb-14 max-w-2xl mx-auto">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">Features</p>
             <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
-              Everything you need to run your money
+              The basics, done well
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Simple tools that cover the full picture, from daily spending to long-term goals.
+              From a single salary to a dozen side hustles. Everything fits.
             </p>
           </div>
 
@@ -316,15 +315,15 @@ export default function Landing() {
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">How it works</p>
             <h2 className="font-display text-2xl sm:text-3xl font-bold">
-              Get started in 3 steps
+              Three steps. That's it.
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6 max-w-4xl mx-auto">
             {[
-              { step: '01', title: 'Sign up', description: 'Create a free account with your email.', icon: Users },
-              { step: '02', title: 'Add your finances', description: 'Log income and expenses. Set budgets.', icon: Wallet },
-              { step: '03', title: 'See the big picture', description: 'Track trends, hit goals, stay on budget.', icon: TrendingUp },
+              { step: '01', title: 'Sign up', description: 'Email and a password. Sixty seconds.', icon: Users },
+              { step: '02', title: 'Add what you have', description: 'Income, expenses, a budget if you want one.', icon: Wallet },
+              { step: '03', title: 'Keep going', description: 'Check in weekly. The picture gets clearer.', icon: TrendingUp },
             ].map((item, index) => (
               <motion.div
                 key={item.step}
@@ -354,10 +353,10 @@ export default function Landing() {
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">Pricing</p>
             <h2 className="font-display text-2xl sm:text-3xl font-bold mb-3">
-              Plans that grow with you
+              Start free. Upgrade if you need to.
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Start free. Upgrade when you outgrow it. Cancel any time.
+              Cancel any time. No tricks.
             </p>
           </div>
 
@@ -420,21 +419,21 @@ export default function Landing() {
             </div>
             <div className="relative">
               <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground mb-3">
-                Ready to take control of your finances?
+                Give it a try this weekend.
               </h2>
               <p className="text-primary-foreground/85 mb-6 max-w-md mx-auto text-sm sm:text-base">
-                It's free to start. No credit card. No tricks.
+                Free to start. Your data stays yours.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link to="/auth">
                   <Button size="lg" variant="secondary" className="h-12 px-7 shadow-lg">
-                    Create Your Account
+                    Create an account
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>
                 <Link to="/pricing">
                   <Button size="lg" variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10 h-12 px-7">
-                    See Plans
+                    See plans
                   </Button>
                 </Link>
               </div>
