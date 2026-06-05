@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, X, Sparkles, Flame, ArrowRight, HelpCircle, TrendingUp, Crown, Download, Users, Building2, Rocket } from 'lucide-react';
-import pricingHero from '@/assets/pricing-hero.png';
+import pricingHero from '@/assets/pricing-hero.jpg';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PublicNavbar } from '@/components/PublicNavbar';
