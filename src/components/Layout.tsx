@@ -30,7 +30,7 @@ export function Layout({ children }: LayoutProps) {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <SidebarInset className="flex-1 flex flex-col min-w-0">
-          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 border-b border-border bg-card/50 backdrop-blur-sm px-3 sm:px-4 sticky top-0 z-40">
+          <header className="flex h-14 sm:h-16 shrink-0 items-center gap-2 border-b border-border bg-card md:bg-card/80 md:backdrop-blur-sm px-3 sm:px-4 sticky top-0 z-40">
             <SidebarTrigger className="-ml-1 md:flex hidden">
               <Menu className="h-5 w-5" />
             </SidebarTrigger>
