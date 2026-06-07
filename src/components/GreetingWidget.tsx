@@ -104,21 +104,10 @@ export function GreetingWidget({ className }: GreetingWidgetProps) {
             greetingData.gradient
           )} />
           
-          {/* Floating decorative elements - hidden on small screens */}
-          <motion.div 
-            className="absolute top-2 right-10 opacity-20 hidden sm:block"
-            animate={{ 
-              y: [0, -5, 0],
-              rotate: [0, 5, 0]
-            }}
-            transition={{ 
-              duration: 4, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
+          {/* Decorative element - hidden on small screens */}
+          <div className="absolute top-2 right-10 opacity-20 hidden sm:block pointer-events-none">
             <Sparkles className="w-12 h-12 text-primary" />
-          </motion.div>
+          </div>
 
           {/* Dismiss button */}
           <Button
