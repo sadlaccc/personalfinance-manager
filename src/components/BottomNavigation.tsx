@@ -1,11 +1,9 @@
+import { memo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Wallet, Receipt, LineChart, Target, Settings, Power, PieChart } from 'lucide-react';
+import { Home, Wallet, Receipt, LineChart, Target, Settings, Power, PieChart, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { MoreHorizontal } from 'lucide-react';
 
 const mainNavItems = [
   { path: '/dashboard', icon: Home, label: 'Home' },
@@ -20,17 +18,20 @@ const moreNavItems = [
   { path: '/settings', icon: Settings, label: 'Settings' },
 ];
 
-export function BottomNavigation() {
+function BottomNavigationImpl() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const [moreOpen, setMoreOpen] = useState(false);
 
   return (
-    <motion.nav
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
+    <nav
       className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-bottom md:hidden"
+      style={{
+        height: 'calc(3.5rem + env(safe-area-inset-bottom, 0px))',
+        contain: 'layout paint style',
+        willChange: 'auto',
+      }}
     >
       <div className="flex items-center justify-around h-14 px-1">
         {mainNavItems.map((item) => {
@@ -42,38 +43,23 @@ export function BottomNavigation() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200",
-                "active:scale-95 touch-manipulation",
-                isActive 
-                  ? "text-primary" 
-                  : "text-muted-foreground hover:text-foreground"
+                'flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200 touch-manipulation',
+                isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              <div className={cn(
-                "relative p-1 rounded-lg transition-all duration-200",
-                isActive && "bg-primary/10"
-              )}>
-                <Icon className={cn(
-                  "h-4 w-4 transition-all duration-200",
-                  isActive && "scale-110"
-                )} />
+              <div className={cn('relative p-1 rounded-lg', isActive && 'bg-primary/10')}>
+                <Icon className="h-4 w-4" />
               </div>
-              <span className={cn(
-                "text-[9px] font-medium",
-                isActive ? "text-primary" : "text-muted-foreground"
-              )}>
+              <span className={cn('text-[9px] font-medium', isActive ? 'text-primary' : 'text-muted-foreground')}>
                 {item.label}
               </span>
             </button>
           );
         })}
 
-        {/* More menu */}
         <Sheet open={moreOpen} onOpenChange={setMoreOpen}>
           <SheetTrigger asChild>
-            <button
-              className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all duration-200 active:scale-95 touch-manipulation text-muted-foreground hover:text-foreground"
-            >
+            <button className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors duration-200 touch-manipulation text-muted-foreground hover:text-foreground">
               <div className="p-1 rounded-lg">
                 <MoreHorizontal className="h-4 w-4" />
               </div>
@@ -94,10 +80,8 @@ export function BottomNavigation() {
                       setMoreOpen(false);
                     }}
                     className={cn(
-                      "flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all duration-200",
-                      isActive 
-                        ? "bg-primary/10 text-primary" 
-                        : "text-foreground hover:bg-secondary"
+                      'flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors duration-200',
+                      isActive ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-secondary'
                     )}
                   >
                     <Icon className="h-5 w-5" />
@@ -105,14 +89,13 @@ export function BottomNavigation() {
                   </button>
                 );
               })}
-              
-              {/* Sign Out */}
+
               <button
                 onClick={() => {
                   signOut();
                   setMoreOpen(false);
                 }}
-                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-all duration-200 text-destructive hover:bg-destructive/10"
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-lg transition-colors duration-200 text-destructive hover:bg-destructive/10"
               >
                 <Power className="h-5 w-5" />
                 <span className="font-medium">Sign Out</span>
@@ -121,6 +104,8 @@ export function BottomNavigation() {
           </SheetContent>
         </Sheet>
       </div>
-    </motion.nav>
+    </nav>
   );
 }
+
+export const BottomNavigation = memo(BottomNavigationImpl);
