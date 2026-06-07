@@ -30,7 +30,7 @@ export function BottomNavigation() {
     <motion.nav
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border safe-area-bottom md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border safe-area-bottom md:hidden"
     >
       <div className="flex items-center justify-around h-14 px-1">
         {mainNavItems.map((item) => {
