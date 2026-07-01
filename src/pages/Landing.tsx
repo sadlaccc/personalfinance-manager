@@ -347,64 +347,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing teaser */}
-      <section className="py-16 sm:py-20 bg-muted/30">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary font-semibold mb-3">Pricing</p>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold mb-3">
-              Start free. Upgrade if you need to.
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Cancel any time. No tricks.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 max-w-5xl mx-auto">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.06 }}
-                className={`relative rounded-2xl border p-6 flex flex-col ${
-                  tier.highlight
-                    ? 'border-primary/60 bg-card shadow-xl shadow-primary/10 ring-1 ring-primary/20'
-                    : 'border-border/50 bg-card'
-                }`}
-              >
-                {tier.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary to-accent px-3 py-0.5 text-[10px] font-semibold text-primary-foreground uppercase tracking-wider shadow">
-                    <Sparkles className="w-3 h-3" /> Popular
-                  </span>
-                )}
-                <p className="font-display font-semibold text-lg">{tier.name}</p>
-                <div className="mt-2 mb-5">
-                  <span className="font-display text-3xl font-bold">{tier.price}</span>
-                  <span className="text-muted-foreground text-sm ml-1">{tier.cadence}</span>
-                </div>
-                <ul className="space-y-2 mb-6 flex-1">
-                  {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-income shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/pricing">
-                  <Button
-                    variant={tier.highlight ? 'default' : 'outline'}
-                    className="w-full"
-                  >
-                    {tier.highlight ? 'Get Started' : 'Compare Plans'}
-                  </Button>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Savings Calculator */}
       <SavingsCalculator />
