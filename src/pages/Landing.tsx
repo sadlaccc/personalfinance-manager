@@ -57,29 +57,6 @@ const features = [
   },
 ];
 
-const pricingTiers = [
-  {
-    name: 'Starter',
-    price: 'Free',
-    cadence: 'forever',
-    highlight: false,
-    features: ['Up to 5 income sources', 'Up to 20 expenses', 'Basic analytics'],
-  },
-  {
-    name: 'Pro',
-    price: '$6',
-    cadence: '/ month',
-    highlight: true,
-    features: ['Unlimited income & expenses', 'Advanced analytics', 'Goals & budgets', 'Exports'],
-  },
-  {
-    name: 'Business',
-    price: '$19',
-    cadence: '/ month',
-    highlight: false,
-    features: ['Everything in Pro', 'Up to 10 team members', 'Team analytics', 'Priority support'],
-  },
-];
 
 function SavingsCalculator() {
   const [monthlyIncome, setMonthlyIncome] = useState('');
