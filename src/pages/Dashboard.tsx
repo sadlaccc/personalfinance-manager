@@ -293,19 +293,26 @@ const Dashboard = () => {
     ),
   };
 
-  // Split widgets into main (full-width) and sidebar groups
-  const mainWidgets = ['stats', 'quick-actions', 'financial-summary', 'recent-income'];
-  const sidebarWidgets = ['subscription', 'income-chart', 'budget-overview', 'daily-tip'];
+  // Bento grid spans (6-col grid on desktop)
+  const bentoSpans: Record<string, string> = {
+    'stats': 'col-span-6',
+    'quick-actions': 'col-span-6',
+    'financial-summary': 'col-span-6 lg:col-span-4',
+    'income-chart': 'col-span-6 lg:col-span-2',
+    'recent-income': 'col-span-6 lg:col-span-4',
+    'budget-overview': 'col-span-6 lg:col-span-2',
+    'subscription': 'col-span-6 lg:col-span-3',
+    'daily-tip': 'col-span-6 lg:col-span-3',
+  };
 
-  const orderedMainWidgets = widgetOrder.filter(w => mainWidgets.includes(w));
-  const orderedSidebarWidgets = widgetOrder.filter(w => sidebarWidgets.includes(w));
+  const orderedWidgets = widgetOrder.filter(w => widgets[w]);
 
   return (
     <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="space-y-4 max-w-[1400px] mx-auto"
+      className="space-y-6 max-w-[1400px] mx-auto"
     >
       {/* Greeting + Month Selector */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -346,50 +353,23 @@ const Dashboard = () => {
       </motion.div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        {/* Stats and Quick Actions always at top, full width */}
-        <SortableContext items={orderedMainWidgets.filter(w => w === 'stats' || w === 'quick-actions')} strategy={verticalListSortingStrategy}>
-          <div className="space-y-4">
-            {orderedMainWidgets.filter(w => w === 'stats' || w === 'quick-actions').map(widgetId => (
-              <DraggableWidget key={widgetId} id={widgetId}>
-                <motion.div variants={itemVariants}>
+        <SortableContext items={orderedWidgets} strategy={verticalListSortingStrategy}>
+          <div className="grid grid-cols-6 gap-4 auto-rows-min">
+            {orderedWidgets.map(widgetId => (
+              <DraggableWidget
+                key={widgetId}
+                id={widgetId}
+                className={`${bentoSpans[widgetId] ?? 'col-span-6'} min-w-0`}
+              >
+                <motion.div variants={itemVariants} className="h-full">
                   {widgets[widgetId]}
                 </motion.div>
               </DraggableWidget>
             ))}
           </div>
         </SortableContext>
-
-        {/* Two-column grid: main content + sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-          <div className="lg:col-span-2 space-y-4 min-w-0">
-            <SortableContext
-              items={orderedMainWidgets.filter(w => w !== 'stats' && w !== 'quick-actions')}
-              strategy={verticalListSortingStrategy}
-            >
-              {orderedMainWidgets
-                .filter(w => w !== 'stats' && w !== 'quick-actions')
-                .map(widgetId => (
-                  <DraggableWidget key={widgetId} id={widgetId}>
-                    <motion.div variants={itemVariants}>
-                      {widgets[widgetId]}
-                    </motion.div>
-                  </DraggableWidget>
-                ))}
-            </SortableContext>
-          </div>
-          <SortableContext items={orderedSidebarWidgets} strategy={verticalListSortingStrategy}>
-            <div className="space-y-4 min-w-0">
-              {orderedSidebarWidgets.map(widgetId => (
-                <DraggableWidget key={widgetId} id={widgetId}>
-                  <motion.div variants={itemVariants}>
-                    {widgets[widgetId]}
-                  </motion.div>
-                </DraggableWidget>
-              ))}
-            </div>
-          </SortableContext>
-        </div>
       </DndContext>
+
 
       <AddIncomeDialog
         open={dialogOpen}
