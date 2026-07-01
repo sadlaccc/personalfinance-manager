@@ -77,6 +77,7 @@ export function useExpenses(options?: UseExpensesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
     },
   });
 
@@ -96,6 +97,7 @@ export function useExpenses(options?: UseExpensesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
     },
   });
 
@@ -112,6 +114,7 @@ export function useExpenses(options?: UseExpensesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
     },
   });
 
