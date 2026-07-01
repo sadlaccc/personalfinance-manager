@@ -19,6 +19,7 @@ export interface IncomeSource {
   date: string;
   created_at: string;
   updated_at: string;
+  isCarryover?: boolean;
 }
 
 export interface IncomeStats {
@@ -59,7 +60,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const selectedMonth = options?.month ?? now.getMonth();
   const selectedYear = options?.year ?? now.getFullYear();
 
-  const { data: incomeSources = [], isLoading } = useQuery({
+  const { data: rawIncomeSources = [], isLoading } = useQuery({
     queryKey: ['income-sources', user?.id, selectedMonth, selectedYear],
     queryFn: async () => {
       if (!user) return [];
@@ -81,6 +82,45 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     enabled: !!user,
   });
+
+  // Carryover: unspent net balance from everything before the selected month
+  const { data: carryover = 0 } = useQuery({
+    queryKey: ['income-carryover', user?.id, selectedMonth, selectedYear],
+    queryFn: async () => {
+      if (!user) return 0;
+      const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
+      const cutoff = format(monthStart, 'yyyy-MM-dd');
+      const [incRes, expRes] = await Promise.all([
+        supabase.from('income_sources').select('amount').eq('user_id', user.id).lt('date', cutoff),
+        supabase.from('expenses').select('amount').eq('user_id', user.id).lt('date', cutoff),
+      ]);
+      if (incRes.error) throw incRes.error;
+      if (expRes.error) throw expRes.error;
+      const inc = (incRes.data || []).reduce((s, r: { amount: number }) => s + Number(r.amount), 0);
+      const exp = (expRes.data || []).reduce((s, r: { amount: number }) => s + Number(r.amount), 0);
+      return Math.max(0, inc - exp);
+    },
+    enabled: !!user,
+  });
+
+  const incomeSources = useMemo<IncomeSource[]>(() => {
+    if (!user || carryover <= 0) return rawIncomeSources;
+    const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
+    const virtual: IncomeSource = {
+      id: `carryover-${selectedYear}-${selectedMonth}`,
+      user_id: user.id,
+      name: 'Carryover from previous months',
+      amount: carryover,
+      category: 'other',
+      frequency: 'one-time',
+      description: 'Unspent balance rolled forward automatically.',
+      date: format(monthStart, 'yyyy-MM-dd'),
+      created_at: monthStart.toISOString(),
+      updated_at: monthStart.toISOString(),
+      isCarryover: true,
+    };
+    return [virtual, ...rawIncomeSources];
+  }, [rawIncomeSources, carryover, selectedMonth, selectedYear, user]);
 
   const canAddIncome = totalSourceCount < limits.incomeSources;
   const incomeLimit = limits.incomeSources;
@@ -109,6 +149,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
       queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
@@ -116,6 +157,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>> }) => {
       if (!user) throw new Error('User not authenticated');
+      if (id.startsWith('carryover-')) throw new Error('Carryover entries are calculated automatically and cannot be edited.');
       const { data, error } = await supabase
         .from('income_sources')
         .update(updates)
@@ -129,12 +171,14 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated');
+      if (id.startsWith('carryover-')) throw new Error('Carryover entries are calculated automatically and cannot be deleted.');
       const { error } = await supabase
         .from('income_sources')
         .delete()
@@ -145,6 +189,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
       queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
