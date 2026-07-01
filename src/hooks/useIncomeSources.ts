@@ -157,6 +157,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const updateMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<Omit<IncomeSource, 'id' | 'user_id' | 'created_at'>> }) => {
       if (!user) throw new Error('User not authenticated');
+      if (id.startsWith('carryover-')) throw new Error('Carryover entries are calculated automatically and cannot be edited.');
       const { data, error } = await supabase
         .from('income_sources')
         .update(updates)
@@ -177,6 +178,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error('User not authenticated');
+      if (id.startsWith('carryover-')) throw new Error('Carryover entries are calculated automatically and cannot be deleted.');
       const { error } = await supabase
         .from('income_sources')
         .delete()
