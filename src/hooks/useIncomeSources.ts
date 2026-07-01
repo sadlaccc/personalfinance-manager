@@ -149,6 +149,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
       queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
@@ -169,6 +170,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
     },
   });
 
@@ -185,6 +187,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['income-sources'] });
+      queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
       queryClient.invalidateQueries({ queryKey: ['income-sources-count'] });
     },
   });
