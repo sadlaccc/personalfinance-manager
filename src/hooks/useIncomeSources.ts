@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { IncomeCategory } from '@/types/income';
 import { Frequency } from '@/types/expense';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
