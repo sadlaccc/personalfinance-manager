@@ -17,6 +17,7 @@ import { ResetPasswordDialog } from '@/components/ResetPasswordDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { PALETTES, FONT_PAIRS, useAppearance } from '@/contexts/AppearanceContext';
 
 const CURRENCIES = [
   { code: 'KES', name: 'Kenya Shilling (KSh)', symbol: 'KSh' },
@@ -44,6 +45,7 @@ const itemVariants = {
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
+  const { palette, setPalette, fontPair, setFontPair, density, setDensity, accent, setAccent, reset: resetAppearance } = useAppearance();
   const { user } = useAuth();
   const { profile, isLoading, updateProfile, isUpdating } = useProfile();
   const { currentPlan, isActive, daysRemaining } = useSubscription();
