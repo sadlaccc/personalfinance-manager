@@ -259,40 +259,109 @@ const Settings = () => {
             <div className="p-2 bg-accent/10 rounded-xl">
               <Palette className="w-5 h-5 text-accent" />
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="font-display font-semibold text-foreground">Appearance</h3>
-              <p className="text-sm text-muted-foreground">Theme preference</p>
+              <p className="text-sm text-muted-foreground">Theme, palette, typography, and density</p>
+            </div>
+            <Button variant="ghost" size="sm" className="rounded-xl" onClick={resetAppearance}>
+              Reset
+            </Button>
+          </div>
+
+          {/* Mode */}
+          <div className="space-y-2 mb-5">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Mode</Label>
+            <div className="flex gap-2">
+              <Button variant={theme === "light" ? "default" : "outline"} size="sm" onClick={() => setTheme("light")} className="rounded-xl gap-2">
+                <Sun className="w-4 h-4" />Light
+              </Button>
+              <Button variant={theme === "dark" ? "default" : "outline"} size="sm" onClick={() => setTheme("dark")} className="rounded-xl gap-2">
+                <Moon className="w-4 h-4" />Dark
+              </Button>
+              <Button variant={theme === "system" ? "default" : "outline"} size="sm" onClick={() => setTheme("system")} className="rounded-xl gap-2">
+                <Monitor className="w-4 h-4" />System
+              </Button>
             </div>
           </div>
-          
-          <div className="flex gap-2">
-            <Button
-              variant={theme === "light" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTheme("light")}
-              className="rounded-xl gap-2"
-            >
-              <Sun className="w-4 h-4" />
-              Light
-            </Button>
-            <Button
-              variant={theme === "dark" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTheme("dark")}
-              className="rounded-xl gap-2"
-            >
-              <Moon className="w-4 h-4" />
-              Dark
-            </Button>
-            <Button
-              variant={theme === "system" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setTheme("system")}
-              className="rounded-xl gap-2"
-            >
-              <Monitor className="w-4 h-4" />
-              System
-            </Button>
+
+          {/* Palette */}
+          <div className="space-y-2 mb-5">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Color palette</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {PALETTES.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPalette(p.id)}
+                  className={`text-left p-2.5 rounded-xl border-2 transition ${palette === p.id ? 'border-primary shadow-sm' : 'border-border hover:border-muted-foreground/40'}`}
+                >
+                  <div className="flex gap-1 mb-1.5">
+                    {p.swatch.map((c) => (
+                      <span key={c} className="w-5 h-5 rounded-md border border-black/10" style={{ background: c }} />
+                    ))}
+                  </div>
+                  <span className="text-xs font-medium text-foreground">{p.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Accent override */}
+          <div className="space-y-2 mb-5">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Custom accent color</Label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={accent || '#c9a84c'}
+                onChange={(e) => setAccent(e.target.value)}
+                className="h-9 w-14 rounded-lg border border-border cursor-pointer bg-transparent"
+                aria-label="Custom accent color"
+              />
+              <span className="text-sm text-muted-foreground flex-1">
+                {accent ? accent.toUpperCase() : 'Using palette default'}
+              </span>
+              {accent && (
+                <Button variant="ghost" size="sm" className="rounded-xl" onClick={() => setAccent(null)}>
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Typography */}
+          <div className="space-y-2 mb-5">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Typography</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {FONT_PAIRS.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFontPair(f.id)}
+                  className={`text-left p-3 rounded-xl border-2 transition ${fontPair === f.id ? 'border-primary shadow-sm' : 'border-border hover:border-muted-foreground/40'}`}
+                >
+                  <div style={{ fontFamily: f.heading }} className="text-base font-bold text-foreground leading-tight">Ag</div>
+                  <div style={{ fontFamily: f.body }} className="text-xs text-muted-foreground mt-0.5">{f.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Density */}
+          <div className="space-y-2">
+            <Label className="text-xs uppercase tracking-wide text-muted-foreground">Layout density</Label>
+            <div className="flex gap-2">
+              {(['compact', 'comfortable', 'spacious'] as const).map((d) => (
+                <Button
+                  key={d}
+                  variant={density === d ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setDensity(d)}
+                  className="rounded-xl capitalize flex-1"
+                >
+                  {d}
+                </Button>
+              ))}
+            </div>
           </div>
         </motion.div>
 
