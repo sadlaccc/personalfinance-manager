@@ -83,11 +83,20 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     enabled: !!user,
   });
 
-  // Carryover: unspent net balance from everything before the selected month
+  // Carryover: unspent net balance from everything before the selected month.
+  // Only surfaced when the user opted in via the monthly CarryoverPrompt.
+  const monthKey = format(startOfMonth(new Date(selectedYear, selectedMonth)), 'yyyy-MM');
+  const carryoverDecision = user
+    ? (typeof window !== 'undefined'
+        ? localStorage.getItem(`carryover-decision-${user.id}-${monthKey}`)
+        : null)
+    : null;
+  const carryoverAccepted = carryoverDecision === 'accept';
+
   const { data: carryover = 0 } = useQuery({
-    queryKey: ['income-carryover', user?.id, selectedMonth, selectedYear],
+    queryKey: ['income-carryover', user?.id, selectedMonth, selectedYear, carryoverDecision],
     queryFn: async () => {
-      if (!user) return 0;
+      if (!user || !carryoverAccepted) return 0;
       const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
       const cutoff = format(monthStart, 'yyyy-MM-dd');
       const [incRes, expRes] = await Promise.all([
@@ -100,8 +109,15 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       const exp = (expRes.data || []).reduce((s, r: { amount: number }) => s + Number(r.amount), 0);
       return Math.max(0, inc - exp);
     },
-    enabled: !!user,
+    enabled: !!user && carryoverAccepted,
   });
+
+  // Refresh when the user answers the carryover prompt in another component
+  useEffect(() => {
+    const handler = () => queryClient.invalidateQueries({ queryKey: ['income-carryover'] });
+    window.addEventListener('carryover-decision-changed', handler);
+    return () => window.removeEventListener('carryover-decision-changed', handler);
+  }, [queryClient]);
 
   const incomeSources = useMemo<IncomeSource[]>(() => {
     if (!user || carryover <= 0) return rawIncomeSources;
