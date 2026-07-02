@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminModeProvider } from "@/contexts/AdminModeContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { AppearanceProvider } from "@/contexts/AppearanceContext";
+import { CarryoverPrompt } from "@/components/CarryoverPrompt";
 import { Layout } from "@/components/Layout";
 import Index from "./pages/Index";
 import Sources from "./pages/Sources";
@@ -69,6 +71,7 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <Layout>
+              <CarryoverPrompt />
               <Routes>
                 <Route path="/dashboard" element={<Index />} />
                 <Route path="/sources" element={<Sources />} />
@@ -92,17 +95,19 @@ function AppRoutes() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="system" storageKey="incomeflow-theme">
-      <AuthProvider>
-        <AdminModeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-        </AdminModeProvider>
-      </AuthProvider>
+      <AppearanceProvider>
+        <AuthProvider>
+          <AdminModeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </AdminModeProvider>
+        </AuthProvider>
+      </AppearanceProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
