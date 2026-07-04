@@ -94,23 +94,25 @@ function AppRoutes() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="system" storageKey="incomeflow-theme">
-      <AppearanceProvider>
-        <AuthProvider>
-          <AdminModeProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
-            </TooltipProvider>
-          </AdminModeProvider>
-        </AuthProvider>
-      </AppearanceProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="system" storageKey="incomeflow-theme">
+        <AppearanceProvider>
+          <AuthProvider>
+            <AdminModeProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AppRoutes />
+                </BrowserRouter>
+              </TooltipProvider>
+            </AdminModeProvider>
+          </AuthProvider>
+        </AppearanceProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
