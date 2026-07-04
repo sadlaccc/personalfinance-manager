@@ -154,9 +154,9 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32">
-        {/* Background gradient blobs */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-[32rem] h-[32rem] rounded-full bg-primary/25 blur-3xl opacity-70" />
+        {/* Background gradient blobs + prestige grid */}
+        <div className="absolute inset-0 -z-10 overflow-hidden prestige-grid">
+          <div className="absolute -top-32 -left-32 w-[32rem] h-[32rem] rounded-full bg-primary/20 blur-3xl opacity-70" />
           <div className="absolute top-32 -right-32 w-[32rem] h-[32rem] rounded-full bg-accent/25 blur-3xl opacity-60" />
           <div className="absolute bottom-0 left-1/3 w-[24rem] h-[24rem] rounded-full bg-income/15 blur-3xl opacity-60" />
         </div>
@@ -175,7 +175,7 @@ export default function Landing() {
 
               <h1 className="font-display text-[2.5rem] sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 leading-[1.05]">
                 Know where your{' '}
-                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                <span className="text-gradient">
                   money goes.
                 </span>
               </h1>
@@ -329,7 +329,7 @@ export default function Landing() {
       {/* CTA */}
       <section className="py-16 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-accent p-8 sm:p-14 text-center">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-hero p-8 sm:p-14 text-center">
             <div className="absolute inset-0 -z-0 opacity-30">
               <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-white/30 blur-3xl" />
               <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-accent/40 blur-3xl" />
