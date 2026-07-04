@@ -50,7 +50,7 @@ export function Layout({ children }: LayoutProps) {
         <AppSidebar />
         <SidebarInset className="flex-1 flex flex-col min-w-0">
           <Header title={pageTitle} />
-          <main className="flex-1 p-4 sm:p-6 overflow-x-hidden pb-20 md:pb-6">
+          <main className="flex-1 p-3 sm:p-4 lg:p-5 overflow-x-hidden pb-20 md:pb-5">
             {children}
           </main>
         </SidebarInset>
