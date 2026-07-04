@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useMemo } from 'react';
 import { IncomeCategory } from '@/types/income';
 import { Frequency } from '@/types/expense';
-import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
 import { useSubscription } from '@/hooks/useSubscription';
 import { getPlanLimits } from '@/lib/planLimits';
 
@@ -83,25 +83,32 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     enabled: !!user,
   });
 
-  // Carryover: unspent net balance from everything before the selected month.
-  // Only surfaced when the user opted in via the monthly CarryoverPrompt.
+  // Carryover: net unspent balance from the PREVIOUS month only.
+  // Surfaced when the user opted in via the monthly CarryoverPrompt. The user
+  // may also override the amount, stored under `carryover-amount-...`.
   const monthKey = format(startOfMonth(new Date(selectedYear, selectedMonth)), 'yyyy-MM');
-  const carryoverDecision = user
-    ? (typeof window !== 'undefined'
-        ? localStorage.getItem(`carryover-decision-${user.id}-${monthKey}`)
-        : null)
+  const carryoverDecision = user && typeof window !== 'undefined'
+    ? localStorage.getItem(`carryover-decision-${user.id}-${monthKey}`)
+    : null;
+  const carryoverOverride = user && typeof window !== 'undefined'
+    ? localStorage.getItem(`carryover-amount-${user.id}-${monthKey}`)
     : null;
   const carryoverAccepted = carryoverDecision === 'accept';
 
   const { data: carryover = 0 } = useQuery({
-    queryKey: ['income-carryover', user?.id, selectedMonth, selectedYear, carryoverDecision],
+    queryKey: ['income-carryover', user?.id, selectedMonth, selectedYear, carryoverDecision, carryoverOverride],
     queryFn: async () => {
       if (!user || !carryoverAccepted) return 0;
-      const monthStart = startOfMonth(new Date(selectedYear, selectedMonth));
-      const cutoff = format(monthStart, 'yyyy-MM-dd');
+      if (carryoverOverride) {
+        const n = Number(carryoverOverride);
+        if (Number.isFinite(n) && n > 0) return n;
+      }
+      const prev = subMonths(new Date(selectedYear, selectedMonth), 1);
+      const start = format(startOfMonth(prev), 'yyyy-MM-dd');
+      const end = format(endOfMonth(prev), 'yyyy-MM-dd');
       const [incRes, expRes] = await Promise.all([
-        supabase.from('income_sources').select('amount').eq('user_id', user.id).lt('date', cutoff),
-        supabase.from('expenses').select('amount').eq('user_id', user.id).lt('date', cutoff),
+        supabase.from('income_sources').select('amount').eq('user_id', user.id).gte('date', start).lte('date', end),
+        supabase.from('expenses').select('amount').eq('user_id', user.id).gte('date', start).lte('date', end),
       ]);
       if (incRes.error) throw incRes.error;
       if (expRes.error) throw expRes.error;
@@ -125,7 +132,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
     const virtual: IncomeSource = {
       id: `carryover-${selectedYear}-${selectedMonth}`,
       user_id: user.id,
-      name: 'Carryover from previous months',
+      name: 'Carryover from previous month',
       amount: carryover,
       category: 'other',
       frequency: 'one-time',
