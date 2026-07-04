@@ -245,7 +245,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout>
-      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-5">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-3">
         {/* Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
