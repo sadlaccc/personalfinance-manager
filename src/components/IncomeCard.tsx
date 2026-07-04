@@ -95,7 +95,19 @@ export function IncomeCard({ income, onEdit, onDelete }: IncomeCardProps) {
           )}
         </div>
 
-        {!isCarryover && (
+        {isCarryover ? (
+          <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 rounded-xl"
+              title="Edit carryover amount"
+              onClick={() => window.dispatchEvent(new CustomEvent('carryover-edit-request'))}
+            >
+              <Pencil className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
           <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               variant="outline"

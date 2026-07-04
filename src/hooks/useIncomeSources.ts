@@ -136,7 +136,7 @@ export function useIncomeSources(options?: UseIncomeSourcesOptions) {
       amount: carryover,
       category: 'other',
       frequency: 'one-time',
-      description: 'Unspent balance rolled forward automatically.',
+      description: 'Net unspent balance rolled over from last month. Tap edit to adjust.',
       date: format(monthStart, 'yyyy-MM-dd'),
       created_at: monthStart.toISOString(),
       updated_at: monthStart.toISOString(),
