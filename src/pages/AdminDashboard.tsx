@@ -229,15 +229,15 @@ export default function AdminDashboard() {
     }
   };
 
-  const StatCard = ({ icon: Icon, label, value, trend, color }: { icon: any; label: string; value: number | string; trend?: string; color?: string }) => (
+  const StatCard = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: number | string; trend?: string; color?: string }) => (
     <Card className="hover-lift border-border/50">
-      <CardContent className="p-4 flex items-center gap-3">
-        <div className={`p-2.5 rounded-xl ${color || 'bg-primary/10'}`}>
+      <CardContent className="p-3 flex items-center gap-2.5">
+        <div className={`p-2 rounded-lg ${color || 'bg-primary/10'}`}>
           <Icon className={`h-4 w-4 ${color ? 'text-primary-foreground' : 'text-primary'}`} />
         </div>
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground truncate">{label}</p>
-          <p className="text-xl font-bold tracking-tight">{value}</p>
+          <p className="text-[11px] text-muted-foreground truncate leading-tight">{label}</p>
+          <p className="text-lg font-bold tracking-tight leading-tight">{value}</p>
         </div>
       </CardContent>
     </Card>
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout>
-      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-5">
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-3">
         {/* Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
 
         {/* Main Tabbed Content */}
         <motion.div variants={itemVariants}>
-          <Tabs defaultValue="users" className="space-y-4">
+          <Tabs defaultValue="users" className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <TabsList className="w-full sm:w-auto grid grid-cols-6 sm:inline-flex">
                 <TabsTrigger value="users" className="gap-1.5 text-xs sm:text-sm">
