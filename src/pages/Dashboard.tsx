@@ -160,12 +160,16 @@ const Dashboard = () => {
     );
   }
 
+  const incomeTrend = Object.values(incomeStats.byCategory).filter(v => v > 0);
+  const expenseTrend = Object.values(expenseStats.byCategory).filter(v => v > 0);
+  const netTrend = incomeTrend.map((v, i) => v - (expenseTrend[i] ?? 0));
+
   const widgets: Record<string, React.ReactNode> = {
     'stats': (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatsCard title="Monthly Income" value={formatAmount(incomeStats.totalMonthly)} subtitle="All sources" icon={<TrendingUp className="w-5 h-5" />} variant="income" />
-        <StatsCard title="Monthly Expenses" value={formatAmount(expenseStats.totalMonthly)} subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`} icon={<TrendingDown className="w-5 h-5" />} variant="destructive" />
-        <StatsCard title="Net Monthly" value={`${netMonthly >= 0 ? '+' : ''}${formatAmount(Math.abs(netMonthly))}`} subtitle={netMonthly >= 0 ? 'Great progress!' : 'Over budget'} icon={<Wallet className="w-5 h-5" />} variant={netMonthly >= 0 ? 'income' : 'destructive'} />
+        <StatsCard title="Monthly Income" value={formatAmount(incomeStats.totalMonthly)} subtitle="All sources" icon={<TrendingUp className="w-5 h-5" />} variant="income" trend={incomeTrend.length > 1 ? incomeTrend : undefined} />
+        <StatsCard title="Monthly Expenses" value={formatAmount(expenseStats.totalMonthly)} subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`} icon={<TrendingDown className="w-5 h-5" />} variant="destructive" trend={expenseTrend.length > 1 ? expenseTrend : undefined} />
+        <StatsCard title="Net Monthly" value={`${netMonthly >= 0 ? '+' : ''}${formatAmount(Math.abs(netMonthly))}`} subtitle={netMonthly >= 0 ? 'Great progress!' : 'Over budget'} icon={<Wallet className="w-5 h-5" />} variant={netMonthly >= 0 ? 'income' : 'destructive'} trend={netTrend.length > 1 ? netTrend : undefined} />
         <StatsCard title="Savings Rate" value={`${incomeStats.totalMonthly > 0 ? Math.round(((incomeStats.totalMonthly - expenseStats.totalMonthly) / incomeStats.totalMonthly) * 100) : 0}%`} subtitle={`${incomeStats.sourceCount} source${incomeStats.sourceCount !== 1 ? 's' : ''}`} icon={<DollarSign className="w-5 h-5" />} variant="primary" />
       </div>
     ),
