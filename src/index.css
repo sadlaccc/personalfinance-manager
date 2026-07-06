@@ -4,144 +4,144 @@
 
 @layer base {
   :root {
-    /* Emerald Prestige — light (cream base, deep emerald, gold) */
-    --background: 44 33% 92%;           /* #f5f0e0 */
-    --foreground: 158 78% 10%;          /* deep emerald ink */
+    /* Muted Emerald + Warm Ivory — light */
+    --background: 42 30% 94%;
+    --foreground: 158 30% 14%;
 
-    --card: 44 40% 96%;                 /* warm ivory */
-    --card-foreground: 158 78% 10%;
+    --card: 42 36% 97%;
+    --card-foreground: 158 30% 14%;
 
-    --popover: 44 40% 96%;
-    --popover-foreground: 158 78% 10%;
+    --popover: 42 36% 97%;
+    --popover-foreground: 158 30% 14%;
 
-    --primary: 158 78% 17%;             /* #064e3b */
-    --primary-foreground: 44 40% 96%;
+    --primary: 158 32% 26%;
+    --primary-foreground: 42 36% 97%;
 
-    --secondary: 44 25% 86%;
-    --secondary-foreground: 158 78% 10%;
+    --secondary: 42 20% 88%;
+    --secondary-foreground: 158 30% 14%;
 
-    --muted: 44 20% 88%;
-    --muted-foreground: 158 15% 30%;
+    --muted: 42 18% 90%;
+    --muted-foreground: 158 12% 36%;
 
-    --accent: 43 55% 54%;               /* #c9a84c gold */
-    --accent-foreground: 158 78% 10%;
+    --accent: 40 32% 58%;
+    --accent-foreground: 158 30% 14%;
 
-    --destructive: 3 68% 42%;
-    --destructive-foreground: 44 40% 96%;
+    --destructive: 6 45% 46%;
+    --destructive-foreground: 42 36% 97%;
 
-    --border: 44 20% 80%;
-    --input: 44 20% 82%;
-    --ring: 158 78% 17%;
+    --border: 42 16% 82%;
+    --input: 42 16% 84%;
+    --ring: 158 32% 26%;
 
     --radius: 0.5rem;
 
     /* Custom tokens */
-    --income: 158 68% 30%;              /* teal-emerald #0d7a5f */
-    --income-foreground: 44 40% 96%;
-    --expense: 3 68% 42%;
-    --expense-foreground: 44 40% 96%;
-    --navy: 158 78% 10%;
-    --navy-light: 158 40% 18%;
-    --slate: 158 15% 35%;
+    --income: 158 32% 34%;
+    --income-foreground: 42 36% 97%;
+    --expense: 6 45% 46%;
+    --expense-foreground: 42 36% 97%;
+    --navy: 158 30% 14%;
+    --navy-light: 158 22% 22%;
+    --slate: 158 12% 38%;
 
     /* Notification colors */
-    --info: 200 60% 32%;
-    --info-foreground: 44 40% 96%;
-    --success: 158 68% 30%;
-    --success-foreground: 44 40% 96%;
-    --warning: 38 82% 42%;
-    --warning-foreground: 44 40% 96%;
-    --ticket: 43 55% 54%;
-    --ticket-foreground: 158 78% 10%;
-    --task: 200 60% 32%;
-    --task-foreground: 44 40% 96%;
+    --info: 205 35% 38%;
+    --info-foreground: 42 36% 97%;
+    --success: 158 32% 34%;
+    --success-foreground: 42 36% 97%;
+    --warning: 34 55% 46%;
+    --warning-foreground: 42 36% 97%;
+    --ticket: 40 32% 58%;
+    --ticket-foreground: 158 30% 14%;
+    --task: 205 35% 38%;
+    --task-foreground: 42 36% 97%;
 
     /* Category colors */
-    --category-salary: 158 78% 17%;
-    --category-freelance: 43 55% 54%;
-    --category-investment: 158 68% 30%;
-    --category-rental: 25 60% 40%;
-    --category-business: 200 60% 32%;
-    --category-other: 158 15% 40%;
+    --category-salary: 158 32% 26%;
+    --category-freelance: 40 32% 58%;
+    --category-investment: 158 32% 38%;
+    --category-rental: 25 35% 44%;
+    --category-business: 205 35% 38%;
+    --category-other: 158 10% 44%;
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(158 78% 17%) 0%, hsl(158 68% 30%) 55%, hsl(43 55% 54%) 100%);
-    --gradient-income: linear-gradient(135deg, hsl(158 68% 30%) 0%, hsl(158 78% 22%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(44 40% 97%) 0%, hsl(44 30% 93%) 100%);
-    --gradient-ticket: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(38 60% 46%) 100%);
-    --gradient-task: linear-gradient(135deg, hsl(200 60% 32%) 0%, hsl(158 68% 30%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(158 68% 30%) 0%, hsl(158 78% 22%) 100%);
-    --gradient-warning: linear-gradient(135deg, hsl(38 82% 42%) 0%, hsl(43 55% 54%) 100%);
-    --gradient-glass: linear-gradient(135deg, hsla(44,40%,96%,0.6) 0%, hsla(44,40%,96%,0.2) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43 55% 54%) 0%, hsl(43 70% 68%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(158 32% 26%) 0%, hsl(158 28% 36%) 55%, hsl(40 32% 58%) 100%);
+    --gradient-income: linear-gradient(135deg, hsl(158 32% 34%) 0%, hsl(158 32% 26%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(42 36% 97%) 0%, hsl(42 28% 93%) 100%);
+    --gradient-ticket: linear-gradient(135deg, hsl(40 32% 58%) 0%, hsl(36 36% 50%) 100%);
+    --gradient-task: linear-gradient(135deg, hsl(205 35% 38%) 0%, hsl(158 32% 34%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(158 32% 34%) 0%, hsl(158 32% 26%) 100%);
+    --gradient-warning: linear-gradient(135deg, hsl(34 55% 46%) 0%, hsl(40 32% 58%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(42,36%,97%,0.6) 0%, hsla(42,36%,97%,0.2) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(40 32% 58%) 0%, hsl(40 42% 70%) 100%);
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(158 78% 10% / 0.05);
-    --shadow-md: 0 2px 4px -1px hsl(158 78% 10% / 0.08), 0 4px 8px -2px hsl(158 78% 10% / 0.06);
-    --shadow-lg: 0 10px 20px -6px hsl(158 78% 10% / 0.12), 0 4px 8px -4px hsl(158 78% 10% / 0.06);
-    --shadow-xl: 0 20px 35px -8px hsl(158 78% 10% / 0.18), 0 8px 12px -6px hsl(158 78% 10% / 0.06);
-    --shadow-2xl: 0 25px 60px -15px hsl(158 78% 10% / 0.28);
-    --shadow-glow: 0 0 24px hsl(43 55% 54% / 0.35);
-    --shadow-glow-primary: 0 0 28px hsl(158 78% 17% / 0.28);
-    --shadow-ticket: 0 0 20px hsl(43 55% 54% / 0.3);
-    --shadow-task: 0 0 20px hsl(200 60% 32% / 0.25);
+    --shadow-sm: 0 1px 2px 0 hsl(158 30% 14% / 0.04);
+    --shadow-md: 0 2px 4px -1px hsl(158 30% 14% / 0.06), 0 4px 8px -2px hsl(158 30% 14% / 0.04);
+    --shadow-lg: 0 10px 20px -6px hsl(158 30% 14% / 0.10), 0 4px 8px -4px hsl(158 30% 14% / 0.05);
+    --shadow-xl: 0 20px 35px -8px hsl(158 30% 14% / 0.14), 0 8px 12px -6px hsl(158 30% 14% / 0.05);
+    --shadow-2xl: 0 25px 60px -15px hsl(158 30% 14% / 0.22);
+    --shadow-glow: 0 0 24px hsl(40 32% 58% / 0.25);
+    --shadow-glow-primary: 0 0 28px hsl(158 32% 26% / 0.20);
+    --shadow-ticket: 0 0 20px hsl(40 32% 58% / 0.22);
+    --shadow-task: 0 0 20px hsl(205 35% 38% / 0.18);
 
-    --sidebar-background: 44 35% 94%;
-    --sidebar-foreground: 158 78% 10%;
-    --sidebar-primary: 158 78% 17%;
-    --sidebar-primary-foreground: 44 40% 96%;
-    --sidebar-accent: 44 25% 88%;
-    --sidebar-accent-foreground: 158 78% 10%;
-    --sidebar-border: 44 20% 82%;
-    --sidebar-ring: 158 78% 17%;
+    --sidebar-background: 42 28% 95%;
+    --sidebar-foreground: 158 30% 14%;
+    --sidebar-primary: 158 32% 26%;
+    --sidebar-primary-foreground: 42 36% 97%;
+    --sidebar-accent: 42 20% 89%;
+    --sidebar-accent-foreground: 158 30% 14%;
+    --sidebar-border: 42 16% 84%;
+    --sidebar-ring: 158 32% 26%;
   }
 
   .dark {
-    /* Emerald Prestige — dark (deep forest with gold) */
-    --background: 158 45% 6%;
-    --foreground: 44 40% 94%;
+    /* Muted Emerald — dark */
+    --background: 158 22% 7%;
+    --foreground: 42 28% 92%;
 
-    --card: 158 40% 9%;
-    --card-foreground: 44 40% 94%;
+    --card: 158 20% 10%;
+    --card-foreground: 42 28% 92%;
 
-    --popover: 158 40% 9%;
-    --popover-foreground: 44 40% 94%;
+    --popover: 158 20% 10%;
+    --popover-foreground: 42 28% 92%;
 
-    --primary: 158 65% 40%;
-    --primary-foreground: 158 78% 6%;
+    --primary: 158 32% 44%;
+    --primary-foreground: 158 30% 8%;
 
-    --secondary: 158 30% 14%;
-    --secondary-foreground: 44 40% 94%;
+    --secondary: 158 18% 15%;
+    --secondary-foreground: 42 28% 92%;
 
-    --muted: 158 30% 14%;
-    --muted-foreground: 44 15% 65%;
+    --muted: 158 18% 15%;
+    --muted-foreground: 42 12% 66%;
 
-    --accent: 43 60% 58%;
-    --accent-foreground: 158 78% 6%;
+    --accent: 40 34% 60%;
+    --accent-foreground: 158 30% 8%;
 
-    --destructive: 3 60% 45%;
-    --destructive-foreground: 44 40% 94%;
+    --destructive: 6 42% 48%;
+    --destructive-foreground: 42 28% 92%;
 
-    --border: 158 30% 18%;
-    --input: 158 30% 18%;
-    --ring: 43 60% 58%;
+    --border: 158 18% 18%;
+    --input: 158 18% 18%;
+    --ring: 40 34% 60%;
 
-    --income: 158 65% 45%;
-    --income-foreground: 158 78% 6%;
-    --expense: 3 65% 55%;
+    --income: 158 32% 46%;
+    --income-foreground: 158 30% 8%;
+    --expense: 6 45% 55%;
 
-    --sidebar-background: 158 45% 5%;
-    --sidebar-foreground: 44 40% 94%;
-    --sidebar-primary: 158 65% 40%;
-    --sidebar-primary-foreground: 158 78% 6%;
-    --sidebar-accent: 158 30% 12%;
-    --sidebar-accent-foreground: 44 40% 94%;
-    --sidebar-border: 158 30% 16%;
-    --sidebar-ring: 43 60% 58%;
+    --sidebar-background: 158 22% 6%;
+    --sidebar-foreground: 42 28% 92%;
+    --sidebar-primary: 158 32% 44%;
+    --sidebar-primary-foreground: 158 30% 8%;
+    --sidebar-accent: 158 18% 13%;
+    --sidebar-accent-foreground: 42 28% 92%;
+    --sidebar-border: 158 18% 17%;
+    --sidebar-ring: 40 34% 60%;
 
-    --gradient-card: linear-gradient(180deg, hsl(158 40% 9%) 0%, hsl(158 45% 7%) 100%);
-    --gradient-glass: linear-gradient(135deg, hsla(44,40%,94%,0.06) 0%, hsla(44,40%,94%,0.02) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(158 45% 8%) 0%, hsl(158 65% 20%) 55%, hsl(43 60% 40%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(158 20% 10%) 0%, hsl(158 22% 8%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsla(42,28%,92%,0.06) 0%, hsla(42,28%,92%,0.02) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(158 22% 9%) 0%, hsl(158 32% 22%) 55%, hsl(40 34% 42%) 100%);
   }
 }
 
@@ -163,7 +163,7 @@
     font-weight: 700;
   }
 
-  /* Density scaling — applied by AppearanceContext via data-density */
+  /* Density scaling */
   [data-density="compact"] { font-size: 14.5px; }
   [data-density="comfortable"] { font-size: 16px; }
   [data-density="spacious"] { font-size: 17px; }
@@ -215,11 +215,11 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
-  /* Subtle Emerald Prestige texture — gold hairlines on cream */
+  /* Subtle Emerald Prestige texture — soft gold hairlines on ivory */
   .prestige-grid {
     background-image:
-      linear-gradient(hsl(var(--accent) / 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--accent) / 0.06) 1px, transparent 1px);
+      linear-gradient(hsl(var(--accent) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--accent) / 0.04) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 }
