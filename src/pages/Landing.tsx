@@ -213,22 +213,7 @@ export default function Landing() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.12 }}
-              className="relative"
-            >
-              <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-primary/30 to-accent/30 blur-3xl -z-10" />
-              <div className="relative rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10 ring-1 ring-white/5">
-                <img
-                  src={heroDashboard}
-                  alt="FedhaFlow dashboard showing income and expense tracking"
-                  className="w-full h-auto"
-                  loading="eager"
-                />
-              </div>
-            </motion.div>
+            <HeroCarousel />
           </div>
 
           {/* Honest highlights strip */}
