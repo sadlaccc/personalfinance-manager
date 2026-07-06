@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Autoplay from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
@@ -19,8 +21,11 @@ import {
   Globe,
   Zap,
   ShieldCheck,
+  Quote,
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.jpg';
+import analyticsIllustration from '@/assets/analytics-illustration.jpg';
+import savingsIllustration from '@/assets/savings-illustration.jpg';
 
 const features = [
   {
@@ -146,6 +151,107 @@ function SavingsCalculator() {
   );
 }
 
+const heroSlides = [
+  {
+    type: 'image' as const,
+    src: heroDashboard,
+    alt: 'FedhaFlow dashboard overview',
+    caption: 'One clean dashboard for income, expenses and goals.',
+  },
+  {
+    type: 'testimonial' as const,
+    quote:
+      'Finally a money app that feels calm. I check in on Sundays and I actually know where I stand.',
+    author: 'Aisha M.',
+    role: 'Freelance designer, Nairobi',
+  },
+  {
+    type: 'image' as const,
+    src: analyticsIllustration,
+    alt: 'Analytics with donut and bar charts',
+    caption: 'Analytics that answer the question, not decorate the page.',
+  },
+  {
+    type: 'testimonial' as const,
+    quote:
+      'The monthly carryover changed how I plan. Nothing gets lost between months anymore.',
+    author: 'David K.',
+    role: 'Small business owner',
+  },
+  {
+    type: 'image' as const,
+    src: savingsIllustration,
+    alt: 'Savings jar filling up',
+    caption: 'Watch each savings goal fill up, one deposit at a time.',
+  },
+];
+
+function HeroCarousel() {
+  const autoplay = useRef(
+    Autoplay({ delay: 4500, stopOnInteraction: false, stopOnMouseEnter: true }),
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 180, damping: 24, delay: 0.15 }}
+      className="relative"
+    >
+      <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-primary/15 to-accent/15 blur-3xl -z-10" />
+      <Carousel
+        opts={{ loop: true, align: 'start' }}
+        plugins={[autoplay.current]}
+        className="relative rounded-2xl overflow-hidden border border-border/60 shadow-2xl shadow-primary/5 bg-card/60 backdrop-blur"
+      >
+        <CarouselContent>
+          {heroSlides.map((slide, i) => (
+            <CarouselItem key={i}>
+              {slide.type === 'image' ? (
+                <div className="relative aspect-[4/3] sm:aspect-[16/11] bg-muted/30">
+                  <img
+                    src={slide.src}
+                    alt={slide.alt}
+                    className="w-full h-full object-cover"
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 bg-gradient-to-t from-background/85 via-background/40 to-transparent">
+                    <p className="text-xs sm:text-sm font-medium text-foreground">
+                      {slide.caption}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="aspect-[4/3] sm:aspect-[16/11] flex items-center justify-center p-8 sm:p-12 bg-gradient-to-br from-card via-card to-muted/50">
+                  <div className="max-w-md text-center space-y-4">
+                    <Quote className="w-8 h-8 mx-auto text-accent" />
+                    <p className="font-display text-lg sm:text-xl leading-relaxed text-foreground">
+                      &ldquo;{slide.quote}&rdquo;
+                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{slide.author}</p>
+                      <p className="text-xs text-muted-foreground">{slide.role}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {heroSlides.map((_, i) => (
+            <span
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-foreground/30"
+              aria-hidden
+            />
+          ))}
+        </div>
+      </Carousel>
+    </motion.div>
+  );
+}
+
 export default function Landing() {
   return (
     <PageTransition>
@@ -208,22 +314,7 @@ export default function Landing() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.12 }}
-              className="relative"
-            >
-              <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-tr from-primary/30 to-accent/30 blur-3xl -z-10" />
-              <div className="relative rounded-2xl overflow-hidden border border-border/50 shadow-2xl shadow-primary/10 ring-1 ring-white/5">
-                <img
-                  src={heroDashboard}
-                  alt="FedhaFlow dashboard showing income and expense tracking"
-                  className="w-full h-auto"
-                  loading="eager"
-                />
-              </div>
-            </motion.div>
+            <HeroCarousel />
           </div>
 
           {/* Honest highlights strip */}

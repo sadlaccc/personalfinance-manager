@@ -7,12 +7,12 @@ interface IncomeChartProps {
 }
 
 const COLORS: Record<IncomeCategory, string> = {
-  salary: '#3b82f6',
-  freelance: '#a855f7',
-  investment: '#10b981',
-  rental: '#f59e0b',
-  business: '#ec4899',
-  other: '#6b7280',
+  salary: 'hsl(158, 32%, 26%)',
+  freelance: 'hsl(40, 32%, 58%)',
+  investment: 'hsl(158, 32%, 44%)',
+  rental: 'hsl(25, 35%, 44%)',
+  business: 'hsl(205, 35%, 38%)',
+  other: 'hsl(158, 10%, 50%)',
 };
 
 export function IncomeChart({ stats }: IncomeChartProps) {

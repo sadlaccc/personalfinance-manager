@@ -6,35 +6,13 @@ interface PageTransitionProps {
   className?: string;
 }
 
-const pageVariants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-  },
-  out: {
-    opacity: 0,
-    y: -20,
-  },
-};
-
-const pageTransition = {
-  type: 'tween' as const,
-  ease: 'anticipate' as const,
-  duration: 0.4,
-};
-
 export function PageTransition({ children, className = '' }: PageTransitionProps) {
   return (
     <motion.div
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={pageVariants}
-      transition={pageTransition}
+      initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
+      transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.9 }}
       className={className}
     >
       {children}
