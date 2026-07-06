@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Autoplay from 'embla-carousel-autoplay';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import { PublicFooter } from '@/components/PublicFooter';
 import { PageTransition } from '@/components/PageTransition';
@@ -19,8 +21,11 @@ import {
   Globe,
   Zap,
   ShieldCheck,
+  Quote,
 } from 'lucide-react';
 import heroDashboard from '@/assets/hero-dashboard.jpg';
+import analyticsIllustration from '@/assets/analytics-illustration.jpg';
+import savingsIllustration from '@/assets/savings-illustration.jpg';
 
 const features = [
   {
