@@ -27,7 +27,7 @@ export function DraggableWidget({ id, children, className = '' }: DraggableWidge
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative group ${className}`}>
+    <div ref={setNodeRef} style={style} className={`relative group h-full ${className}`}>
       <button
         {...attributes}
         {...listeners}

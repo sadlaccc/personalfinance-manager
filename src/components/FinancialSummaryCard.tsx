@@ -73,7 +73,7 @@ export function FinancialSummaryCard({ incomeSources, expenses, selectedDate, fo
   const hasData = summary.incomeCount > 0 || summary.expenseCount > 0;
 
   return (
-    <Card className="border-border/50 shadow-sm overflow-hidden">
+    <Card className="h-full border-border/50 shadow-sm overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <CardTitle className="text-base font-semibold flex items-center gap-2.5">

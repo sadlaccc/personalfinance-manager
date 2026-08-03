@@ -1,17 +1,17 @@
 import { useState, useCallback } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 
-const STORAGE_KEY = 'dashboard-widget-order';
+const STORAGE_KEY = 'dashboard-widget-order-v2';
 
 const DEFAULT_WIDGETS = [
   'stats',
   'quick-actions',
   'financial-summary',
-  'recent-income',
-  'subscription',
   'income-chart',
-  'daily-tip',
+  'recent-income',
   'budget-overview',
+  'subscription',
+  'daily-tip',
 ];
 
 export function useDashboardLayout() {

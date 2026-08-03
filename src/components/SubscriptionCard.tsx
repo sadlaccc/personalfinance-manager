@@ -28,7 +28,7 @@ export function SubscriptionCard() {
 
   if (isLoading) {
     return (
-      <Card className="glass-card">
+      <Card className="glass-card h-full">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-4 bg-muted rounded w-1/3" />

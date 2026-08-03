@@ -166,7 +166,7 @@ const Dashboard = () => {
 
   const widgets: Record<string, React.ReactNode> = {
     'stats': (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 h-full">
         <StatsCard title="Monthly Income" value={formatAmount(incomeStats.totalMonthly)} subtitle="All sources" icon={<TrendingUp className="w-5 h-5" />} variant="income" trend={incomeTrend.length > 1 ? incomeTrend : undefined} />
         <StatsCard title="Monthly Expenses" value={formatAmount(expenseStats.totalMonthly)} subtitle={`${expenseStats.expenseCount} expense${expenseStats.expenseCount !== 1 ? 's' : ''}`} icon={<TrendingDown className="w-5 h-5" />} variant="destructive" trend={expenseTrend.length > 1 ? expenseTrend : undefined} />
         <StatsCard title="Net Monthly" value={`${netMonthly >= 0 ? '+' : ''}${formatAmount(Math.abs(netMonthly))}`} subtitle={netMonthly >= 0 ? 'Great progress!' : 'Over budget'} icon={<Wallet className="w-5 h-5" />} variant={netMonthly >= 0 ? 'income' : 'destructive'} trend={netTrend.length > 1 ? netTrend : undefined} />
@@ -174,7 +174,7 @@ const Dashboard = () => {
       </div>
     ),
     'quick-actions': (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 h-full">
         {quickActions.map((action) => (
           <Link key={action.label} to={action.href}>
             <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer group">
@@ -198,7 +198,7 @@ const Dashboard = () => {
       />
     ),
     'recent-income': (
-      <div className="space-y-4">
+      <div className="h-full flex flex-col gap-4 bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="font-display text-lg font-bold text-foreground">Recent Income</h2>
@@ -259,7 +259,7 @@ const Dashboard = () => {
     'subscription': <SubscriptionCard />,
     'income-chart': <IncomeChart stats={incomeStats} />,
     'daily-tip': (
-      <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div className="h-full bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
         <h3 className="font-display font-semibold text-foreground mb-3 text-sm flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-warning/10">
             <Lightbulb className="w-3.5 h-3.5 text-warning" />
@@ -270,7 +270,7 @@ const Dashboard = () => {
       </div>
     ),
     'budget-overview': (
-      <div className="bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div className="h-full bg-card border border-border/50 rounded-2xl p-4 sm:p-5 shadow-sm">
         <h3 className="font-display font-semibold text-foreground mb-4 text-sm flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
           Budget Overview
@@ -302,11 +302,11 @@ const Dashboard = () => {
     'stats': 'col-span-6',
     'quick-actions': 'col-span-6',
     'financial-summary': 'col-span-6 lg:col-span-4',
-    'income-chart': 'col-span-6 lg:col-span-2',
+    'income-chart': 'col-span-6 sm:col-span-3 lg:col-span-2',
     'recent-income': 'col-span-6 lg:col-span-4',
-    'budget-overview': 'col-span-6 lg:col-span-2',
-    'subscription': 'col-span-6 lg:col-span-3',
-    'daily-tip': 'col-span-6 lg:col-span-3',
+    'budget-overview': 'col-span-6 sm:col-span-3 lg:col-span-2',
+    'subscription': 'col-span-6 sm:col-span-3',
+    'daily-tip': 'col-span-6 sm:col-span-3',
   };
 
   const orderedWidgets = widgetOrder.filter(w => widgets[w]);
@@ -358,7 +358,7 @@ const Dashboard = () => {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={orderedWidgets} strategy={verticalListSortingStrategy}>
-          <div className="grid grid-cols-6 gap-4 auto-rows-min">
+          <div className="grid grid-cols-6 gap-4 items-stretch auto-rows-[minmax(0,auto)]">
             {orderedWidgets.map(widgetId => (
               <DraggableWidget
                 key={widgetId}
