@@ -26,7 +26,7 @@ export function IncomeChart({ stats }: IncomeChartProps) {
 
   if (data.length === 0) {
     return (
-      <div className="relative overflow-hidden bg-card border border-border/50 rounded-2xl p-6 text-center shadow-sm">
+      <div className="h-full relative overflow-hidden bg-card border border-border/50 rounded-2xl p-6 text-center shadow-sm">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
         <div className="relative z-10">
           <div className="bg-gradient-to-br from-primary/15 to-primary/5 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3">
@@ -42,7 +42,7 @@ export function IncomeChart({ stats }: IncomeChartProps) {
   }
 
   return (
-    <div className="bg-card border border-border/50 rounded-2xl p-5 shadow-sm">
+    <div className="h-full bg-card border border-border/50 rounded-2xl p-5 shadow-sm">
       <h3 className="font-display font-semibold text-sm text-foreground mb-3 flex items-center gap-2">
         <div className="w-1.5 h-1.5 rounded-full bg-primary" />
         Income Distribution
