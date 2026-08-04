@@ -325,27 +325,27 @@ export default function AdminDashboard() {
               <TabsList className="w-full sm:w-auto justify-start">
                 <TabsTrigger value="users" className="gap-1.5 text-xs sm:text-sm">
                   <Users className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Users</span>
+                  <span>Users</span>
                 </TabsTrigger>
                 <TabsTrigger value="analytics" className="gap-1.5 text-xs sm:text-sm">
                   <BarChart3 className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Analytics</span>
+                  <span>Analytics</span>
                 </TabsTrigger>
                 <TabsTrigger value="content" className="gap-1.5 text-xs sm:text-sm">
                   <Newspaper className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Content</span>
+                  <span>Content</span>
                 </TabsTrigger>
                 <TabsTrigger value="messages" className="gap-1.5 text-xs sm:text-sm">
                   <MessageSquare className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Messages</span>
+                  <span>Messages</span>
                 </TabsTrigger>
                 <TabsTrigger value="feedback" className="gap-1.5 text-xs sm:text-sm">
                   <ThumbsUp className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Feedback</span>
+                  <span>Feedback</span>
                 </TabsTrigger>
                 <TabsTrigger value="audit" className="gap-1.5 text-xs sm:text-sm">
                   <History className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Audit</span>
+                  <span>Audit</span>
                 </TabsTrigger>
               </TabsList>
 
