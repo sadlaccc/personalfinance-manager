@@ -20,7 +20,7 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install
 
 COPY --from=build /app/app.cjs ./app.cjs
 COPY --from=build /app/dist ./dist
