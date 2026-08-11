@@ -1,0 +1,56 @@
+name: Build and push docker images
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  push_to_registry:
+    name: Push Docker Image to Hub
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+  
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@v3
+
+      - name: Get Version and Commit Hash
+        id: get_version
+        run: |
+          # Check if a tag exists
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          # If no tag exists, create one using the commit hash or increment version
+          if [ -z "$VERSION" ]; then
+            VERSION="v$(date +'%Y%m%d%H%M%S')"  # Using a timestamp as the version
+            echo "No tag found, creating new tag: $VERSION"
+            git tag $VERSION
+            git push origin $VERSION  # Push the new tag to GitHub
+          else
+            echo "Tag found: $VERSION"
+          fi
+          
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "COMMIT_HASH=${COMMIT_HASH}" >> $GITHUB_ENV
+          echo "Current version: $VERSION, Commit Hash: $COMMIT_HASH"
+
+      - name: Log in to Docker Hub
+        run: |
+          docker login --username enockkim --password ${{ secrets.GCR_TOKEN }} ghcr.io
+
+      - name: Build and Tag Docker Image
+        run: |
+          # Build the Docker image with the version tag
+          docker build . --tag ghcr.io/sadlaccc/personalfinance-manager:${{ env.VERSION }}
+          
+          # Tag the image with the 'latest' tag
+          docker tag ghcr.io/sadlaccc/personalfinance-manager:${{ env.VERSION }} ghcr.io/sadlaccc/personalfinance-manager:latest
+          
+          # Push both version and latest tags to Docker Hub
+          docker push ghcr.io/sadlaccc/personalfinance-manager:${{ env.VERSION }}
+          docker push ghcr.io/sadlaccc/personalfinance-manager:latest
