@@ -1,29 +1,20 @@
-# ---------- Stage 1: install all dependencies (incl. dev) ----------
-FROM node:22-alpine AS deps
+# Build stage
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package*.json ./
+RUN npm ci
 
-# ---------- Stage 2: build the app ----------
-FROM node:22-alpine AS build
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
 RUN npm run build
 
-# ---------- Stage 3: production runtime ----------
-FROM node:22-alpine AS runner
-ENV NODE_ENV=production
-WORKDIR /app
+# Production stage
+FROM nginx:alpine
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=build /app/app.cjs ./app.cjs
-COPY --from=build /app/dist ./dist
+EXPOSE 80
 
-EXPOSE 3000
-CMD ["node", "app.cjs"]
+CMD ["nginx", "-g", "daemon off;"]
